@@ -9,7 +9,7 @@ import "@react-pdf-viewer/core/lib/styles/index.css";
 import { defaultLayoutPlugin, ToolbarProps, ToolbarSlot } from "@react-pdf-viewer/default-layout";
 // Import styles
 import "@react-pdf-viewer/default-layout/lib/styles/index.css";
-import pr_FR from "@react-pdf-viewer/locales/lib/pr_FR.json";
+// import pr_FR from "@react-pdf-viewer/locales/lib/pr_FR.json";
 import { useTheme } from "@mui/material/styles";
 
 interface PDFProps {
@@ -102,7 +102,7 @@ const MyPdfViewer: React.FC<PDFProps> = ({ PdfUrl,sx }) => {
             direction: TextDirection.RightToLeft,
             theme: muiTheme.palette.mode
           }}
-          localization={pr_FR as unknown as LocalizationMap}
+        //   localization={pr_FR as unknown as LocalizationMap}
           fileUrl={PdfUrl ?? samplePdfUrl}
           plugins={[
             // پلاگین رابط کاربری رو به Viewer اضافه می‌کنیم
