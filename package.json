@@ -1,0 +1,102 @@
+{
+  "name": "IACPA",
+  "version": "0.1.0",
+  "private": true,
+  "dependencies": {
+    "@emotion/react": "^11.11.4",
+    "@emotion/styled": "^11.11.5",
+    "@hassanmojab/react-modern-calendar-datepicker": "^3.1.7",
+    "@hookform/resolvers": "^3.1.1",
+    "@mui/icons-material": "^5.14.1",
+    "@mui/material": "^5.16.1",
+    "@mui/x-charts": "^7.10.0",
+    "@mui/x-data-grid": "^6.11.2",
+    "@mui/x-date-pickers": "^7.29.4",
+    "@mui/x-tree-view": "^7.5.0",
+    "@persian-tools/persian-tools": "^3.5.2",
+    "@react-pdf-viewer/core": "^3.12.0",
+    "@react-pdf-viewer/default-layout": "^3.12.0",
+    "@react-pdf-viewer/locales": "^1.0.0",
+    "@reduxjs/toolkit": "^2.2.7",
+    "@tanstack/react-query": "^4.32.0",
+    "@tanstack/react-query-devtools": "^4.32.0",
+    "@testing-library/jest-dom": "^5.17.0",
+    "@testing-library/react": "^13.4.0",
+    "@testing-library/user-event": "^13.5.0",
+    "@types/jest": "^27.5.2",
+    "@types/node": "^16.18.39",
+    "@types/react": "^18.2.17",
+    "@types/react-dom": "^18.2.7",
+    "axios": "^1.4.0",
+    "date-fns-jalali": "^3.2.0-0",
+    "dayjs": "^1.11.11",
+    "embla-carousel": "^8.6.0",
+    "embla-carousel-autoplay": "^8.6.0",
+    "embla-carousel-react": "^8.6.0",
+    "html2canvas": "^1.4.1",
+    "immutability-helper": "^3.1.1",
+    "jalali-moment": "^3.3.11",
+    "jwt-decode": "^3.1.2",
+    "moment": "^2.30.1",
+    "moment-timezone": "^0.6.0",
+    "pdfjs-dist": "3.4.120",
+    "react": "^18.3.1",
+    "react-checkbox-tree": "^1.8.0",
+    "react-device-detect": "^2.2.3",
+    "react-dnd": "^16.0.1",
+    "react-dnd-html5-backend": "^16.0.1",
+    "react-dom": "^18.2.0",
+    "react-error-boundary": "^4.0.11",
+    "react-hook-form": "^7.45.3",
+    "react-img-mapper": "^1.5.1",
+    "react-live-clock": "^6.1.23-beta",
+    "react-medium-image-zoom": "^5.2.9",
+    "react-multi-date-picker": "^4.4.1",
+    "react-redux": "^9.0.4",
+    "react-responsive-carousel": "^3.2.23",
+    "react-router-dom": "^6.14.2",
+    "react-scripts": "^5.0.1",
+    "react-to-print": "^2.15.1",
+    "react-use-cookie": "^1.4.0",
+    "recharts": "^2.12.7",
+    "redux": "^5.0.1",
+    "redux-persist": "^6.0.0",
+    "redux-thunk": "^3.1.0",
+    "resolve-url-loader": "^5.0.0",
+    "sass": "^1.77.8",
+    "stylis": "^4.3.0",
+    "stylis-plugin-rtl": "^2.1.1",
+    "typescript": "^4.9.5",
+    "web-vitals": "^2.1.4",
+    "yup": "^1.2.0"
+  },
+  "scripts": {
+    "start": "react-scripts start",
+    "build": "react-scripts build",
+    "test": "react-scripts test",
+    "eject": "react-scripts eject"
+  },
+  "eslintConfig": {
+    "extends": [
+      "react-app",
+      "react-app/jest"
+    ]
+  },
+  "browserslist": {
+    "production": [
+      ">0.2%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "@babel/plugin-proposal-private-property-in-object": "^7.21.11",
+    "@types/moment-timezone": "^0.5.13",
+    "@types/stylis": "^4.2.0"
+  }
+}

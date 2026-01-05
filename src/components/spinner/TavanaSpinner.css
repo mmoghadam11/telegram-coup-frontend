@@ -1,0 +1,107 @@
+.iconSpinner {
+    width: 190px;
+    opacity: 1;
+}
+.animate-flicker {
+  -webkit-animation: flickerAnimation 2s infinite;
+  -moz-animation: flickerAnimation 2s infinite;
+  -o-animation: flickerAnimation 2s infinite;
+  animation: flickerAnimation 2s infinite;
+}
+.scale-flicker {
+  -webkit-animation: scaleAnimation 2s infinite;
+  -moz-animation: scaleAnimation 2s infinite;
+  -o-animation: scaleAnimation 2s infinite;
+  animation: scaleAnimation 2s infinite;
+}
+  @keyframes flickerAnimation {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.3;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  @-o-keyframes flickerAnimation {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.3;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  @-moz-keyframes flickerAnimation {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.3;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  @-webkit-keyframes flickerAnimation {
+    0% {
+      opacity: 1;
+    }
+    50% {
+      opacity: 0.3;
+    }
+    100% {
+      opacity: 1;
+    }
+  }
+  @keyframes scaleAnimation {
+    0% {
+      scale: 1;
+      filter: brightness(1.5) grayscale(1);
+    }
+    50% {
+        scale: 1;
+        filter: brightness(1) grayscale(0);
+    }
+    100% {
+        scale: 1;
+        filter: brightness(1.5) grayscale(1);
+    }
+  }
+  @-o-keyframes scaleAnimation {
+    0% {
+      scale: 1;
+    }
+    50% {
+      scale: 0.9;
+    }
+    100% {
+      scale: 1;
+    }
+  }
+  @-moz-keyframes scaleAnimation {
+    0% {
+      scale: 1;
+    }
+    50% {
+      scale: 0.9;
+    }
+    100% {
+      scale: 1;
+    }
+  }
+  @-webkit-keyframes scaleAnimation {
+    0% {
+      scale: 1;
+    }
+    50% {
+      scale: 0.9;
+    }
+    100% {
+      scale: 1;
+    }
+  }

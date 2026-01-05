@@ -1,0 +1,82 @@
+.login {
+    width: 100vw;
+    height: 90vh;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.login__input input {
+    width: 100%;
+    margin: 10px;
+    border: 1px solid;
+    height: 30px;
+    border-radius: 5px;
+}
+
+.naeim-container {
+    min-height: 100vh;
+    display: flex;
+    justify-content: "center";
+    align-items: flex-start;
+}
+
+.loginFlexRow {
+    margin: 0 auto;
+    margin-top: 3vh;
+    border-radius: 10px;
+    min-height: 85vh;
+    width: 90%;
+    display: flex;
+    flex-direction: row;
+    box-shadow: 0 0 10px 2px #9e9e9e;
+    justify-content: center;
+}
+
+.flexLoginForm {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    min-height: 100%;
+    width: 40%;
+    /* min-width: 300px; */
+    min-width: 45%;
+    position: relative;
+    text-align: center;
+}
+
+@media (max-width: 60em) {
+    #betaja-img {
+        display: none;
+    }
+    .loginFlexRow {
+        box-shadow: none;
+        width: 95%;
+
+    }
+    .flexLoginForm {
+        width: 100%;
+        /* background-color: #dfe4e1; */
+        border-radius: 0 0 10px 10px;
+        box-shadow: 0 0 20px 2px #9e9e9e;
+        .MuiInputBase-root {
+            background-color: white;
+          }
+    }
+}
+
+#loginbgimageContainer {
+    background-image: url("../../../../public/assets/images/Home0.png");
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    width: 100%;
+     /* min-height: 100%;
+    min-width: 100%;  */
+    width: auto;
+    height: auto;
+    margin: 0;
+    padding: 0;
+}

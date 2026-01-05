@@ -1,0 +1,88 @@
+.date-input {
+  height: 100% !important;
+  border-radius: 0px 4px 4px 0px;
+  margin: 0px !important;
+  flex: 1;
+}
+
+/* ================brown Theme===================== */
+:root {
+  --rmdp-primary-brown: #a77955;     /* قهوه‌ای اصلی، پایه تم */
+  --rmdp-secondary-brown: #A47551;   /* قهوه‌ای کاراملی روشن */
+  --rmdp-shadow-brown: #C69C6D;      /* بژ طلایی برای سایه‌ها */
+  --rmdp-today-brown: #ffab3e;       /* کرم طلایی برای روز جاری */
+  --rmdp-hover-brown: #A2683D;       /* قهوه‌ای مایل به مسی هنگام هاور */
+  --rmdp-deselect-brown: #5C3A21;    /* قهوه‌ای تیره برای دکمه‌های غیرفعال */
+}
+
+.brown .rmdp-wrapper {
+  border: 1px solid var(--rmdp-secondary-brown);
+  box-shadow: 0 0 5px var(--rmdp-shadow-brown);
+}
+
+.brown .rmdp-panel-body li {
+  background-color: var(--rmdp-primary-brown);
+  box-shadow: 0 0 2px var(--rmdp-secondary-brown);
+}
+
+.brown .rmdp-week-day {
+  color: var(--rmdp-primary-brown);
+}
+
+.brown .rmdp-day.rmdp-deactive {
+  color: var(--rmdp-secondary-brown);
+}
+
+.brown .rmdp-range {
+  background-color: var(--rmdp-primary-brown);
+  box-shadow: 0 0 3px var(--rmdp-shadow-brown);
+}
+
+.brown .rmdp-arrow {
+  border: solid var(--rmdp-primary-brown);
+  border-width: 0 2px 2px 0;
+}
+
+.brown .rmdp-arrow-container:hover {
+  background-color: var(--rmdp-hover-brown);
+  box-shadow: 0 0 3px var(--rmdp-secondary-brown);
+}
+
+.brown .rmdp-panel-body::-webkit-scrollbar-thumb {
+  background: var(--rmdp-primary-brown);
+}
+
+.brown .rmdp-day.rmdp-today span {
+  background-color: var(--rmdp-today-brown);
+}
+
+.brown .rmdp-rtl .rmdp-panel {
+  border-left: unset;
+  border-right: 1px solid var(--rmdp-secondary-brown);
+}
+
+.brown .rmdp-day.rmdp-selected span:not(.highlight) {
+  background-color: var(--rmdp-primary-brown);
+  box-shadow: 0 0 3px var(--rmdp-shadow-brown);
+}
+
+.brown .rmdp-day:not(.rmdp-day-hidden) span:hover {
+  background-color: var(--rmdp-hover-brown) !important;
+}
+
+.brown .b-deselect {
+  color: var(--rmdp-deselect-brown);
+  background-color: white;
+}
+
+.brown .rmdp-action-button {
+  color: var(--rmdp-primary-brown);
+}
+
+.brown .rmdp-button:not(.rmdp-action-button) {
+  background-color: var(--rmdp-primary-brown);
+}
+
+.brown .rmdp-button:not(.rmdp-action-button):hover {
+  background-color: var(--rmdp-deselect-brown);
+}

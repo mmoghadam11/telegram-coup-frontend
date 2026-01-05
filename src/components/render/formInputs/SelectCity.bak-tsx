@@ -1,0 +1,217 @@
+import React, { useRef, useState } from "react";
+import {
+  Autocomplete,
+  Box,
+  Button,
+  IconButton,
+  InputAdornment,
+  LinearProgress,
+  Modal,
+  SxProps,
+  TextField,
+  Typography,
+} from "@mui/material";
+import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "hooks/useAuth";
+import ErrorHandler from "components/errorHandler/ErrorHandler";
+import { ICity, IProvince } from "types/address";
+import { convertArabicCharToPersian } from "services/convertArabicCharToPersian";
+import LocationOnIcon from "@mui/icons-material/LocationOn";
+
+type Props = {
+  label: string;
+  name: string;
+  setValue: any;
+  disabled?: boolean;
+  cityId?: number;
+};
+
+const SelectCity: React.FC<Props> = ({ label, name, setValue, disabled, cityId }) => {
+  const Auth = useAuth();
+  const textRef = useRef<HTMLInputElement | null>(null);
+  const [showModal, setShowModal] = useState(false);
+  const [selectedProvince, setSelectedProvince] = useState<IProvince>();
+  const [selectedCity, setSelectedCity] = useState<ICity>();
+
+  const {
+    data: provinces,
+    status: provincesStatus,
+    refetch: provincesRefetch,
+  } = useQuery<any, any, any>({
+    queryKey: ["province/all_provinces"],
+    queryFn: Auth?.getRequest,
+    enabled: !disabled,
+    select: (res) => res.result,
+  });
+
+  const {
+    data: city,
+    status: cityStatus,
+    refetch: cityRefetch,
+  } = useQuery<any, any, any>({
+    queryKey: [`city/${cityId}`],
+    queryFn: Auth?.getRequest,
+    enabled: !!cityId && !selectedCity?.id,
+    staleTime: 0,
+    cacheTime: 0,
+    select: (res) => res.result,
+    onSuccess(res) {
+      setSelectedCity(res);
+    },
+  });
+
+  const {
+    data: cities,
+    status: citiesStatus,
+    refetch: citiesRefetch,
+  } = useQuery<any, any, any>({
+    queryKey: [`city/province_cities/${selectedProvince?.id}`],
+    queryFn: Auth?.getRequest,
+    enabled: !!selectedProvince?.id,
+    select: (res) => res.result,
+  });
+
+  if (disabled) {
+    return (
+      <>
+        {cityStatus === "loading" ? (
+          <LinearProgress />
+        ) : citiesStatus === "error" ? (
+          <ErrorHandler onRefetch={cityRefetch} />
+        ) : (
+          <TextField label="شهر" value={city?.faName} variant="outlined" size="small" fullWidth disabled />
+        )}
+      </>
+    );
+  }
+
+  return (
+    <>
+      <TextField
+        ref={textRef}
+        variant="outlined"
+        name={name}
+        onChange={() => {
+          setShowModal(true);
+        }}
+        onClick={() => setShowModal(true)}
+        fullWidth
+        sx={{ overflow: "hidden" }}
+        value={selectedCity?.faName}
+        InputProps={{
+          endAdornment: (
+            <InputAdornment position="end">
+              <IconButton aria-label="show city modal" onClick={() => setShowModal(true)} edge="end" color="primary">
+                <LocationOnIcon />
+              </IconButton>
+            </InputAdornment>
+          ),
+          startAdornment: (
+            <Typography
+              variant="caption"
+              sx={{ background: (theme) => theme.palette.divider, p: "10px", ml: -2, borderRadius: 1, mr: 1 }}
+            >
+              {label}
+            </Typography>
+          ),
+        }}
+      />
+      <Modal
+        open={showModal}
+        onClose={() => {
+          textRef.current?.focus();
+          setShowModal(false);
+        }}
+        aria-labelledby="modal-city-select"
+        aria-describedby="modal-city-select-description"
+      >
+        <Box sx={modalStyle}>
+          <Typography variant="h5" gutterBottom>
+            انتخاب شهر
+          </Typography>
+          {provincesStatus === "loading" ? (
+            <LinearProgress />
+          ) : provincesStatus === "error" ? (
+            <ErrorHandler onRefetch={provincesRefetch} />
+          ) : (
+            <Box sx={{ display: "flex", flexDirection: "column" }}>
+              <Autocomplete
+                options={provinces}
+                getOptionLabel={(province: IProvince) => province.faName}
+                filterOptions={(ops, state) => {
+                  let input = convertArabicCharToPersian(state.inputValue) as string;
+                  //@ts-ignore
+                  let temp = ops?.filter((op: IProvince) => op?.faName?.includes(input));
+                  return temp;
+                }}
+                renderInput={(params) => (
+                  <TextField {...params} variant="outlined" label={"استان"} size="small" fullWidth />
+                )}
+                sx={{ m: 1 }}
+                //@ts-ignore
+                onChange={(e, value: IProvince) => setSelectedProvince(value)}
+                value={selectedProvince}
+              />
+              {selectedProvince?.id && (
+                <Box sx={{ mt: 2 }}>
+                  {citiesStatus === "loading" ? (
+                    <LinearProgress />
+                  ) : citiesStatus === "error" ? (
+                    <ErrorHandler onRefetch={citiesRefetch} />
+                  ) : (
+                    <Autocomplete
+                      options={cities}
+                      getOptionLabel={(city: ICity) => city.faName}
+                      filterOptions={(ops, state) => {
+                        let input = convertArabicCharToPersian(state.inputValue) as string;
+                        //@ts-ignore
+                        let temp = ops?.filter((op: ICity) => op?.faName?.includes(input));
+                        return temp;
+                      }}
+                      renderInput={(params) => (
+                        <TextField {...params} variant="outlined" label={label} size="small" fullWidth />
+                      )}
+                      sx={{ m: 1 }}
+                      //@ts-ignore
+                      onChange={(e, value: ICity) => setSelectedCity(value)}
+                      value={selectedCity}
+                    />
+                  )}
+                </Box>
+              )}
+            </Box>
+          )}
+          <Box sx={{ width: "100%", display: "flex", justifyContent: "center" }}>
+            <Button
+              disabled={!selectedCity?.id}
+              variant="contained"
+              sx={{ minWidth: "100px", my: 2 }}
+              onClick={() => {
+                setValue(name, selectedCity?.id);
+                setShowModal(false);
+              }}
+            >
+              انتخاب
+            </Button>
+          </Box>
+        </Box>
+      </Modal>
+    </>
+  );
+};
+
+export default SelectCity;
+
+const modalStyle: SxProps = {
+  position: "absolute" as "absolute",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
+  width: 400,
+  height: 250,
+  bgcolor: "background.paper",
+  border: "2px solid #000",
+  borderRadius: "4px",
+  boxShadow: 24,
+  p: 2,
+};

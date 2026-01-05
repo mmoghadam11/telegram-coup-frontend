@@ -1,0 +1,146 @@
+import { Autocomplete, FormControl, Grid, InputLabel, MenuItem, Select, TextField } from "@mui/material";
+import { useQuery } from "@tanstack/react-query";
+import { useAuth } from "hooks/useAuth";
+import React from "react";
+import { LoadingState } from "./RenderFormInput";
+import ErrorHandler from "components/errorHandler/ErrorHandler";
+import { ICountry } from "types/country";
+import { ICity, IProvince } from "types/address";
+
+type Props = {
+  countryFormName?: string;
+  provinceFormName?: string;
+  cityFormName?: string;
+  watch: any;
+  setValue: any;
+};
+
+const SelectLocation: React.FC<Props> = ({
+  cityFormName = "cityId",
+  provinceFormName = "provinceId",
+  countryFormName = "countryId",
+  watch,
+  setValue,
+}) => {
+  const Auth = useAuth();
+  const {
+    data: country,
+    status: countryStatus,
+    refetch: countryRefetch,
+  } = useQuery<any, any, any>({
+    queryKey: ["country/all_countries"],
+    queryFn: Auth?.getRequest,
+    staleTime: Infinity,
+    cacheTime: Infinity,
+    select: (res) => res.result,
+  });
+
+  const {
+    data: province,
+    status: provinceStatus,
+    refetch: provinceRefetch,
+  } = useQuery<any, any, any>({
+    queryKey: ["province/provinces_of_country", watch(countryFormName)],
+    queryFn: Auth?.getRequest,
+    staleTime: Infinity,
+    cacheTime: Infinity,
+    select: (res) => res.result,
+    enabled: !!watch(countryFormName),
+  });
+
+  const {
+    data: city,
+    status: cityStatus,
+    refetch: cityRefetch,
+  } = useQuery<any, any, any>({
+    queryKey: ["city/province_cities", watch(provinceFormName)],
+    queryFn: Auth?.getRequest,
+    staleTime: Infinity,
+    cacheTime: Infinity,
+    select: (res) => res.result,
+    enabled: !!watch(provinceFormName),
+  });
+
+  return (
+    <Grid container item spacing={3} xs={12}>
+      <Grid item xs={12} md={4} lg={4}>
+        {countryStatus === "loading" ? (
+          <LoadingState label="کشور" />
+        ) : countryStatus === "error" ? (
+          <ErrorHandler onRefetch={countryRefetch} />
+        ) : (
+          <FormControl fullWidth>
+            <InputLabel id={`country-input-${countryFormName}`}>کشور</InputLabel>
+            <Select
+              labelId={`country-input-${countryFormName}`}
+              label="کشور"
+              onChange={(e) => {
+                setValue(countryFormName, e.target.value);
+                setValue(provinceFormName, undefined);
+                setValue(cityFormName, undefined);
+              }}
+              size="small"
+            >
+              {country?.map((option: ICountry) => (
+                <MenuItem key={`${cityFormName}-select-item-${option.id}`} value={option.id}>
+                  {option.faName}
+                </MenuItem>
+              ))}
+            </Select>
+          </FormControl>
+        )}
+      </Grid>
+      <Grid item xs={12} md={4} lg={4}>
+        {provinceStatus === "loading" && !!watch(countryFormName) ? (
+          <LoadingState label="استان" />
+        ) : provinceStatus === "error" ? (
+          <ErrorHandler onRefetch={provinceRefetch} />
+        ) : (
+          <Autocomplete
+            disabled={!watch(countryFormName)}
+            onChange={(e, value) => {
+              setValue(provinceFormName, value?.id);
+              setValue(cityFormName, undefined);
+            }}
+            options={province}
+            getOptionLabel={(option: IProvince) => {
+              return option?.faName || "";
+            }}
+            filterOptions={(ops, state) => {
+              let temp = ops?.filter((op: IProvince) => op?.faName?.includes(state?.inputValue));
+              return temp;
+            }}
+            value={watch(provinceFormName)}
+            renderInput={(params) => <TextField {...params} variant="outlined" label={"استان"} size="small" />}
+          />
+        )}
+      </Grid>
+      <Grid item xs={12} md={4} lg={4}>
+        {cityStatus === "loading" && !!watch(provinceFormName) ? (
+          <LoadingState label="شهر" />
+        ) : cityStatus === "error" ? (
+          <ErrorHandler onRefetch={cityRefetch} />
+        ) : (
+          <Autocomplete
+            disabled={!watch(countryFormName)}
+            onChange={(e, value) => setValue(cityFormName, value?.id)}
+            options={city}
+            getOptionLabel={(option: ICity) => {
+              return option?.faName || "";
+            }}
+            filterOptions={(ops, state) => {
+              let temp = ops?.filter((op: ICity) => op?.faName?.includes(state?.inputValue));
+              return temp;
+            }}
+            value={watch(cityFormName)}
+            renderInput={(params) => <TextField {...params} variant="outlined" label={"شهر"} size="small" />}
+          />
+        )}
+      </Grid>
+    </Grid>
+  );
+};
+
+export default SelectLocation;
+
+// const { name, label, errors, elementProps, controllerField } = props;

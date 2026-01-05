@@ -1,0 +1,23 @@
+@import url(font.css);
+@import url(../resources/styles.css);
+
+*{
+    font-family: "Vazirmatn";
+}
+/* Fix small size select in material ui */
+.MuiBox-root .MuiFormLabel-root:not(.MuiInputLabel-shrink){
+    transform: translate(-14px, 12px) scale(1) ;
+    font-size: .8rem ;
+}
+
+.MuiInputBase-inputSizeSmall {
+    font-size: 0.8rem;
+}
+
+.MuiInputBase-input.MuiOutlinedInput-input{
+    font-size: 0.8rem;
+    padding: 14px 8px 8px 4px;
+}
+.Mui-expanded {
+    margin: 0;
+}
