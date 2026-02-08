@@ -103,13 +103,13 @@ const AppRoutes: React.FC = () => {
             </Route>
           </Route>
           {renderRoutes(MENU_ITEMS)}        
-          <Route path="/" element={<Welcome />} />
+          {/* <Route path="/" element={<Welcome />} /> */}
         </Route>
 
         <Route path="contract" element={<RemoveContract />} />
       </Route>
 
-      <Route path="welcome" element={<Welcome />} />
+      <Route path="/" element={<Welcome />} />
       <Route path="logout" element={<LogoutPage />} />
       <Route
         path="login"

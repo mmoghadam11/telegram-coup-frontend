@@ -1,4 +1,4 @@
-import React, { useEffect } from "react";
+import React, { useEffect, useState } from "react";
 // import { useKeycloak } from "@react-keycloak/web";
 import TavanaSpinner from "components/spinner/TavanaSpinner";
 import { useAuth } from "hooks/useAuth";
@@ -21,6 +21,7 @@ import EmblaCarousel from "components/Carousel/EmblaCarouselWithScaleAndLazy";
 import { useAuthorization } from "hooks/useAutorization";
 import { AccountBalance, BusinessCenter, People } from "@mui/icons-material";
 import HangOverMenu from "components/HangOverMenu";
+import AllCard from "components/AllCard";
 interface CarouselItem {
   id: number;
   title: string;
@@ -81,12 +82,21 @@ function Welcome() {
   const Auth = useAuth();
   const theme = useTheme();
   const authFunctions = useAuthorization();
+  const [name, setName] = useState("");
+
+  useEffect(() => {
+    if ((window as any).Telegram?.WebApp?.initDataUnsafe?.user) {
+      const user = (window as any).Telegram.WebApp.initDataUnsafe.user;
+      setName(`${user.first_name || ""} ${user.last_name || ""}`.trim());
+    }
+  }, []);
   return (
-    <Grid container justifyContent={"center"}>
-      <Grid item md={11}>
-        <Typography variant="h6">خوش آمدید</Typography>
-      </Grid>
-      {/* <Grid item md={4}>
+    <Box sx={{ minHeight: "100svh", }}>
+      <Grid container justifyContent={"center"}>
+        <Grid item md={11} xs={11} p={4}>
+          <Typography variant="h6" textAlign={"center"}>{name} خوش آمدید</Typography>
+        </Grid>
+        {/* <Grid item md={4}>
         <Carousel
           items={carouselItems}
           autoPlay={true}
@@ -94,13 +104,18 @@ function Welcome() {
           height={300}
         />
       </Grid> */}
-      {/**@description EmblaCarousel */}
-      {/* <Grid item md={11}>
+        {/**@description EmblaCarousel */}
+        {/* <Grid item md={11}>
         <EmblaCarousel slides={carouselItems}/>
       </Grid> */}
-      {/**@description hangover */}
-      {/* <HangOverMenu/> */}
-    </Grid>
+        {/**@description hangover */}
+        <HangOverMenu />
+        <Grid item md={11} xs={11} p={4}>
+          <AllCard/>
+        </Grid>
+      </Grid>
+    </Box>
+
   );
 }
 

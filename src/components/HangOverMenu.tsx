@@ -19,7 +19,7 @@ import {
 import Carousel from "components/Carousel/Carousel";
 import EmblaCarousel from "components/Carousel/EmblaCarouselWithScaleAndLazy";
 import { useAuthorization } from "hooks/useAutorization";
-import { AccountBalance, BusinessCenter, People } from "@mui/icons-material";
+import { AccountBalance, BusinessCenter, Numbers, People, PlayCircle } from "@mui/icons-material";
 interface CarouselItem {
   id: number;
   title: string;
@@ -35,40 +35,26 @@ interface MenuItem {
 }
 const menuItems: MenuItem[] = [
   {
-    title: "احکام انتظامی",
+    title: "ورود به بازی",
     url: "IACPA/disciplinary-order",
     access: ["administrator", "city-showmenu"],
-    description: "مدیریت کلی احکام انتظامی",
-    icon: <AccountBalance />,
+    description: "وارد شوید",
+    icon: <PlayCircle fontSize={"small"}/>,
   },
   {
-    title: "احکام انتظامی",
+    title: "امتیازات",
     // url: "accountant-user/cartable",
     url: "accountant-user/disciplinary-order",
     access: ["accountant-showmenu"],
-    description: "مدیریت کلی احکام انتظامی",
-    icon: <AccountBalance />,
+    description: "رتبه ها و امتیازات",
+    icon: <Numbers fontSize={"small"}/>,
   },
   {
     title: "کارتابل",
     url: "accountant-user/cartable",
     access: ["accountant-showmenu"],
-    description: "مدیریت کلی احکام انتظامی",
-    icon: <AccountBalance />,
-  },
-  {
-    title: "اطلاعات موسسات",
-    url: "institutions/information",
-    access: ["administrator", "city-showmenu"],
-    description: "انتخاب و بررسی موسسات",
-    icon: <BusinessCenter />,
-  },
-  {
-    title: "حسابداران رسمی",
-    url: "accountant/official-users",
-    access: ["administrator", "city-showmenu"],
-    description: "بررسی حسابدارن رسمی",
-    icon: <People />,
+    description: "مدیریت کارتابل",
+    icon: <AccountBalance fontSize={"small"}/>,
   },
 ];
 const carouselItems: CarouselItem[] = [
@@ -97,7 +83,7 @@ function HangOverMenu() {
   const authFunctions = useAuthorization();
   const navigate=useNavigate();
   return (
-    <Grid container item md={12} justifyContent={"center"}>
+    <Grid container item md={12} mb={"15vh"} justifyContent={"center"}>
       {/* <Grid item md={4}>
         <Carousel
           items={carouselItems}
@@ -128,20 +114,21 @@ function HangOverMenu() {
         <Box p={1} mb={-1} width={"100%"} display={"flex"} justifyContent={"center"}>
           <Typography variant="h5" color={"white"}>پر کاربرد های شما</Typography>
         </Box>
-        <Grid container display={"flex"} width={"100%"}>
+        <Grid container display={"flex"} width={"100%"}  justifyContent={"space-around"}>
           {menuItems
-          ?.filter((item) => {
-            // return item.access?.includes(access?.accessMenu[0]);
-            return authFunctions?.hasMenuAccess(item.access);
-          })
+          // ?.filter((item) => {
+          //   return authFunctions?.hasMenuAccess(item.access);
+          // })
           ?.map((item, index) => (
             <Grid
               item
-              md={4}
+              md={3}
+              xs={3.5}
               sx={{
                 // position: "relative",
                 display: "flex",
                 justifyContent: "center",
+                mb:1,
               }}
             >
               <Card
@@ -149,7 +136,7 @@ function HangOverMenu() {
                   borderRadius: "5px",
                   position: "relative",
                   top: "18px", // کارت از پایین گرید بیرون می‌زند بدون افزایش ارتفاع
-                  // width: "100%",
+                  width: "100%",
                   height: "20vh",
                   // aspectRatio: "15/16",
                 }}
@@ -158,9 +145,9 @@ function HangOverMenu() {
                 <CardContent
                 // sx={{ height: "100%" }}
                 >
-                  <Box display={"flex"} gap={1}>
+                  <Box display={"flex"} alignItems={"center"} gap={1}>
                     {item.icon}
-                    <Typography gutterBottom variant="h6" component="div">
+                    <Typography  variant={"body2"} fontWeight={"bold"} fontSize={{xs:"0.8rem",md:"1.2rem"}} component="div">
                       {item.title}
                     </Typography>
                   </Box>
@@ -169,18 +156,20 @@ function HangOverMenu() {
                   </Typography>
                 </CardContent>
                 <CardActions>
-                  <Button onClick={()=>{navigate(item.url)}} variant="contained">مشاهده</Button>
+                  <Button sx={{position: "absolute",
+                     left:{md:"7%",xs:"10%"}, bottom: {md:20,xs:10},width:{md:"20%",xs:"80%"}}} size="small" onClick={()=>{navigate(item.url)}} variant="contained">مشاهده</Button>
                   <Typography
                     variant="body2"
                     sx={{
                       position: "absolute",
-                      bottom: 22,
+                      bottom: {md:22,xs:33},
                       right: 16,
                       // color: slide.image ? "white" : "text.secondary",
                       zIndex: 2,
+                      display:{xs:"none",md:"block"}
                     }}
                   >
-                    {index + 1} / {carouselItems.length}
+                    {index + 1} / {menuItems.length}
                   </Typography>
                 </CardActions>
               </Card>
