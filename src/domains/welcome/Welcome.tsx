@@ -22,6 +22,8 @@ import { useAuthorization } from "hooks/useAutorization";
 import { AccountBalance, BusinessCenter, People } from "@mui/icons-material";
 import HangOverMenu from "components/HangOverMenu";
 import AllCard from "components/AllCard";
+import FireButton from "components/FireButton";
+import PushButton from "components/PushButton";
 interface CarouselItem {
   id: number;
   title: string;
@@ -92,26 +94,29 @@ function Welcome() {
   }, []);
   return (
     <Box sx={{ minHeight: "100svh", }}>
-      <Grid container justifyContent={"center"}>
+      <Grid container justifyContent={"center"} width={"100svw"}>
         <Grid item md={11} xs={11} p={4}>
           <Typography variant="h6" textAlign={"center"}>{name} خوش آمدید</Typography>
         </Grid>
         {/* <Grid item md={4}>
-        <Carousel
-          items={carouselItems}
-          autoPlay={true}
-          interval={5000}
-          height={300}
-        />
-      </Grid> */}
+          <Carousel
+            items={carouselItems}
+            autoPlay={true}
+            interval={5000}
+            height={300}
+          />
+        </Grid> */}
         {/**@description EmblaCarousel */}
         {/* <Grid item md={11}>
-        <EmblaCarousel slides={carouselItems}/>
-      </Grid> */}
+          <EmblaCarousel slides={carouselItems}/>
+        </Grid> */}
         {/**@description hangover */}
         <HangOverMenu />
         <Grid item md={11} xs={11} p={4}>
-          <AllCard/>
+          <AllCard />
+        </Grid>
+        <Grid item md={11} xs={11} p={4} justifyContent={"center"} alignContent={"center"} display={"flex"}>
+          <PushButton size={200} onClick={() => console.log("Button Pressed!")} />
         </Grid>
       </Grid>
     </Box>

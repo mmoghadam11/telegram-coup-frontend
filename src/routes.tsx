@@ -22,6 +22,8 @@ import AddPerson from "domains/person/AddPerson";
 import NewLogin from "domains/login/pages/NewLogin";
 import renderRoutes, { MenuItem } from "components/routeHelper/renderRoutes";
 import { url } from "inspector";
+import Envelope from "domains/envelope/Envelope";
+import MEnvelope from "domains/envelope/motion/MEnvelope";
 
 
 const AppRoutes: React.FC = () => {
@@ -110,6 +112,8 @@ const AppRoutes: React.FC = () => {
       </Route>
 
       <Route path="/" element={<Welcome />} />
+      <Route path="/post" element={<Envelope/>} />
+      <Route path="/motion" element={<MEnvelope/>} />
       <Route path="logout" element={<LogoutPage />} />
       <Route
         path="login"

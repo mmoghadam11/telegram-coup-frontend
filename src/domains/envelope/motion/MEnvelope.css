@@ -1,0 +1,53 @@
+.scene {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+  background: #f4f1ea;
+  /* ۱. عمق کل صحنه اینجا تعیین می‌شود */
+  perspective: 1500px; 
+}
+
+.envelope {
+  position: relative;
+  width: 320px;
+  height: 200px;
+  cursor: pointer;
+  /* ۲. این خط اجازه می‌دهد فرزندان (مثل flap) در فضای ۳ بعدی بچرخند */
+  transform-style: preserve-3d;
+  transition: transform 0.5s;
+}
+
+/* برای اینکه مطمئن شویم پشت درب پاکت دیده می‌شود */
+.flap {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #d4b483;
+  clip-path: polygon(0 0, 50% 60%, 100% 0);
+  /* ۳. نقطه لولا باید لبه بالایی باشد */
+  transform-origin: top;
+  /* ۴. دیدن پشت المان هنگام چرخش */
+  backface-visibility: visible;
+}
+
+.letter {
+  position: absolute;
+  width: 90%;
+  height: 180px;
+  background: white;
+  left: 5%;
+  top: 10px;
+  border-radius: 6px;
+  box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+}
+
+.pocket {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background: #e0c9a6;
+  border-radius: 0 0 6px 6px;
+  /* ۵. پاکت باید کمی جلوتر باشد تا نامه زیرش برود */
+  transform: translateZ(10px); 
+}
