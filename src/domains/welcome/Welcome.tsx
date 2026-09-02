@@ -90,6 +90,7 @@ function Welcome() {
     if ((window as any).Telegram?.WebApp?.initDataUnsafe?.user) {
       const user = (window as any).Telegram.WebApp.initDataUnsafe.user;
       setName(`${user.first_name || ""} ${user.last_name || ""}`.trim());
+      console.log('telegram ok=>',(window as any).Telegram.WebApp.initDataUnsafe.user)
     }
   }, []);
   return (
