@@ -116,7 +116,7 @@ function Welcome() {
     <Box sx={{ minHeight: "100svh", }}>
       <Grid container justifyContent={"center"} width={"100svw"}>
         <Grid item md={11} xs={11} p={4}>
-          <Typography variant="h6" textAlign={"center"}>{(window as any)?.Telegram?.WebApp?.initDataUnsafe?.user??"خالی"}</Typography>
+          <Typography variant="h6" textAlign={"center"}>{(window as any)?.Telegram?.WebApp?.initDataUnsafe?.user?.first_name??"خالی"}</Typography>
           <Typography variant="h6" textAlign={"center"}>{name} خوش آمدید</Typography>
         </Grid>
         {/* <Grid item md={4}>
