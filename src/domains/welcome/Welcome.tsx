@@ -86,13 +86,32 @@ function Welcome() {
   const authFunctions = useAuthorization();
   const [name, setName] = useState("");
 
+  // useEffect(() => {
+  //   if ((window as any).Telegram?.WebApp?.initDataUnsafe?.user) {
+  //     const user = (window as any).Telegram.WebApp.initDataUnsafe.user;
+  //     setName(`${user.first_name || ""} ${user.last_name || ""}`.trim());
+  //     console.log('telegram ok=>',(window as any).Telegram.WebApp.initDataUnsafe.user)
+  //   }
+  // }, []);
   useEffect(() => {
-    if ((window as any).Telegram?.WebApp?.initDataUnsafe?.user) {
-      const user = (window as any).Telegram.WebApp.initDataUnsafe.user;
+  try {
+    const tg = (window as any).Telegram?.WebApp;
+    
+    if (tg?.initDataUnsafe?.user) {
+      const user = tg.initDataUnsafe.user;
       setName(`${user.first_name || ""} ${user.last_name || ""}`.trim());
-      console.log('telegram ok=>',(window as any).Telegram.WebApp.initDataUnsafe.user)
     }
-  }, []);
+    
+    // نمایش موقت وضعیت روی خود صفحه (به‌جای console.log که توی تلگرام قابل دیدن نیست)
+    const debugEl = document.createElement('div');
+    debugEl.style.cssText = 'position:fixed;top:0;left:0;right:0;background:yellow;color:black;font-size:10px;z-index:9999;padding:8px;white-space:pre-wrap;direction:ltr;text-align:left';
+    debugEl.textContent = `Telegram: ${!!(window as any).Telegram}\nWebApp: ${!!tg}\ninitData: ${tg?.initData || 'خالی'}\nuser: ${JSON.stringify(tg?.initDataUnsafe?.user) || 'خالی'}`;
+    document.body.prepend(debugEl);
+    
+  } catch (e) {
+    document.body.innerHTML = `<pre style="color:red;white-space:pre-wrap;direction:ltr;text-align:left">${String(e)}\n${(e as Error)?.stack}</pre>`;
+  }
+}, []);
   return (
     <Box sx={{ minHeight: "100svh", }}>
       <Grid container justifyContent={"center"} width={"100svw"}>
