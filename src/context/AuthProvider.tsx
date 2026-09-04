@@ -1,9 +1,11 @@
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import { api, BASE_URL } from "services/axios";
+import { api, apiUpload, BASE_URL } from "services/axios";
 import useSessionStorage from "hooks/useSessionStorage";
 import useLocalStorage from "hooks/useLocalStorge";
 import { useSnackbar } from "hooks/useSnackbar";
+import { convertArabicCharToPersian } from "services/convertArabicCharToPersian";
+import { TAuthContext, TServerCall } from "types/authContext";
 
 interface TelegramUser {
   id: number;
@@ -20,7 +22,7 @@ interface Props {
 
 let localToken = "";
 
-export const AuthContext = React.createContext<any>(null);
+export const AuthContext = React.createContext<TAuthContext | null>(null)
 
 const AuthProvider: React.FC<Props> = ({ children }) => {
   const snackbar = useSnackbar();
@@ -92,7 +94,100 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
       throw e.response || new Error("خطا در انجام عملیات");
     }
   };
+  const serverCallUpload = async ({ entity, method, data }: TServerCall) => {
+    try {
+      let requestOptions = {
+        url: convertArabicCharToPersian(entity),
+        method,
+        headers: {
+          Authorization: "Bearer " + (localToken || token),
+        },
+        redirect: "follow",
+        ...(data && { data: data }),
+      };
+      let response = await apiUpload({ ...requestOptions });
+      if (response.status === 200) {
+        return response.data;
+      } else if (response.status === 204) {
+        return { data: { rows: [] } };
+      } else {
+        // setNotification(response.status, `خطا در انجام عملیات - ${response?.statusText}`, "error");
+        // setNotification(response.status, "", "error");
+        throw new Error(`خطا در انجام عملیات - ${response?.statusText}`);
+      }
+    } catch (e: any) {
+      if (e?.response?.status === 401) {
+        clearUserInfo();
+      }
+      throw e.response || new Error(`خطا در انجام عملیات`);
+    }
+  };
+  const serverCallGetFile = async ({
+    entity,
+    method = "get",
+    data,
+  }: TServerCall) => {
+    try {
+      let requestOptions = {
+        url: convertArabicCharToPersian(entity),
+        method,
+        headers: {
+          Authorization: "Bearer " + (localToken || token),
+        },
+        responseType: "blob",
+        redirect: "follow",
+        ...(data && { data: data }),
+      };
+      let response = await apiUpload({ ...requestOptions });
+      if (response.status === 200) {
+        return response.data;
+      } else if (response.status === 204) {
+        return { data: { rows: [] } };
+      } else {
+        // setNotification(response.status, `خطا در انجام عملیات - ${response?.statusText}`, "error");
+        // setNotification(response.status, "", "error");
+        throw new Error(`خطا در انجام عملیات - ${response?.statusText}`);
+      }
+    } catch (e: any) {
+      if (e?.response?.status === 401) {
+        clearUserInfo();
+      }
+      throw e.response || new Error(`خطا در انجام عملیات`);
+    }
+  };
+const getRequestDownloadFile = async ({
+    queryKey,
+  }: {
+    queryKey: string | number | boolean | Array<number | boolean | string>;
+  }) => {
+    let tempEntity = queryKey;
+    if (Array.isArray(queryKey)) {
+      tempEntity = queryKey.join("/");
+    }
+    tempEntity = String(tempEntity);
+    try {
+      return await serverCallGetFile({ entity: tempEntity, method: "get" });
+    } catch (error: any) {
+      throw new Error(error?.message || `خطا در انجام عملیات`);
+    }
+  };
 
+  // const getRequest = async ({
+  //   queryKey,
+  // }: {
+  //   queryKey: string | number | boolean | Array<number | boolean | string>;
+  // }) => {
+  //   let tempEntity = queryKey;
+  //   if (Array.isArray(queryKey)) {
+  //     tempEntity = queryKey.join("/");
+  //   }
+  //   tempEntity = String(tempEntity);
+  //   try {
+  //     return await serverCall({ entity: tempEntity, method: "get" });
+  //   } catch (error: any) {
+  //     throw new Error(error?.message || `خطا در انجام عملیات`);
+  //   }
+  // };
   const getRequest = async ({ queryKey }: { queryKey: string | Array<string | number> }) => {
     const entity = Array.isArray(queryKey) ? queryKey.join("/") : String(queryKey);
     return serverCall({ entity, method: "get" });
@@ -109,6 +204,9 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
         storeToken,
         setUserInfo,
         serverCall,
+        serverCallUpload,
+        serverCallGetFile,
+        getRequestDownloadFile,
         getRequest,
         logout,
       }}
