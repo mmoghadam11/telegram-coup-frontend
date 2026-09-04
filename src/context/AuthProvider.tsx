@@ -66,6 +66,7 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
       })
       .catch((err) => {
         console.error("telegram auth failed", err);
+        alert(err)
         setAuthError("ورود ناموفق بود.");
       })
       .finally(() => setAuthLoading(false));
