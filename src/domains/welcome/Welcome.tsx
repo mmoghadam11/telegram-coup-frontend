@@ -93,31 +93,30 @@ function Welcome() {
   //     console.log('telegram ok=>',(window as any).Telegram.WebApp.initDataUnsafe.user)
   //   }
   // }, []);
-  useEffect(() => {
-  try {
-    const tg = (window as any).Telegram?.WebApp;
+//   useEffect(() => {
+//   try {
+//     const tg = (window as any).Telegram?.WebApp;
     
-    if (tg?.initDataUnsafe?.user) {
-      const user = tg.initDataUnsafe.user;
-      setName(`${user.first_name || ""} ${user.last_name || ""}`.trim());
-    }
+//     if (tg?.initDataUnsafe?.user) {
+//       const user = tg.initDataUnsafe.user;
+//       setName(`${user.first_name || ""} ${user.last_name || ""}`.trim());
+//     }
     
-    // نمایش موقت وضعیت روی خود صفحه (به‌جای console.log که توی تلگرام قابل دیدن نیست)
-    const debugEl = document.createElement('div');
-    debugEl.style.cssText = 'position:fixed;top:0;left:0;right:0;background:yellow;color:black;font-size:10px;z-index:9999;padding:8px;white-space:pre-wrap;direction:ltr;text-align:left';
-    debugEl.textContent = `Telegram: ${!!(window as any).Telegram}\nWebApp: ${!!tg}\ninitData: ${tg?.initData || 'خالی'}\nuser: ${JSON.stringify(tg?.initDataUnsafe?.user) || 'خالی'}`;
-    document.body.prepend(debugEl);
+//     // نمایش موقت وضعیت روی خود صفحه (به‌جای console.log که توی تلگرام قابل دیدن نیست)
+//     const debugEl = document.createElement('div');
+//     debugEl.style.cssText = 'position:fixed;top:0;left:0;right:0;background:yellow;color:black;font-size:10px;z-index:9999;padding:8px;white-space:pre-wrap;direction:ltr;text-align:left';
+//     debugEl.textContent = `Telegram: ${!!(window as any).Telegram}\nWebApp: ${!!tg}\ninitData: ${tg?.initData || 'خالی'}\nuser: ${JSON.stringify(tg?.initDataUnsafe?.user) || 'خالی'}`;
+//     document.body.prepend(debugEl);
     
-  } catch (e) {
-    document.body.innerHTML = `<pre style="color:red;white-space:pre-wrap;direction:ltr;text-align:left">${String(e)}\n${(e as Error)?.stack}</pre>`;
-  }
-}, []);
+//   } catch (e) {
+//     document.body.innerHTML = `<pre style="color:red;white-space:pre-wrap;direction:ltr;text-align:left">${String(e)}\n${(e as Error)?.stack}</pre>`;
+//   }
+// }, []);
   return (
     <Box sx={{ minHeight: "100svh", }}>
       <Grid container justifyContent={"center"} width={"100svw"}>
         <Grid item md={11} xs={11} p={4}>
-          <Typography variant="h6" textAlign={"center"}>{(window as any)?.Telegram?.WebApp?.initDataUnsafe?.user?.first_name??"خالی"}</Typography>
-          <Typography variant="h6" textAlign={"center"}>{name} خوش آمدید</Typography>
+          <Typography variant="h6" textAlign={"center"}>{Auth?.userInfo?.first_name } خوش آمدید</Typography>
         </Grid>
         {/* <Grid item md={4}>
           <Carousel
