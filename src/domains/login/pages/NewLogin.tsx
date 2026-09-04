@@ -28,7 +28,7 @@ import RenderFormInput from "components/render/formInputs/RenderFormInput";
 // A single dynamic schema for validation
 
 const NewLogin = () => {
-  const { storeToken, setUserInfo, storeRefreshToken } = useAuth();
+  const { storeToken, setUserInfo } = useAuth();
   const { setNotification } = useErrorHandler();
 
   const [formMode, setFormMode] = useState("2FA1"); // 'LOGIN', 'FORGOT_PASSWORD', 'CHANGE_PASSWORD',2FA1,2FA2
@@ -123,7 +123,7 @@ const NewLogin = () => {
         } else if (result?.access_token) {
           // window.localStorage.setItem("keycloak", result.access_token);
           storeToken(result.access_token);
-          storeRefreshToken(result?.refresh_token);
+          // storeRefreshToken(result?.refresh_token);
           localStorage.setItem("username", result.username);
           localStorage.setItem(
             "permission",
@@ -257,7 +257,7 @@ const NewLogin = () => {
         } else if (result?.access_token) {
           // window.localStorage.setItem("keycloak", result.access_token);
           storeToken(result.access_token);
-          storeRefreshToken(result?.refresh_token);
+          // storeRefreshToken(result?.refresh_token);
           localStorage.setItem("username", result.username);
           localStorage.setItem(
             "permission",

@@ -169,12 +169,10 @@ const UserProfile: React.FC<Props> = ({ open, onClose }) => {
 
   useEffect(() => {
     reset({
-      id:Auth?.userInfo?.userId,
+      id:Auth?.userInfo?.telegram_id,
       firstname:Auth?.userInfo?.firstName,
       lastname:Auth?.userInfo?.lastName,
-      nationalCode:Auth?.userInfo?.nationalCode,
       username:localStorage.getItem("username"),
-      mobileNumber:Auth?.userInfo?.mobileNumber,
     })
   }, [open]);
 

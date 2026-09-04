@@ -183,27 +183,27 @@ const RemoveContract: React.FC = () => {
   const auth = useAuth();
   const { access } = useContext(mainProviderContext);
 
-  React.useEffect(() => {
-    if (auth?.isContractSet()) {
-      auth.setContract(
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        "",
-        null,
-        null,
-        null,
-        false,
-        false,
-        false,
-        ""
-      );
-    }
-  }, [auth]);
+  // React.useEffect(() => {
+  //   if (auth?.isContractSet()) {
+  //     auth.setContract(
+  //       "",
+  //       "",
+  //       "",
+  //       "",
+  //       "",
+  //       "",
+  //       "",
+  //       "",
+  //       null,
+  //       null,
+  //       null,
+  //       false,
+  //       false,
+  //       false,
+  //       ""
+  //     );
+  //   }
+  // }, [auth]);
 
   return (
     <Layout hideRightMenu={!access.admin}>
