@@ -53,7 +53,7 @@ const UserProfile: React.FC<Props> = ({ open, onClose }) => {
   // آرایه آیتم‌های فرم
   const formItems: FormItem[] = [
     // {
-    //   name: "firstname",
+    //   name: "first_name",
     //   inputType: "text",
     //   label: "نام",
     //   size: { md: 3 },
@@ -170,8 +170,8 @@ const UserProfile: React.FC<Props> = ({ open, onClose }) => {
   useEffect(() => {
     reset({
       id:Auth?.userInfo?.telegram_id,
-      firstname:Auth?.userInfo?.firstName,
-      lastname:Auth?.userInfo?.lastName,
+      first_name:Auth?.userInfo?.first_name,
+      lastname:Auth?.userInfo?.last_name,
       username:localStorage.getItem("username"),
     })
   }, [open]);

@@ -139,8 +139,8 @@ const NewLogin = () => {
           );
           setUserInfo({
             userId:result.id,
-            firstName: result.firstName,
-            lastName: result.lastName,
+            first_name: result.first_name,
+            last_name: result.last_name,
             nationalCode: result.nationalCode,
             mobileNumber:result.mobileNumber,
           });
@@ -273,8 +273,8 @@ const NewLogin = () => {
           );
           setUserInfo({
             userId:result.id,
-            firstName: result.firstName,
-            lastName: result.lastName,
+            first_name: result.first_name,
+            last_name: result.last_name,
             nationalCode: result.nationalCode,
             mobileNumber:result.mobileNumber,
           });

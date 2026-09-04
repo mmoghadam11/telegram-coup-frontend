@@ -132,8 +132,8 @@ const BasicDataAuth: React.FC<Props> = ({ handlePhoneFlag,setuserMoileId,userMoi
   } = useForm();
 
   type DataType = {
-    firstName: string | null;
-    lastName: string | null;
+    first_name: string | null;
+    last_name: string | null;
     fatherName: string | null;
     birthDate: string | null;
     idNumber: string | null;
@@ -148,8 +148,8 @@ const BasicDataAuth: React.FC<Props> = ({ handlePhoneFlag,setuserMoileId,userMoi
     prefixPhone: string | null;
   };
   const [myData, setMyData] = useState<DataType>({
-    firstName: "",
-    lastName: "",
+    first_name: "",
+    last_name: "",
     fatherName: "",
     birthDate: "",
     idNumber: "",
@@ -169,8 +169,8 @@ useEffect(() => {
 }, [myData])
 
   const myPlaceHolder = {
-    firstName: "نام خود را وارد نمایید",
-    lastName: "نام خانوادگی را وارد نمایید",
+    first_name: "نام خود را وارد نمایید",
+    last_name: "نام خانوادگی را وارد نمایید",
     fatherName: "نام پدر خود را وارد نمایید",
     birthDate: "تاریخ تولد",
     idNumber: "شماره شناسنامه",
@@ -225,9 +225,9 @@ useEffect(() => {
       label: "اطلاعات عمومی",
       size: { md: 12 },
     },
-    { name: "firstName", inputType: "text", label: "نام", size: { md: 4 } },
+    { name: "first_name", inputType: "text", label: "نام", size: { md: 4 } },
     {
-      name: "lastName",
+      name: "last_name",
       inputType: "text",
       label: "نام خانوادگی",
       size: { md: 4 },

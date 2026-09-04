@@ -243,7 +243,7 @@ const RolesGrid = (props: Props) => {
             }
           )
         }
-        message={`آیا از حذف ${deleteData?.firstname} ${deleteData?.lastname} مطمعین میباشید؟`}
+        message={`آیا از حذف ${deleteData?.first_name} ${deleteData?.lastname} مطمعین میباشید؟`}
         title={"درخواست حذف!"}
       />
     </Grid>

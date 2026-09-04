@@ -56,13 +56,13 @@ export interface FullInstituteType {
   // website: string;
 
   /**@description اطلاعات مدیرعامل*/
-  directorFirstName: string;
+  directorfirst_name: string;
   directorLastName: string;
   directorNationalCode: string;
   directorAcceptanceDate: string;
   directorTerminateDate: string;
   directorMobileNo: string;
-  // ceoFirstName: string;
+  // ceofirst_name: string;
   // ceoLastName: string;
   // ceoNationalId: string;
   // ceoStartDate: string;

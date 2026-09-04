@@ -112,7 +112,7 @@ const UsersGrid = (props: Props) => {
       },
     },
     { field: "username", headerName: "نام کاربر", flex: 2 },
-    { field: "firstname", headerName: "نام", flex: 1 },
+    { field: "first_name", headerName: "نام", flex: 1 },
     { field: "lastname", headerName: "نام خانوادگی", flex: 1 },
     { field: "nationalCode", headerName: "کدملی", flex: 1 },
     {
@@ -168,7 +168,7 @@ const UsersGrid = (props: Props) => {
   
   const searchItems: FormItem[] = [
     {
-      name: "firstname",
+      name: "first_name",
       inputType: "text",
       label: "نام",
       size: { md: 3 },
@@ -321,7 +321,7 @@ const UsersGrid = (props: Props) => {
             }
           )
         }
-        message={`آیا از حذف ${deleteData?.firstname} ${deleteData?.lastname} مطمعین میباشید؟`}
+        message={`آیا از حذف ${deleteData?.first_name} ${deleteData?.lastname} مطمعین میباشید؟`}
         title={"درخواست حذف!"}
       />
     </Grid>

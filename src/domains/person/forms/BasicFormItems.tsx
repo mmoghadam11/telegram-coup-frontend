@@ -6,21 +6,21 @@ export const BasicFormItems = (
   options: any
 ): FormItem[] => [
   {
-    name: "firstName",
+    name: "first_name",
     inputType: "text",
     label: "نام",
     size: { md: 4 },
     rules: { required: "نام الزامی است" },
   },
   {
-    name: "lastName",
+    name: "last_name",
     inputType: "text",
     label: "نام خانوادگی",
     size: { md: 4 },
     rules: { required: "نام خانوادگی الزامی است" },
   },
   {
-    name: "latinFirstName",
+    name: "latinfirst_name",
     inputType: "text",
     label: "نام (لاتین)",
     size: { md: 4 },

@@ -66,7 +66,7 @@ export default function AddUser(): JSX.Element {
   // آرایه آیتم‌های فرم
   const formItems: FormItem[] = [
     {
-      name: "firstname",
+      name: "first_name",
       inputType: "text",
       label: "نام",
       size: { md: 3 },

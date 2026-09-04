@@ -44,8 +44,8 @@ const PersonGrid = (props: Props) => {
   } = useForm();
   const [filters, setFilters] = useState<any>({
     ...PAGINATION_DEFAULT_VALUE,
-    firstName: "",
-    lastName: "",
+    first_name: "",
+    last_name: "",
     // code: "",
   });
   const {
@@ -62,19 +62,19 @@ const PersonGrid = (props: Props) => {
   } as any);
   const columns: GridColDef[] = [
     {
-      field: "firstName",
+      field: "first_name",
       headerName: "نام",
       flex: 2,
       renderCell: ({ row }: { row: any }) => {
-        return row?.firstName + " " + row?.lastName;
+        return row?.first_name + " " + row?.last_name;
       },
     },
     {
-      field: "latinFirstName",
+      field: "latinfirst_name",
       headerName: "نام لاتین",
       flex: 1,
       renderCell: ({ row }: { row: any }) => {
-        return row?.latinFirstName + " " + row?.latinLastName;
+        return row?.latinfirst_name + " " + row?.latinLastName;
       },
     },
     {
@@ -82,7 +82,7 @@ const PersonGrid = (props: Props) => {
       headerName: "وضعیت",
       flex: 1.5,
       // renderCell: ({ row }: { row: any }) => {
-      //   return row?.latinFirstName + " " + row?.latinLastName;
+      //   return row?.latinfirst_name + " " + row?.latinLastName;
       // },
     },
     {
@@ -146,13 +146,13 @@ const PersonGrid = (props: Props) => {
   };
   const searchItems: searchType[] = [
     {
-      name: "firstName",
+      name: "first_name",
       inputType: "text",
       label: "نام",
       size: { md: 4 },
     },
     {
-      name: "lastName",
+      name: "last_name",
       inputType: "text",
       label: "نام خانوادگی",
       size: { md: 4 },
@@ -274,7 +274,7 @@ const PersonGrid = (props: Props) => {
             }
           )
         }
-        message={`آیا از حذف ${deleteData?.firstName}  ${deleteData?.lastName} مطمعین میباشید؟`}
+        message={`آیا از حذف ${deleteData?.first_name}  ${deleteData?.last_name} مطمعین میباشید؟`}
         title={"درخواست حذف!"}
       />
     </Grid>

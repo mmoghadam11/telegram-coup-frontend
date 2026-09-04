@@ -164,8 +164,8 @@ const Login = () => {
             JSON.stringify(result.accessMenu || [])
           );
           setContract(
-            result.firstName,
-            result.lastName,
+            result.first_name,
+            result.last_name,
             result.nationalCode,
           );
           // window.location.pathname = "/welcome";

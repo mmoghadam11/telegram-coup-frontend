@@ -316,9 +316,9 @@ const Navbar: React.FC<Props> = ({ open, hideRightMenu, handleDrawerOpen }) => {
             {isMobile ? null : (
               <>
                 <Typography variant="caption" color="inherit" fontWeight={600}>
-                  {Auth?.userInfo?.firstName +
+                  {Auth?.userInfo?.first_name +
                     " " +
-                    Auth?.userInfo?.lastName +
+                    Auth?.userInfo?.last_name +
                     " " +
                     "عزیز"}
                 </Typography>

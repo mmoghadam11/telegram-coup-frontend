@@ -169,7 +169,7 @@ const AppendFirm = ({
         onSuccess: (res: any) => {
           if (!!editeData)
             snackbar(
-              `به روز رسانی دسترسی ها برای ${editeData.firstname+" "+editeData.lastname} با موفقیت انجام شد`,
+              `به روز رسانی دسترسی ها برای ${editeData.first_name+" "+editeData.lastname} با موفقیت انجام شد`,
               "success"
             );
           else snackbar(`کاربری انتخاب نشده`, "error");

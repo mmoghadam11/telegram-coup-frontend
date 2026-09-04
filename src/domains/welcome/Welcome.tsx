@@ -116,7 +116,7 @@ function Welcome() {
     <Box sx={{ minHeight: "100svh", }}>
       <Grid container justifyContent={"center"} width={"100svw"}>
         <Grid item md={11} xs={11} p={4}>
-          <Typography variant="h6" textAlign={"center"}>{Auth?.userInfo?.firstName } خوش آمدید</Typography>
+          <Typography variant="h6" textAlign={"center"}>{Auth?.userInfo?.first_name } خوش آمدید</Typography>
         </Grid>
         {/* <Grid item md={4}>
           <Carousel

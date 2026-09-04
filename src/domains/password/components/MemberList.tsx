@@ -83,7 +83,7 @@ const MemberList = () => {
         // { field: 'contractNumber', headerName: 'کد واحد', flex: 1, },
         {
             field: 'memberName', headerName: 'نام عضو', flex: 2,
-            renderCell: ({ row }: any) => row?.firstName + " " + row?.lastName
+            renderCell: ({ row }: any) => row?.first_name + " " + row?.last_name
         },
         { field: 'nationalCode', headerName: 'کد ملی', flex: 2 },
         // {

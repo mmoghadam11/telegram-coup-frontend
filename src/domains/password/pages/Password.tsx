@@ -120,7 +120,7 @@ const Password = () => {
         //             {
         //                 data ?
         //                     <DisabledTextInput label={"نام و نام خانوادگی"}
-        //                                        value={data?.firstName + ' ' + data?.lastName}/>
+        //                                        value={data?.first_name + ' ' + data?.last_name}/>
         //                     : null
         //             }
         //         </Grid>

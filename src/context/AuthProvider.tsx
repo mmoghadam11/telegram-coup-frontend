@@ -11,8 +11,8 @@ interface TelegramUser {
   id: number;
   telegram_id: number;
   username?: string;
-  firstName: string;
-  lastName?: string;
+  first_name: string;
+  last_name?: string;
   photo_url?: string;
 }
 

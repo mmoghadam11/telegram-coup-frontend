@@ -126,7 +126,7 @@ const ChangePass = ({ open, handleClose, nationalCode }: Props) => {
                             {
 
                                 <DisabledTextInput label={"نام و نام خانوادگی"}
-                                    value={userData?.firstName + ' ' + userData?.lastName} />
+                                    value={userData?.first_name + ' ' + userData?.last_name} />
 
                             }
                         </Grid>

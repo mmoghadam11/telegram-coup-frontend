@@ -10,8 +10,8 @@ export interface UserInfo {
   userName: string;
   password: string;
   degree?: string;
-  firstName: string;
-  lastName: string;
+  first_name: string;
+  last_name: string;
   mobile?: string;
   nationalCode?: number;
   pesonnelId?: number;
