@@ -52,6 +52,7 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
 
     if (!tg?.initData) {
       setAuthError("این برنامه باید از داخل تلگرام باز بشه.");
+      snackbar("این برنامه باید از داخل تلگرام باز بشه.","error")
       setAuthLoading(false);
       return;
     }
@@ -61,6 +62,7 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
       .then((res) => {
         storeToken(res.data.sessionToken);
         setUserInfo(res.data.user);
+        snackbar("شما"+res.data.user.first_name+"هستید","info")
       })
       .catch((err) => {
         console.error("telegram auth failed", err);

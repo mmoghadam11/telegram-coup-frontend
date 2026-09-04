@@ -86,13 +86,13 @@ function Welcome() {
   const authFunctions = useAuthorization();
   const [name, setName] = useState("");
 
-  // useEffect(() => {
-  //   if ((window as any).Telegram?.WebApp?.initDataUnsafe?.user) {
-  //     const user = (window as any).Telegram.WebApp.initDataUnsafe.user;
-  //     setName(`${user.first_name || ""} ${user.last_name || ""}`.trim());
-  //     console.log('telegram ok=>',(window as any).Telegram.WebApp.initDataUnsafe.user)
-  //   }
-  // }, []);
+  useEffect(() => {
+    if ((window as any).Telegram?.WebApp?.initDataUnsafe?.user) {
+      const user = (window as any).Telegram.WebApp.initDataUnsafe.user;
+      setName(`${user.first_name || ""} ${user.last_name || ""}`.trim());
+      // console.log('telegram ok=>',(window as any).Telegram.WebApp.initDataUnsafe.user)
+    }
+  }, []);
 //   useEffect(() => {
 //   try {
 //     const tg = (window as any).Telegram?.WebApp;
@@ -116,6 +116,7 @@ function Welcome() {
     <Box sx={{ minHeight: "100svh", }}>
       <Grid container justifyContent={"center"} width={"100svw"}>
         <Grid item md={11} xs={11} p={4}>
+          <Typography variant="h6" textAlign={"center"}>{name} welcome</Typography>
           <Typography variant="h6" textAlign={"center"}>{Auth?.userInfo?.first_name } خوش آمدید</Typography>
         </Grid>
         {/* <Grid item md={4}>
