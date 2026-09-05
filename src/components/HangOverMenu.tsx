@@ -50,10 +50,10 @@ const menuItems: MenuItem[] = [
     icon: <Numbers fontSize={"small"}/>,
   },
   {
-    title: "کارتابل",
-    url: "accountant-user/cartable",
+    title: "لابی",
+    url: "lobby",
     access: ["accountant-showmenu"],
-    description: "مدیریت کارتابل",
+    description: "ورود به لیست میزها",
     icon: <AccountBalance fontSize={"small"}/>,
   },
 ];

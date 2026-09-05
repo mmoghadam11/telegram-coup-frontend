@@ -30,6 +30,7 @@ export interface TAuthContext {
     first_name : string;
     last_name?: string;
     photo_url?: string;
+    role:string;
   } | null;
   isUserLoggedIn: boolean;
   authLoading: boolean;

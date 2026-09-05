@@ -4,12 +4,10 @@ import PermissionRoute from "./PermissionRoute";
 // ایمپورت کامپوننت PermissionRoute و سایر کامپوننت‌ها...
 
 export interface MenuItem {
-  title?: string;
   url: string;
   access?: string[];
-  icon?: React.ReactNode;
   menuChildren?: MenuItem[];
-  component?: React.ReactNode; // <--- این را اضافه کنید
+  component?: React.ReactNode;
 };
 // تابع بازگشتی برای ساخت روت‌ها
 const renderRoutes = (items: MenuItem[]) => {
