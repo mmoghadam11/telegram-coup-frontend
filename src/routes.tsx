@@ -8,6 +8,7 @@ import renderRoutes, { MenuItem } from "components/routeHelper/renderRoutes";
 import Envelope from "domains/envelope/Envelope";
 import MEnvelope from "domains/envelope/motion/MEnvelope";
 import Lobby from "domains/lobby/Lobby";
+import Room from "domains/rooms/Room";
 
 
 const AppRoutes: React.FC = () => {
@@ -35,7 +36,7 @@ const AppRoutes: React.FC = () => {
   {
     url: "room/:roomId",
     access: ["player", "admin"],
-    // component: <Room />,
+    component: <Room />,
   },
 ];
   return (
