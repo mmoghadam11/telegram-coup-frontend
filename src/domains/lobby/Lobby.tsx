@@ -15,9 +15,11 @@ import {
   Paper,
   Stack,
   CircularProgress,
+  Grid,
 } from "@mui/material";
 import { useAuth } from "hooks/useAuth";
 import { useSnackbar } from "hooks/useSnackbar";
+import { AddCircleOutline } from "@mui/icons-material";
 
 export default function Lobby() {
   const Auth = useAuth();
@@ -31,7 +33,7 @@ export default function Lobby() {
     queryFn: Auth?.getRequest,
     select: (res: any) => res.rooms,
     refetchInterval: 5000, // هر ۵ ثانیه لیست روم‌ها رو رفرش کن
-  }as any);
+  } as any);
 
   const { mutate: createRoom, isLoading: creating } = useMutation({
     mutationFn: Auth?.serverCall,
@@ -72,18 +74,22 @@ export default function Lobby() {
         لابی بازی
       </Typography>
 
-      <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
-        <TextField
-          fullWidth
-          size="small"
-          label="نام روم جدید"
-          value={newRoomName}
-          onChange={(e) => setNewRoomName(e.target.value)}
-        />
-        <Button variant="contained" onClick={handleCreateRoom} disabled={creating}>
-          {creating ? <CircularProgress size={20} /> : "ساخت روم"}
-        </Button>
-      </Stack>
+      <Grid container spacing={1} sx={{ mb: 2 }}>
+        <Grid item sm={9}>
+          <TextField
+            fullWidth
+            size="small"
+            label="نام روم جدید"
+            value={newRoomName}
+            onChange={(e) => setNewRoomName(e.target.value)}
+          />
+        </Grid>
+        <Grid item textAlign={"end"} sm={3}>
+          <Button variant="contained" onClick={handleCreateRoom} disabled={creating}>
+            {creating ? <CircularProgress size={20} /> : <Stack direction={"row"} gap={1}><AddCircleOutline/> ساخت روم</Stack>}
+          </Button> 
+        </Grid>
+      </Grid>
 
       <Paper variant="outlined">
         {isLoading ? (

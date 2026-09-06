@@ -1,5 +1,5 @@
-import React, {  } from "react";
-import { Navigate, Route, Routes } from "react-router-dom";
+import React, { useEffect } from "react";
+import { Navigate, Route, Routes, useNavigate } from "react-router-dom";
 import { useAuth } from "hooks/useAuth";
 import LogoutPage from "./domains/logout/pages/Logout";
 import NotFound from "components/errorPages/notFound/NotFound";
@@ -12,7 +12,19 @@ import Lobby from "domains/lobby/Lobby";
 
 const AppRoutes: React.FC = () => {
   const auth = useAuth();
-  const isUserLoggedIn = auth?.isUserLoggedIn ?? false;
+  const navigate = useNavigate();
+  // بلافاصله بعد از لاگین، اگه کاربر یه روم فعال داره، ببرش همونجا
+  useEffect(() => {
+    if (auth?.authLoading) return; // صبر کن لاگین تموم بشه
+
+    const activeRoomId = auth?.userInfo?.active_room_id;
+    if (!activeRoomId) return; // روم فعالی نداره، کاری نکن
+
+    // اگه از قبل توی همون روم نیست، ببرش اونجا
+    if (!location.pathname.startsWith(`/room/${activeRoomId}`)) {
+      navigate(`/room/${activeRoomId}`, { replace: true });
+    }
+  }, [auth?.authLoading, auth?.userInfo?.active_room_id]);
   const MENU_ITEMS: MenuItem[] = [
   {
     url: "lobby",

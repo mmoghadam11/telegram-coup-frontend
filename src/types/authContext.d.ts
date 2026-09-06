@@ -30,7 +30,8 @@ export interface TAuthContext {
     first_name : string;
     last_name?: string;
     photo_url?: string;
-    role:string;
+    role:"player" | "admin";
+    active_room_id?:string;
   } | null;
   isUserLoggedIn: boolean;
   authLoading: boolean;
