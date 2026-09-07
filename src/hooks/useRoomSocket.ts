@@ -11,11 +11,13 @@ export function useRoomSocket(roomId?: string) {
   const Auth = useAuth();
   const wsRef = useRef<WebSocket | null>(null);
   const [connected, setConnected] = useState(false);
+  const [loaded, setLoaded] = useState(false);
   const [players, setPlayers] = useState<any[]>([]);
   const [log, setLog] = useState<string[]>([]);
 
   useEffect(() => {
     if (!roomId || !Auth?.token) return;
+    setLoaded(false);
 
     const ws = new WebSocket(getWsUrl(roomId, Auth.token));
     wsRef.current = ws;
@@ -27,7 +29,10 @@ export function useRoomSocket(roomId?: string) {
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
       if (data.type === "players") setPlayers(data.players);
-      if (data.type === "log") setLog(data.log);
+      if (data.type === "log") {
+        setLog(data.log);
+        setLoaded(true);
+    }
     };
 
     return () => ws.close();
@@ -39,5 +44,5 @@ export function useRoomSocket(roomId?: string) {
     }
   }, []);
 
-  return { connected, players, log, sendChat };
+  return { connected, loaded, players, log, sendChat };
 }

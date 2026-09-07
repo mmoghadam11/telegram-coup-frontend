@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useParams } from "react-router-dom";
-import { Box, Container, Typography, Chip, TextField, Button, Paper, Stack, List, ListItem, ListItemText } from "@mui/material";
+import { Box, Container, Typography, Chip, TextField, Button, Paper, Stack, List, ListItem, ListItemText, CircularProgress } from "@mui/material";
 import { useRoomSocket } from "hooks/useRoomSocket";
 
 export default function Room() {
   const { roomId } = useParams<{ roomId: string }>();
-  const { connected, players, log, sendChat } = useRoomSocket(roomId);
+  const { connected,loaded, players, log, sendChat } = useRoomSocket(roomId);
   const [input, setInput] = useState("");
 
   const handleSend = () => {
@@ -14,6 +14,13 @@ export default function Room() {
     setInput("");
   };
 
+  if (!connected || !loaded) {
+    return (
+      <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "60vh" }}>
+        <CircularProgress />
+      </Box>
+    );
+  }
   return (
     <Container maxWidth="sm" sx={{ py: 3 }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>

@@ -75,7 +75,7 @@ export default function Lobby() {
       </Typography>
 
       <Grid container spacing={1} sx={{ mb: 2 }}>
-        <Grid item sm={9}>
+        <Grid item sm={9} xs={7}>
           <TextField
             fullWidth
             size="small"
@@ -84,9 +84,9 @@ export default function Lobby() {
             onChange={(e) => setNewRoomName(e.target.value)}
           />
         </Grid>
-        <Grid item textAlign={"end"} sm={3}>
-          <Button variant="contained" onClick={handleCreateRoom} disabled={creating}>
-            {creating ? <CircularProgress size={20} /> : <Stack direction={"row"} gap={1}><AddCircleOutline/> ساخت روم</Stack>}
+        <Grid item textAlign={"end"} sm={3} xs={5}>
+          <Button startIcon={creating? null :<AddCircleOutline/>} variant="contained" onClick={handleCreateRoom} disabled={creating}>
+            {creating ? <CircularProgress size={20} /> : "ساخت روم"}
           </Button> 
         </Grid>
       </Grid>
