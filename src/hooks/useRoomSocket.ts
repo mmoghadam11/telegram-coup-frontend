@@ -1,50 +1,43 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { BASE_URL } from "services/axios";
+import { useAuth } from "hooks/useAuth";
 
-function getWsUrl(roomId: string): string {
+function getWsUrl(roomId: string, token: string): string {
   const wsBase = BASE_URL.replace(/^http/, "ws");
-  return `${wsBase}/rooms/${roomId}/ws`;
+  return `${wsBase}/rooms/${roomId}/ws?token=${encodeURIComponent(token)}`;
 }
 
 export function useRoomSocket(roomId?: string) {
+  const Auth = useAuth();
   const wsRef = useRef<WebSocket | null>(null);
   const [connected, setConnected] = useState(false);
-  const [messages, setMessages] = useState<string[]>([]);
+  const [players, setPlayers] = useState<any[]>([]);
+  const [log, setLog] = useState<string[]>([]);
 
   useEffect(() => {
-    if (!roomId) return;
+    if (!roomId || !Auth?.token) return;
 
-    const url = getWsUrl(roomId);
-
-    const ws = new WebSocket(url);
+    const ws = new WebSocket(getWsUrl(roomId, Auth.token));
     wsRef.current = ws;
 
-    ws.onopen = () => {
-      setConnected(true);
-      setMessages((prev) => [...prev, `✅ Connected to: ${url}`]);
-    };
-    ws.onclose = (e) => {
-      setConnected(false);
-      setMessages((prev) => [...prev, `❌ Closed: code=${e.code} reason=${e.reason || "(none)"}`]);
-    };
-    ws.onerror = () => {
-      setConnected(false);
-      setMessages((prev) => [...prev, `⚠️ Error occurred`]);
-    };
+    ws.onopen = () => setConnected(true);
+    ws.onclose = () => setConnected(false);
+    ws.onerror = () => setConnected(false);
+
     ws.onmessage = (event) => {
-      setMessages((prev) => [...prev.slice(-49), event.data]);
+      const data = JSON.parse(event.data);
+      if (data.type === "players") setPlayers(data.players);
+      if (data.type === "log") setLog(data.log);
     };
 
-    return () => {
-      ws.close();
-    };
-  }, [roomId]);
+    return () => ws.close();
+  }, [roomId, Auth?.token]);
 
-  const send = useCallback((data: object) => {
+  const sendChat = useCallback((text: string) => {
     if (wsRef.current?.readyState === WebSocket.OPEN) {
-      wsRef.current.send(JSON.stringify(data));
+      wsRef.current.send(JSON.stringify({ type: "chat", text }));
     }
   }, []);
 
-  return { connected, messages, send };
+  return { connected, players, log, sendChat };
 }
