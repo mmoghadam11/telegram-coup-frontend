@@ -7,16 +7,39 @@ function getWsUrl(roomId: string, token: string): string {
   return `${wsBase}/rooms/${roomId}/ws?token=${encodeURIComponent(token)}`;
 }
 
+interface PublicPlayer {
+  id: string;
+  name: string;
+  connected: boolean;
+  coins: number;
+  roleCount: number;
+}
+
+interface PublicGameState {
+  phase: string;
+  players: PublicPlayer[];
+  turnOrder: string[];
+  currentTurnIndex: number;
+  deckCount: number;
+  log: string[];
+}
+
+interface PrivateState {
+  yourRoles: string[];
+  yourRevealed: boolean[];
+}
+
 export function useRoomSocket(roomId?: string) {
   const Auth = useAuth();
   const wsRef = useRef<WebSocket | null>(null);
   const [connected, setConnected] = useState(false);
   const [loaded, setLoaded] = useState(false);
-  const [players, setPlayers] = useState<any[]>([]);
-  const [log, setLog] = useState<string[]>([]);
+  const [gameState, setGameState] = useState<PublicGameState | null>(null);
+  const [privateState, setPrivateState] = useState<PrivateState | null>(null);
 
   useEffect(() => {
     if (!roomId || !Auth?.token) return;
+
     setLoaded(false);
 
     const ws = new WebSocket(getWsUrl(roomId, Auth.token));
@@ -28,21 +51,26 @@ export function useRoomSocket(roomId?: string) {
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
-      if (data.type === "players") setPlayers(data.players);
-      if (data.type === "log") {
-        setLog(data.log);
+      if (data.type === "state") {
+        setGameState(data.state);
         setLoaded(true);
-    }
+      }
+      if (data.type === "private") {
+        setPrivateState(data.private);
+      }
     };
 
     return () => ws.close();
   }, [roomId, Auth?.token]);
 
-  const sendChat = useCallback((text: string) => {
+  const send = useCallback((data: object) => {
     if (wsRef.current?.readyState === WebSocket.OPEN) {
-      wsRef.current.send(JSON.stringify({ type: "chat", text }));
+      wsRef.current.send(JSON.stringify(data));
     }
   }, []);
 
-  return { connected, loaded, players, log, sendChat };
+  const startGame = useCallback(() => send({ type: "start_game" }), [send]);
+  const sendChat = useCallback((text: string) => send({ type: "chat", text }), [send]);
+
+  return { connected, loaded, gameState, privateState, startGame, sendChat };
 }
