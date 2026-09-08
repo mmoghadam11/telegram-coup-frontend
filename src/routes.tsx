@@ -1,5 +1,5 @@
 import React, { useEffect } from "react";
-import { Navigate, Route, Routes, useLocation, useNavigate } from "react-router-dom";
+import { Navigate, Outlet, Route, Routes, useLocation, useNavigate } from "react-router-dom";
 import { useAuth } from "hooks/useAuth";
 import LogoutPage from "./domains/logout/pages/Logout";
 import NotFound from "components/errorPages/notFound/NotFound";
@@ -9,6 +9,7 @@ import Envelope from "domains/envelope/Envelope";
 import MEnvelope from "domains/envelope/motion/MEnvelope";
 import Lobby from "domains/lobby/Lobby";
 import Room from "domains/rooms/Room";
+import Layout from "components/layout/Layout";
 
 
 const AppRoutes: React.FC = () => {
@@ -41,8 +42,10 @@ const AppRoutes: React.FC = () => {
 ];
   return (
     <Routes>
+      {/* <Route element={<UserRoute />}> */}
       {renderRoutes(MENU_ITEMS)}        
       <Route path="/" element={<Welcome />} />
+      {/* </Route> */}
       <Route path="/post" element={<Envelope/>} />
       <Route path="/motion" element={<MEnvelope/>} />
       <Route path="logout" element={<LogoutPage />} />
@@ -51,5 +54,11 @@ const AppRoutes: React.FC = () => {
     </Routes>
   );
 };
-
+type ProtectedRouteProps = {
+  redirectPath?: string;
+  children?: React.ReactNode;
+};
+const UserRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
+  return <Layout>{children ?? <Outlet />}</Layout>;
+};
 export default AppRoutes;

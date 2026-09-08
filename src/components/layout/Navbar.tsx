@@ -240,7 +240,7 @@ const Navbar: React.FC<Props> = ({ open, hideRightMenu, handleDrawerOpen }) => {
           <Box sx={{ flexGrow: 1, textAlign: "center" }}>{pathname}</Box> */}
           <Box sx={{ flexGrow: 1, marginLeft: "20px" }}>
             <Typography variant="h6">
-              {isMobile ? "ساحر" : "سامانه ساحــر"}
+              {isMobile ? "کودتا" : "کــودتا"}
             </Typography>
           </Box>
           <Box
