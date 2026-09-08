@@ -17,6 +17,7 @@ interface PublicPlayer {
 
 interface PublicGameState {
   phase: string;
+  creatorId: string | null
   players: PublicPlayer[];
   turnOrder: string[];
   currentTurnIndex: number;

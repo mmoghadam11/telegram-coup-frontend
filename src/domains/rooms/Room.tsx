@@ -46,7 +46,7 @@ export default function Room() {
         <Chip size="small" color="success" label="متصل" />
       </Stack>
 
-      {gameState.phase === "waiting_for_players" && (
+      {gameState.phase === "waiting_for_players" && gameState.creatorId === myUserId &&(
         <Button variant="contained" fullWidth sx={{ mb: 2 }} onClick={startGame}>
           شروع بازی ({gameState.players.length} بازیکن)
         </Button>
