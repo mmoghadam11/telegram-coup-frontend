@@ -9,7 +9,7 @@ import { useAuth } from "hooks/useAuth";
 import { useRoomSocket } from "hooks/useRoomSocket";
 import { CheckCircle } from "@mui/icons-material";
 
-const navigate = useNavigate();
+
 const ROLE_LABELS_FA: Record<string, string> = {
   duke: "بزرگ‌زاده", captain: "فرمانده", ambassador: "سفیر",
   princess: "شاهدخت", assassin: "قاتل", contessa: "بازرس",
@@ -27,6 +27,7 @@ const ACTION_LABELS: Record<string, string> = {
 export default function Room() {
   const Auth = useAuth();
   const { roomId } = useParams<{ roomId: string }>();
+  const navigate = useNavigate();
   const {
     connected, loaded, gameState, privateState,
     startGame, sendChat, sendAction, respond, blockAction, respondToBlock, revealCard, restartGame, leaveRoom, closeRoom,
