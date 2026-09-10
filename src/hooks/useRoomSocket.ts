@@ -136,6 +136,9 @@ export function useRoomSocket(roomId?: string) {
     (roleIndex: number) => send({ type: "reveal_card", roleIndex }),
     [send]
   );
+  const restartGame = useCallback(() => send({ type: "restart_game" }), [send]);
+  const leaveRoom = useCallback(() => send({ type: "leave_room" }), [send]);
+  const closeRoom = useCallback(() => send({ type: "close_room" }), [send]);
 
   return {
     connected,
@@ -149,5 +152,8 @@ export function useRoomSocket(roomId?: string) {
     blockAction,
     respondToBlock,
     revealCard,
+    restartGame,
+    leaveRoom,
+    closeRoom,
   };
 }

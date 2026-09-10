@@ -1,5 +1,5 @@
-import React, { useState } from "react";
-import { useParams } from "react-router-dom";
+import React, { useEffect, useState } from "react";
+import { useNavigate, useParams } from "react-router-dom";
 import {
   Box, Container, Typography, Chip, TextField, Button, Paper,
   Stack, List, ListItem, ListItemText, CircularProgress, Dialog,
@@ -7,7 +7,9 @@ import {
 } from "@mui/material";
 import { useAuth } from "hooks/useAuth";
 import { useRoomSocket } from "hooks/useRoomSocket";
+import { CheckCircle } from "@mui/icons-material";
 
+const navigate = useNavigate();
 const ROLE_LABELS_FA: Record<string, string> = {
   duke: "بزرگ‌زاده", captain: "فرمانده", ambassador: "سفیر",
   princess: "شاهدخت", assassin: "قاتل", contessa: "بازرس",
@@ -27,8 +29,16 @@ export default function Room() {
   const { roomId } = useParams<{ roomId: string }>();
   const {
     connected, loaded, gameState, privateState,
-    startGame, sendChat, sendAction, respond, blockAction, respondToBlock, revealCard,
+    startGame, sendChat, sendAction, respond, blockAction, respondToBlock, revealCard, restartGame, leaveRoom, closeRoom,
   } = useRoomSocket(roomId);
+
+  // وقتی روم بسته می‌شه، خودکار برگرد به لابی
+useEffect(() => {
+  if (gameState?.phase === "room_closed") {
+    if (Auth?.setUserInfo) Auth.setUserInfo({ ...Auth.userInfo, active_room_id: null });
+    navigate("/lobby");
+  }
+}, [gameState?.phase]);
   const [input, setInput] = useState("");
   const [targetDialogAction, setTargetDialogAction] = useState<string | null>(null);
   const [selectedTarget, setSelectedTarget] = useState("");
@@ -79,9 +89,20 @@ export default function Room() {
 
       {gameState.phase === "game_over" && (
         <Paper sx={{ p: 2, mb: 2, textAlign: "center" }}>
-          <Typography variant="h6">
+          <Typography variant="h6" sx={{ mb: 2 }}>
             🏆 {gameState.players.find((p) => p.id === gameState.winnerId)?.name} برنده شد!
           </Typography>
+          <Stack direction="row" spacing={1} justifyContent="center" flexWrap="wrap" useFlexGap>
+            {gameState.creatorId === myUserId && (
+              <>
+                <Button variant="contained" onClick={restartGame}>شروع مجدد</Button>
+                <Button variant="outlined" color="error" onClick={closeRoom}>بستن کامل روم</Button>
+              </>
+            )}
+            <Button variant="outlined" onClick={() => { leaveRoom(); navigate("/lobby"); }}>
+              خروج از روم
+            </Button>
+          </Stack>
         </Paper>
       )}
 
@@ -112,7 +133,12 @@ export default function Room() {
           {gameState.players.map((p) => (
             <ListItem key={p.id} sx={{ opacity: p.isAlive ? 1 : 0.5 }}>
               <ListItemText
-                primary={`${p.name} ${p.id === myUserId ? "(شما)" : ""} ${!p.isAlive ? "☠️" : ""}`}
+                primary={
+                  <Stack direction="row" spacing={0.5} alignItems="center">
+                    <span>{p.name} {p.id === myUserId ? "(شما)" : ""} {!p.isAlive ? "☠️" : ""}</span>
+                    {p.connected && <CheckCircle sx={{ fontSize: 14, color: "success.main" }} />}
+                  </Stack>
+                }
                 secondary={`سکه: ${p.coins} · کارت باز: ${p.roleCount}`}
               />
               {gameState.turnOrder[gameState.currentTurnIndex] === p.id && p.isAlive && (
@@ -145,7 +171,9 @@ export default function Room() {
           {pending.actorId !== myUserId && pending.awaitingResponseFrom.includes(myUserId) && !pending.responses[myUserId] && (
             <Stack direction="row" spacing={1}>
               <Button size="small" variant="contained" onClick={() => respond("allow")}>قبول</Button>
-              <Button size="small" color="warning" onClick={() => respond("challenge")}>چالش (بلوفه!)</Button>
+              {pending.claimedRole && (
+                <Button size="small" color="warning" onClick={() => respond("challenge")}>چالش (بلوفه!)</Button>
+              )}
               {["foreign_aid", "assassinate", "steal"].includes(pending.action) &&
                 (pending.action !== "assassinate" && pending.action !== "steal" || pending.targetId === myUserId) && (
                 <Button size="small" color="secondary" onClick={blockAction}>بلاک می‌کنم</Button>
