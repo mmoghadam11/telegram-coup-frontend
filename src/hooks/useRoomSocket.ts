@@ -4,7 +4,7 @@ import { useAuth } from "hooks/useAuth";
 
 function getWsUrl(roomId: string, token: string): string {
   const wsBase = BASE_URL.replace(/^http/, "ws");
-  return `${wsBase}/rooms/${roomId}/ws?token=${encodeURIComponent(token)}`;
+  return `${wsBase}/rooms/${roomId}/ws?token=${encodeURIComponent(token)}&roomId=${roomId}`;
 }
 
 interface PublicPlayer {
@@ -13,16 +13,37 @@ interface PublicPlayer {
   connected: boolean;
   coins: number;
   roleCount: number;
+  isAlive: boolean;
+}
+
+interface PendingAction {
+  id: string;
+  actorId: string;
+  action: string;
+  targetId?: string;
+  claimedRole?: string;
+  awaitingResponseFrom: string[];
+  responses: Record<string, "allow" | "challenge">;
+  blockedBy?: { playerId: string; claimedRole: string };
+  blockChallengeResponses?: Record<string, "allow" | "challenge">;
+}
+
+interface RevealPending {
+  playerId: string;
+  reason: string;
 }
 
 interface PublicGameState {
   phase: string;
-  creatorId: string | null
+  creatorId: string | null;
   players: PublicPlayer[];
   turnOrder: string[];
   currentTurnIndex: number;
   deckCount: number;
   log: string[];
+  pendingAction: PendingAction | null;
+  revealPending: RevealPending | null;
+  winnerId: string | null;
 }
 
 interface PrivateState {
@@ -34,7 +55,7 @@ export function useRoomSocket(roomId?: string) {
   const Auth = useAuth();
   const wsRef = useRef<WebSocket | null>(null);
   const reconnectTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
-  const shouldReconnectRef = useRef(true); // برای جلوگیری از reconnect بعد از unmount عمدی
+  const shouldReconnectRef = useRef(true);
 
   const [connected, setConnected] = useState(false);
   const [loaded, setLoaded] = useState(false);
@@ -47,21 +68,14 @@ export function useRoomSocket(roomId?: string) {
     const ws = new WebSocket(getWsUrl(roomId, Auth.token));
     wsRef.current = ws;
 
-    ws.onopen = () => {
-      setConnected(true);
-    };
-
+    ws.onopen = () => setConnected(true);
     ws.onclose = () => {
       setConnected(false);
-      // اگه عمدی (unmount) نبوده، بعد از یه تاخیر کوتاه دوباره تلاش کن
       if (shouldReconnectRef.current) {
         reconnectTimeoutRef.current = setTimeout(connect, 2000);
       }
     };
-
-    ws.onerror = () => {
-      ws.close(); // این خودش onclose رو trigger می‌کنه که reconnect منطق رو مدیریت می‌کنه
-    };
+    ws.onerror = () => ws.close();
 
     ws.onmessage = (event) => {
       const data = JSON.parse(event.data);
@@ -81,19 +95,16 @@ export function useRoomSocket(roomId?: string) {
     setLoaded(false);
     connect();
 
-    // وقتی صفحه دوباره visible می‌شه (مثلاً از حالت قفل برگشتیم)، فوراً وضعیت اتصال رو چک کن
     const handleVisibilityChange = () => {
-      if (document.visibilityState === "visible") {
-        if (wsRef.current?.readyState !== WebSocket.OPEN) {
-          if (reconnectTimeoutRef.current) clearTimeout(reconnectTimeoutRef.current);
-          connect();
-        }
+      if (document.visibilityState === "visible" && wsRef.current?.readyState !== WebSocket.OPEN) {
+        if (reconnectTimeoutRef.current) clearTimeout(reconnectTimeoutRef.current);
+        connect();
       }
     };
     document.addEventListener("visibilitychange", handleVisibilityChange);
 
     return () => {
-      shouldReconnectRef.current = false; // دیگه بعد از این، reconnect نکن
+      shouldReconnectRef.current = false;
       if (reconnectTimeoutRef.current) clearTimeout(reconnectTimeoutRef.current);
       document.removeEventListener("visibilitychange", handleVisibilityChange);
       wsRef.current?.close();
@@ -108,6 +119,35 @@ export function useRoomSocket(roomId?: string) {
 
   const startGame = useCallback(() => send({ type: "start_game" }), [send]);
   const sendChat = useCallback((text: string) => send({ type: "chat", text }), [send]);
+  const sendAction = useCallback(
+    (action: string, targetId?: string) => send({ type: "action", action, targetId }),
+    [send]
+  );
+  const respond = useCallback(
+    (response: "allow" | "challenge") => send({ type: "respond", response }),
+    [send]
+  );
+  const blockAction = useCallback(() => send({ type: "block" }), [send]);
+  const respondToBlock = useCallback(
+    (response: "allow" | "challenge") => send({ type: "respond_to_block", response }),
+    [send]
+  );
+  const revealCard = useCallback(
+    (roleIndex: number) => send({ type: "reveal_card", roleIndex }),
+    [send]
+  );
 
-  return { connected, loaded, gameState, privateState, startGame, sendChat };
+  return {
+    connected,
+    loaded,
+    gameState,
+    privateState,
+    startGame,
+    sendChat,
+    sendAction,
+    respond,
+    blockAction,
+    respondToBlock,
+    revealCard,
+  };
 }
