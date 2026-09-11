@@ -90,6 +90,10 @@ useEffect(() => {
 
       {gameState.phase === "game_over" && (
         <Paper sx={{ p: 2, mb: 2, textAlign: "center" }}>
+          {/* موقت برای دیباگ */}
+          <Typography variant="caption" display="block" sx={{ direction: "ltr" }}>
+            myUserId={myUserId} | creatorId={gameState.creatorId}
+          </Typography>
           <Typography variant="h6" sx={{ mb: 2 }}>
             🏆 {gameState.players.find((p) => p.id === gameState.winnerId)?.name} برنده شد!
           </Typography>
