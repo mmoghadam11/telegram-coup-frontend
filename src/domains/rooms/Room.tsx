@@ -4,10 +4,11 @@ import {
   Box, Container, Typography, Chip, TextField, Button, Paper,
   Stack, List, ListItem, ListItemText, CircularProgress, Dialog,
   DialogTitle, DialogContent, DialogActions, MenuItem, Select,
+  IconButton,
 } from "@mui/material";
 import { useAuth } from "hooks/useAuth";
 import { useRoomSocket } from "hooks/useRoomSocket";
-import { CheckCircle } from "@mui/icons-material";
+import { CheckCircle, RestartAlt } from "@mui/icons-material";
 
 
 const ROLE_LABELS_FA: Record<string, string> = {
@@ -28,9 +29,10 @@ export default function Room() {
   const Auth = useAuth();
   const { roomId } = useParams<{ roomId: string }>();
   const navigate = useNavigate();
+  const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
   const {
     connected, loaded, gameState, privateState,
-    startGame, sendChat, sendAction, respond, blockAction, respondToBlock, revealCard, restartGame, leaveRoom, closeRoom,
+    startGame, sendChat, sendAction, respond, blockAction, respondToBlock, revealCard, restartGame, leaveRoom, closeRoom, forceReset,
   } = useRoomSocket(roomId);
 
   // وقتی روم بسته می‌شه، خودکار برگرد به لابی
@@ -84,9 +86,38 @@ export default function Room() {
   return (
     <Container maxWidth="sm" sx={{ py: 3 }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
-        <Typography variant="h6">روم: {roomId}</Typography>
-        <Chip size="small" color="success" label="متصل" />
+        <Typography variant="h6">روم: {gameState.roomName || roomId}</Typography>
+        <Stack direction="row" alignItems="center" spacing={1}>
+          {gameState.creatorId === myUserId && gameState.phase !== "room_closed" && (
+            <IconButton size="small" color="warning" onClick={() => setResetConfirmOpen(true)}>
+              <RestartAlt />
+            </IconButton>
+          )}
+          <Chip size="small" color="success" label="متصل" />
+        </Stack>
       </Stack>
+      <Dialog open={resetConfirmOpen} onClose={() => setResetConfirmOpen(false)}>
+        <DialogTitle>ریست کردن بازی</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2">
+            این کار بازی فعلی رو کامل متوقف می‌کنه و از اول (با همین بازیکن‌ها) شروع می‌کنه.
+            برای مواقعی که بازی گیر کرده یا نوبت کسی مشخص نیست استفاده کنید. مطمئنید؟
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setResetConfirmOpen(false)}>انصراف</Button>
+          <Button
+            color="warning"
+            variant="contained"
+            onClick={() => {
+              forceReset();
+              setResetConfirmOpen(false);
+            }}
+          >
+            بله، ریست کن
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {gameState.phase === "game_over" && (
         <Paper sx={{ p: 2, mb: 2, textAlign: "center" }}>

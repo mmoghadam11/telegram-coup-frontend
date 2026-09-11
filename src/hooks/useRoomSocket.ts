@@ -36,6 +36,7 @@ interface RevealPending {
 
 interface PublicGameState {
   phase: string;
+  roomName: string | null;
   creatorId: string | null;
   players: PublicPlayer[];
   turnOrder: string[];
@@ -140,6 +141,7 @@ export function useRoomSocket(roomId?: string) {
   const restartGame = useCallback(() => send({ type: "restart_game" }), [send]);
   const leaveRoom = useCallback(() => send({ type: "leave_room" }), [send]);
   const closeRoom = useCallback(() => send({ type: "close_room" }), [send]);
+  const forceReset = useCallback(() => send({ type: "force_reset" }), [send]);
 
   return {
     connected,
@@ -156,5 +158,6 @@ export function useRoomSocket(roomId?: string) {
     restartGame,
     leaveRoom,
     closeRoom,
+    forceReset,
   };
 }
