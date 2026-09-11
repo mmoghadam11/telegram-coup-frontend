@@ -151,7 +151,14 @@ export default function Room() {
                     {p.connected && <CheckCircle sx={{ fontSize: 14, color: "success.main" }} />}
                   </Stack>
                 }
-                secondary={`سکه: ${p.coins} · کارت باز: ${p.roleCount}`}
+                secondary={
+                  <Stack direction="row" spacing={0.5} alignItems="center" sx={{ mt: 0.5 }}>
+                    <span>سکه: {p.coins} · کارت باقی: {p.roleCount}</span>
+                    {p.revealedRoles.map((role, i) => (
+                      <Chip key={i} size="small" variant="outlined" label={ROLE_LABELS_FA[role]} sx={{ height: 18 }} />
+                    ))}
+                  </Stack>
+                }
               />
               {gameState.turnOrder[gameState.currentTurnIndex] === p.id && p.isAlive && (
                 <Chip size="small" color="secondary" label="نوبت" />

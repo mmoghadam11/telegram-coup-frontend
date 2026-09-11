@@ -13,6 +13,7 @@ interface PublicPlayer {
   connected: boolean;
   coins: number;
   roleCount: number;
+  revealedRoles: string[];
   isAlive: boolean;
 }
 
