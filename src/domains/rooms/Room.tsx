@@ -34,12 +34,12 @@ export default function Room() {
   } = useRoomSocket(roomId);
 
   // وقتی روم بسته می‌شه، خودکار برگرد به لابی
-useEffect(() => {
-  if (gameState?.phase === "room_closed") {
-    if (Auth?.setUserInfo) Auth.setUserInfo({ ...Auth.userInfo, active_room_id: null });
-    navigate("/lobby");
-  }
-}, [gameState?.phase]);
+  useEffect(() => {
+    if (gameState?.phase === "room_closed") {
+      if (Auth?.setUserInfo) Auth.setUserInfo({ ...Auth.userInfo, active_room_id: null });
+      navigate("/lobby");
+    }
+  }, [gameState?.phase]);
   const [input, setInput] = useState("");
   const [targetDialogAction, setTargetDialogAction] = useState<string | null>(null);
   const [selectedTarget, setSelectedTarget] = useState("");
@@ -92,10 +92,10 @@ useEffect(() => {
         <Paper sx={{ p: 2, mb: 2, textAlign: "center" }}>
           {/* موقت برای دیباگ */}
           <Typography variant="caption" display="block" >
-            myUserId={myUserId} 
+            myUserId={myUserId}
           </Typography>
           <Typography variant="caption" display="block" >
-            creatorId={gameState.creatorId} 
+            creatorId={gameState.creatorId}
           </Typography>
           <Typography variant="h6" sx={{ mb: 2 }}>
             🏆 {gameState.players.find((p) => p.id === gameState.winnerId)?.name} برنده شد!
@@ -107,7 +107,11 @@ useEffect(() => {
                 <Button variant="outlined" color="error" onClick={closeRoom}>بستن کامل روم</Button>
               </>
             )}
-            <Button variant="outlined" onClick={() => { leaveRoom(); navigate("/lobby"); }}>
+            <Button variant="outlined" onClick={() => {
+              leaveRoom();
+              Auth?.setUserInfo({ ...Auth.userInfo, active_room_id: null });
+              navigate("/lobby");
+            }}>
               خروج از روم
             </Button>
           </Stack>
@@ -184,8 +188,8 @@ useEffect(() => {
               )}
               {["foreign_aid", "assassinate", "steal"].includes(pending.action) &&
                 (pending.action !== "assassinate" && pending.action !== "steal" || pending.targetId === myUserId) && (
-                <Button size="small" color="secondary" onClick={blockAction}>بلاک می‌کنم</Button>
-              )}
+                  <Button size="small" color="secondary" onClick={blockAction}>بلاک می‌کنم</Button>
+                )}
             </Stack>
           )}
         </Paper>
