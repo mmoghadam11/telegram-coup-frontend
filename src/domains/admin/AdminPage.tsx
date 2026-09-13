@@ -118,8 +118,9 @@ function UsersGrid() {
     <>
       {/* چون DevTools در دسترس نیست، وضعیت واقعی رو همینجا نشون می‌دیم */}
       <Alert severity={isError ? "error" : "info"} sx={{ mb: 2, direction: "ltr", textAlign: "left" }}>
-        loading={String(isLoading)} | error={isError ? JSON.stringify((error as any)?.data || error) : "none"} |
-        rows={data?.users?.length ?? "undefined"} | total={data?.totalElements ?? "undefined"}
+        url=admin/users?{queryString} | loading={String(isLoading)} | error=
+        {isError ? JSON.stringify((error as any)?.data || (error as any)?.message || error) : "none"} | rows=
+        {data?.users?.length ?? "undefined"} | total={data?.totalElements ?? "undefined"}
       </Alert>
 
       <TextField
