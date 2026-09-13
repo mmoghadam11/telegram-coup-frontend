@@ -138,7 +138,10 @@ export function useRoomSocket(roomId?: string) {
     (roleIndex: number) => send({ type: "reveal_card", roleIndex }),
     [send]
   );
-  const restartGame = useCallback(() => send({ type: "restart_game" }), [send]);
+  const restartGame = useCallback(
+  (reopenForJoining: boolean) => send({ type: "restart_game", reopenForJoining }),
+  [send]
+);
   const leaveRoom = useCallback(() => send({ type: "leave_room" }), [send]);
   const closeRoom = useCallback(() => send({ type: "close_room" }), [send]);
   const forceReset = useCallback(() => send({ type: "force_reset" }), [send]);

@@ -30,6 +30,7 @@ export default function Room() {
   const { roomId } = useParams<{ roomId: string }>();
   const navigate = useNavigate();
   const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
+  const [restartDialogOpen, setRestartDialogOpen] = useState(false);
   const {
     connected, loaded, gameState, privateState,
     startGame, sendChat, sendAction, respond, blockAction, respondToBlock, revealCard, restartGame, leaveRoom, closeRoom, forceReset,
@@ -119,35 +120,40 @@ export default function Room() {
         </DialogActions>
       </Dialog>
 
-      {gameState.phase === "game_over" && (
-        <Paper sx={{ p: 2, mb: 2, textAlign: "center" }}>
-          {/* موقت برای دیباگ */}
-          <Typography variant="caption" display="block" >
-            myUserId={myUserId}
-          </Typography>
-          <Typography variant="caption" display="block" >
-            creatorId={gameState.creatorId}
-          </Typography>
-          <Typography variant="h6" sx={{ mb: 2 }}>
-            🏆 {gameState.players.find((p) => p.id === gameState.winnerId)?.name} برنده شد!
-          </Typography>
-          <Stack direction="row" spacing={1} justifyContent="center" flexWrap="wrap" useFlexGap>
-            {gameState.creatorId === myUserId && (
-              <>
-                <Button variant="contained" onClick={restartGame}>شروع مجدد</Button>
-                <Button variant="outlined" color="error" onClick={closeRoom}>بستن کامل روم</Button>
-              </>
-            )}
-            <Button variant="outlined" onClick={() => {
-              leaveRoom();
-              Auth?.setUserInfo({ ...Auth.userInfo, active_room_id: null });
-              navigate("/lobby");
-            }}>
-              خروج از روم
-            </Button>
-          </Stack>
-        </Paper>
+      {gameState.phase === "game_over" && gameState.creatorId === myUserId && (
+        <Button variant="contained" onClick={() => setRestartDialogOpen(true)}>
+          شروع مجدد
+        </Button>
       )}
+
+      <Dialog open={restartDialogOpen} onClose={() => setRestartDialogOpen(false)}>
+        <DialogTitle>شروع مجدد بازی</DialogTitle>
+        <DialogContent>
+          <Typography variant="body2">
+            بازی جدید با همین بازیکن‌ها شروع می‌شه. روم برای بازیکن‌های جدید باز بمونه یا بسته؟
+          </Typography>
+        </DialogContent>
+        <DialogActions>
+          <Button onClick={() => setRestartDialogOpen(false)}>انصراف</Button>
+          <Button
+            onClick={() => {
+              restartGame(false);
+              setRestartDialogOpen(false);
+            }}
+          >
+            همین بازیکن‌ها (بسته)
+          </Button>
+          <Button
+            variant="contained"
+            onClick={() => {
+              restartGame(true);
+              setRestartDialogOpen(false);
+            }}
+          >
+            باز برای ورود
+          </Button>
+        </DialogActions>
+      </Dialog>
 
       {gameState.phase === "waiting_for_players" && gameState.creatorId === myUserId && (
         <Button variant="contained" fullWidth sx={{ mb: 2 }} onClick={startGame}>
