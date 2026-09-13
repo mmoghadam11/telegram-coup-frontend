@@ -2,14 +2,14 @@ import React, { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
   Container, Typography, Tabs, Tab, IconButton, Dialog, DialogTitle,
-  DialogContent, DialogActions, TextField, Button, Select, MenuItem, Avatar,
+  DialogContent, DialogActions, TextField, Button, Select, MenuItem, Avatar, Alert,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
 import { GridColDef } from "@mui/x-data-grid";
 import { useAuth } from "hooks/useAuth";
 import TavanaDataGrid from "components/dataGrid/TavanaDataGrid";
-import { IQueryFilter } from "types/types";
+import { PAGINATION_DEFAULT_VALUE } from "shared/paginationValue";
 
 export default function AdminPage() {
   const [tab, setTab] = useState(0);
@@ -27,23 +27,32 @@ export default function AdminPage() {
   );
 }
 
-function UsersGrid() {
-  const Auth = useAuth();
-  const queryClient = useQueryClient();
-  const [filters, setFilters] = useState<IQueryFilter & { telegram_id?: string }>({ page: 1, size: 10 });
-  const [editUser, setEditUser] = useState<any>(null);
-  const [telegramSearch, setTelegramSearch] = useState("");
-
-  const queryString = new URLSearchParams({
+function buildQueryString(filters: any, extra?: Record<string, string>) {
+  const params = new URLSearchParams({
     page: String(filters.page || 1),
     size: String(filters.size || 10),
     ...(filters.sortBy && { sortBy: filters.sortBy }),
     ...(filters.sortDir && { sortDir: filters.sortDir }),
-    ...(filters.telegram_id && { telegram_id: filters.telegram_id }),
-  }).toString();
+    ...extra,
+  });
+  return params.toString();
+}
 
-  const { data, isLoading } = useQuery({
-    queryKey: ["admin/users", filters],
+function UsersGrid() {
+  const Auth = useAuth();
+  const queryClient = useQueryClient();
+  const [filters, setFilters] = useState<any>(PAGINATION_DEFAULT_VALUE);
+  const [editUser, setEditUser] = useState<any>(null);
+  const [telegramSearch, setTelegramSearch] = useState("");
+  const [appliedTelegramSearch, setAppliedTelegramSearch] = useState("");
+
+  const queryString = buildQueryString(
+    filters,
+    appliedTelegramSearch ? { telegram_id: appliedTelegramSearch } : undefined
+  );
+
+  const { data, isLoading, isError, error } = useQuery({
+    queryKey: ["admin/users", filters, appliedTelegramSearch],
     queryFn: () => Auth?.getRequest({ queryKey: `admin/users?${queryString}` }),
   });
 
@@ -107,6 +116,12 @@ function UsersGrid() {
 
   return (
     <>
+      {/* چون DevTools در دسترس نیست، وضعیت واقعی رو همینجا نشون می‌دیم */}
+      <Alert severity={isError ? "error" : "info"} sx={{ mb: 2, direction: "ltr", textAlign: "left" }}>
+        loading={String(isLoading)} | error={isError ? JSON.stringify((error as any)?.data || error) : "none"} |
+        rows={data?.users?.length ?? "undefined"} | total={data?.totalElements ?? "undefined"}
+      </Alert>
+
       <TextField
         size="small"
         label="سرچ بر اساس Telegram ID"
@@ -114,7 +129,8 @@ function UsersGrid() {
         onChange={(e) => setTelegramSearch(e.target.value)}
         onKeyDown={(e) => {
           if (e.key === "Enter") {
-            setFilters((f) => ({ ...f, telegram_id: telegramSearch, page: 1 }));
+            setAppliedTelegramSearch(telegramSearch);
+            setFilters((f: any) => ({ ...f, page: 1 }));
           }
         }}
         sx={{ mb: 2, width: 250 }}
@@ -124,9 +140,11 @@ function UsersGrid() {
         rows={data?.users || []}
         columns={columns}
         loading={isLoading}
-        filters={{ ...filters, totalElements: data?.totalElements }}
-        setFilters={setFilters as any}
-        getRowId={(row) => row.id}
+        setFilters={setFilters}
+        filters={filters}
+        rowCount={data?.totalElements || 0}
+        autoHeight
+        getRowId={(row: any) => row.id}
       />
 
       <Dialog open={!!editUser} onClose={() => setEditUser(null)}>
@@ -181,17 +199,12 @@ function UsersGrid() {
 function RoomsGrid() {
   const Auth = useAuth();
   const queryClient = useQueryClient();
-  const [filters, setFilters] = useState<IQueryFilter>({ page: 1, size: 10 });
+  const [filters, setFilters] = useState<any>(PAGINATION_DEFAULT_VALUE);
   const [editRoom, setEditRoom] = useState<any>(null);
 
-  const queryString = new URLSearchParams({
-    page: String(filters.page || 1),
-    size: String(filters.size || 10),
-    ...(filters.sortBy && { sortBy: filters.sortBy }),
-    ...(filters.sortDir && { sortDir: filters.sortDir }),
-  }).toString();
+  const queryString = buildQueryString(filters);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading, isError, error } = useQuery({
     queryKey: ["admin/rooms", filters],
     queryFn: () => Auth?.getRequest({ queryKey: `admin/rooms?${queryString}` }),
   });
@@ -242,13 +255,20 @@ function RoomsGrid() {
 
   return (
     <>
+      <Alert severity={isError ? "error" : "info"} sx={{ mb: 2, direction: "ltr", textAlign: "left" }}>
+        loading={String(isLoading)} | error={isError ? JSON.stringify((error as any)?.data || error) : "none"} |
+        rows={data?.rooms?.length ?? "undefined"} | total={data?.totalElements ?? "undefined"}
+      </Alert>
+
       <TavanaDataGrid
         rows={data?.rooms || []}
         columns={columns}
         loading={isLoading}
-        filters={{ ...filters, totalElements: data?.totalElements }}
-        setFilters={setFilters as any}
-        getRowId={(row) => row.id}
+        setFilters={setFilters}
+        filters={filters}
+        rowCount={data?.totalElements || 0}
+        autoHeight
+        getRowId={(row: any) => row.id}
       />
 
       <Dialog open={!!editRoom} onClose={() => setEditRoom(null)}>
