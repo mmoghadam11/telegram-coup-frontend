@@ -10,6 +10,7 @@ import MEnvelope from "domains/envelope/motion/MEnvelope";
 import Lobby from "domains/lobby/Lobby";
 import Room from "domains/rooms/Room";
 import Layout from "components/layout/Layout";
+import AdminPage from "domains/admin/AdminPage";
 
 
 const AppRoutes: React.FC = () => {
@@ -39,13 +40,14 @@ const AppRoutes: React.FC = () => {
     access: ["player", "admin"],
     component: <Room />,
   },
+  { url: "admin", access: ["admin"], component: <AdminPage /> },
 ];
   return (
     <Routes>
-      {/* <Route element={<UserRoute />}> */}
+      <Route element={<UserRoute />}>
       {renderRoutes(MENU_ITEMS)}        
       <Route path="/" element={<Welcome />} />
-      {/* </Route> */}
+      </Route>
       <Route path="/post" element={<Envelope/>} />
       <Route path="/motion" element={<MEnvelope/>} />
       <Route path="logout" element={<LogoutPage />} />

@@ -109,7 +109,7 @@ const MENU_ITEMS: MenuItem[] = [
   {
     icon: <Gavel />,
     title: "احکام انتظامی(new)",
-    url: "IACPA-disciplinary-order",
+    url: "COUP-disciplinary-order",
     access: ["administrator", "city-showmenu","operator-showmenu"],
     menuChildren: [
       {
@@ -127,7 +127,7 @@ const MENU_ITEMS: MenuItem[] = [
   {
     icon: <AccountBalance />,
     title: "جامعه",
-    url: "/IACPA",
+    url: "/COUP",
     access: ["city-showmenu", "operator-showmenu"],
     menuChildren: [
       {

@@ -23,7 +23,7 @@ const Footer = () => {
       }}
     >
       <Typography variant="body1" >
-        IACPA © {new Date().getFullYear()} SAHER
+        COUP © {new Date().getFullYear()} SAHER
       </Typography>
 
       

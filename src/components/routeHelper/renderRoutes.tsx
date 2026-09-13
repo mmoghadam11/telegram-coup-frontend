@@ -24,7 +24,7 @@ const renderRoutes = (items: MenuItem[]) => {
       >
         {/* حالت ۱: اگر این آیتم خودش یک صفحه نهایی است (کامپوننت دارد) 
            آن را به عنوان index رندر می‌کنیم.
-           این کار باعث می‌شود اگر مسیر /IACPA/workgroup زده شد، 
+           این کار باعث می‌شود اگر مسیر /COUP/workgroup زده شد، 
            اول پرمیشن چک شود، بعد گرید نمایش داده شود.
         */}
         {item.component && <Route index element={item.component} />}

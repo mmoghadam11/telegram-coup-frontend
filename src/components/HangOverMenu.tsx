@@ -36,7 +36,7 @@ interface MenuItem {
 const menuItems: MenuItem[] = [
   {
     title: "ورود به بازی",
-    url: "IACPA/disciplinary-order",
+    url: "COUP/disciplinary-order",
     access: ["administrator", "city-showmenu"],
     description: "وارد شوید",
     icon: <PlayCircle fontSize={"small"}/>,

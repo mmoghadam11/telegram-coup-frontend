@@ -4,6 +4,7 @@ import Navbar from "./Navbar";
 import RightMenu from "./RightMenu";
 import { styled } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
+import NavbarOnly from "./NavbarOnly";
 
 export const DRAWER_WIDTH = 280;
 
@@ -41,17 +42,18 @@ const Layout: React.FC<Props> = ({ hideRightMenu=false, children }) => {
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
       {
-        hideRightMenu ? null :
-        <RightMenu open={open} handleDrawerClose={handleDrawerClose} handleDrawerOpen={handleDrawerOpen}/>
+        // hideRightMenu ? null :
+        // <RightMenu open={open} handleDrawerClose={handleDrawerClose} handleDrawerOpen={handleDrawerOpen}/>
       }
       <Box component="div" sx={{ width: "100%", flexDirection: "column", overflowX: "hidden", height: "100vh" }}>
-        <Navbar open={open} hideRightMenu={hideRightMenu} handleDrawerOpen={handleDrawerOpen} />
+        {/* <Navbar open={open} hideRightMenu={hideRightMenu} handleDrawerOpen={handleDrawerOpen} /> */}
+        <NavbarOnly />
         <Box
           component="main"
           sx={{ display: "flex", flexDirection: "column", flexGrow: 1, width: "100%", height: "100vh" }}
         >
           <DrawerHeader />
-          <Box sx={{ p: 2, width: "100%", height: "100%" }}>{children}</Box>
+          <Box sx={{ p: 0, width: "100%", height: "100%" }}>{children}</Box>
         </Box>
       </Box>
     </Box>

@@ -640,7 +640,7 @@ const NewLogin = () => {
               }}
             >
               <img
-                src="/assets/images/IACPA.Main_Logo.png"
+                src="/assets/images/COUP.Main_Logo.png"
                 alt="center"
                 style={{
                   width: "40%",

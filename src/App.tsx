@@ -44,7 +44,7 @@ const queryClient = new QueryClient({
 function App() {
   let mediaTypeMode = useMediaQuery("(prefers-color-scheme: dark)")
   const [mode, setMode] = React.useState<ThemeMode>(
-    localStorage.getItem("IACPA_THEME_MODE") as ThemeMode ?? (mediaTypeMode ? "dark" : "light"),
+    localStorage.getItem("COUP_THEME_MODE") as ThemeMode ?? (mediaTypeMode ? "dark" : "light"),
   );
 
   const colorMode = React.useMemo(
@@ -52,7 +52,7 @@ function App() {
       toggleColorMode: () => {
         setMode((prevMode) => {
           let new_mode = (prevMode === "light" ? "dark" : "light")
-          localStorage.setItem('IACPA_THEME_MODE', new_mode)
+          localStorage.setItem('COUP_THEME_MODE', new_mode)
           return new_mode as ThemeMode
         });
       },

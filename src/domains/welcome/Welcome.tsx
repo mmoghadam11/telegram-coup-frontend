@@ -40,7 +40,7 @@ interface MenuItem {
 const menuItems: MenuItem[] = [
   {
     title: "احکام انتظامی",
-    url: "IACPA/disciplinary-order",
+    url: "COUP/disciplinary-order",
     access: ["administrator", "city-showmenu"],
     description: "مدیریت کلی احکام انتظامی",
     icon: <AccountBalance />,
