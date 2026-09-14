@@ -34,6 +34,10 @@ interface RevealPending {
   reason: string;
 }
 
+interface SelectionPending {
+  playerId: string;
+  mode: "exchange" | "contessa";
+}
 interface PublicGameState {
   phase: string;
   roomName: string | null;
@@ -45,12 +49,15 @@ interface PublicGameState {
   log: string[];
   pendingAction: PendingAction | null;
   revealPending: RevealPending | null;
+  selectionPending: SelectionPending | null;
   winnerId: string | null;
 }
 
 interface PrivateState {
   yourRoles: string[];
   yourRevealed: boolean[];
+  exchangePool?: string[];
+  exchangeKeepCount?: number;
 }
 
 export function useRoomSocket(roomId?: string) {
@@ -139,9 +146,18 @@ export function useRoomSocket(roomId?: string) {
     [send]
   );
   const restartGame = useCallback(
-  (reopenForJoining: boolean) => send({ type: "restart_game", reopenForJoining }),
-  [send]
-);
+    (reopenForJoining: boolean) => send({ type: "restart_game", reopenForJoining }),
+    [send]
+  );
+  const sendExchangeSelect = useCallback(
+    (keepIndexes: number[]) => send({ type: "exchange_select", keepIndexes }),
+    [send]
+  );
+  const sendContessaSelect = useCallback(
+    (messageType: "contessa_self_select" | "contessa_other_select", roleIndex: number) =>
+      send({ type: messageType, roleIndex }),
+    [send]
+  );
   const leaveRoom = useCallback(() => send({ type: "leave_room" }), [send]);
   const closeRoom = useCallback(() => send({ type: "close_room" }), [send]);
   const forceReset = useCallback(() => send({ type: "force_reset" }), [send]);
@@ -158,6 +174,8 @@ export function useRoomSocket(roomId?: string) {
     blockAction,
     respondToBlock,
     revealCard,
+    sendContessaSelect,
+    sendExchangeSelect,
     restartGame,
     leaveRoom,
     closeRoom,

@@ -9,6 +9,8 @@ import {
 import { useAuth } from "hooks/useAuth";
 import { useRoomSocket } from "hooks/useRoomSocket";
 import { CheckCircle, RestartAlt } from "@mui/icons-material";
+import ExchangeDialog from "./components/ExchangeDialog";
+import ContessaDialog from "./components/ContessaDialog";
 
 
 const ROLE_LABELS_FA: Record<string, string> = {
@@ -33,7 +35,7 @@ export default function Room() {
   const [restartDialogOpen, setRestartDialogOpen] = useState(false);
   const {
     connected, loaded, gameState, privateState,
-    startGame, sendChat, sendAction, respond, blockAction, respondToBlock, revealCard, restartGame, leaveRoom, closeRoom, forceReset,
+    startGame, sendChat, sendAction, respond, blockAction, respondToBlock, revealCard, restartGame, leaveRoom, closeRoom, forceReset, sendContessaSelect, sendExchangeSelect,
   } = useRoomSocket(roomId);
 
   // وقتی روم بسته می‌شه، خودکار برگرد به لابی
@@ -286,6 +288,19 @@ export default function Room() {
           </Stack>
         </DialogContent>
       </Dialog>
+      <ExchangeDialog
+        open={gameState.selectionPending?.mode === "exchange" && gameState.selectionPending.playerId === myUserId}
+        pool={privateState?.exchangePool}
+        keepCount={privateState?.exchangeKeepCount}
+        onConfirm={(keepIndexes) => sendExchangeSelect(keepIndexes)}
+      />
+
+      <ContessaDialog
+        open={gameState.selectionPending?.mode === "contessa" && gameState.selectionPending.playerId === myUserId}
+        roles={privateState?.yourRoles}
+        revealed={privateState?.yourRevealed}
+        onSelect={(roleIndex) => sendContessaSelect("contessa_self_select", roleIndex)}
+      />
 
       <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
         <TextField
