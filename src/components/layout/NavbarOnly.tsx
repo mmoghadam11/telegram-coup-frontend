@@ -140,6 +140,19 @@ const NavbarOnly: React.FC<Props> = () => {
           >
             پنل ادمین
           </Button>
+          }   
+          {
+            Auth.userInfo?.role==="admin"&&
+            <Button
+            className="account-menu-btn"
+            sx={{ mt: 1, color: (theme) => theme.palette.text.primary }}
+            color="primary"
+            variant="contained"
+            endIcon={<AdminPanelSettings />}
+            onClick={()=>navigate("/")}
+          >
+            صفحه اصلی
+          </Button>
           }
           
         </Box>
