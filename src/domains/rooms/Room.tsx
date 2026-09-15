@@ -12,6 +12,8 @@ import { BugReport, CheckCircle, RestartAlt } from "@mui/icons-material";
 import ExchangeDialog from "./components/ExchangeDialog";
 import ContessaDialog from "./components/ContessaDialog";
 import DebugPanel from "./components/DebugPanel";
+import GameOverDialog from "./components/GameOverDialog";
+import RestartVoteDialog from "./components/RestartVoteDialog";
 
 
 const ROLE_LABELS_FA: Record<string, string> = {
@@ -36,7 +38,7 @@ export default function Room() {
   const [restartDialogOpen, setRestartDialogOpen] = useState(false);
   const {
     connected, loaded, gameState, privateState,
-    startGame, sendChat, sendAction, respond, blockAction, respondToBlock, revealCard, restartGame, leaveRoom, closeRoom, forceReset, sendContessaSelect, sendExchangeSelect,
+    startGame, sendChat, sendAction, respond, blockAction, respondToBlock, revealCard, restartGame, leaveRoom, closeRoom, forceReset, sendContessaSelect, sendExchangeSelect,respondToRestartVote,
   } = useRoomSocket(roomId);
 
   // وقتی روم بسته می‌شه، خودکار برگرد به لابی
@@ -101,7 +103,7 @@ export default function Room() {
           {
             Auth.userInfo?.role === "admin" &&
             <IconButton size="small" onClick={() => setDebugMode((d) => !d)}>
-              <BugReport   fontSize="small" />
+              <BugReport fontSize="small" />
             </IconButton>
           }
           <Chip size="small" color="success" label="متصل" />
@@ -336,6 +338,34 @@ export default function Room() {
           <Typography key={i} variant="body2" sx={{ p: 0.5 }}>{line}</Typography>
         ))}
       </Paper>
+      <GameOverDialog
+        open={gameState.phase === "game_over"}
+        winnerName={gameState.players.find((p) => p.id === gameState.winnerId)?.name}
+        players={gameState.players.map((p) => ({ id: p.id, name: p.name, stats: p.stats }))}
+        isCreator={gameState.creatorId === myUserId}
+        onRestart={(reopenForJoining) => restartGame(reopenForJoining)}
+        onCloseRoom={closeRoom}
+        onLeaveRoom={() => {
+          leaveRoom();
+          Auth?.setUserInfo({ ...Auth.userInfo, active_room_id: null });
+          navigate("/lobby");
+        }}
+      />
+
+      <RestartVoteDialog
+        open={gameState.phase === "restart_vote"}
+        isCreator={gameState.creatorId === myUserId}
+        alreadyResponded={!!gameState.restartVote?.responses[myUserId]}
+        waitingForNames={
+          gameState.restartVote?.waitingFor.map(
+            (id) => gameState.players.find((p) => p.id === id)?.name || id
+          ) || []
+        }
+        onStay={() => respondToRestartVote("stay")}
+        onLeave={() => {
+          respondToRestartVote("leave");
+        }}
+      />
     </Container>
   );
 }

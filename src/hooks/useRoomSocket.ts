@@ -7,6 +7,14 @@ function getWsUrl(roomId: string, token: string): string {
   return `${wsBase}/rooms/${roomId}/ws?token=${encodeURIComponent(token)}&roomId=${roomId}`;
 }
 
+interface PlayerStats {
+  successfulBluffs: number;
+  caughtBluffs: number;
+  correctChallenges: number;
+  wrongChallenges: number;
+  successfulSteals: number;
+  kills: number;
+}
 interface PublicPlayer {
   id: string;
   name: string;
@@ -15,6 +23,13 @@ interface PublicPlayer {
   roleCount: number;
   revealedRoles: string[];
   isAlive: boolean;
+  stats: PlayerStats;
+}
+
+interface RestartVoteState {
+  reopenForJoining: boolean;
+  responses: Record<string, "stay" | "leave">;
+  waitingFor: string[];
 }
 
 interface PendingAction {
@@ -50,6 +65,7 @@ interface PublicGameState {
   pendingAction: PendingAction | null;
   revealPending: RevealPending | null;
   selectionPending: SelectionPending | null;
+  restartVote: RestartVoteState | null;
   winnerId: string | null;
 }
 
@@ -158,6 +174,10 @@ export function useRoomSocket(roomId?: string) {
       send({ type: messageType, roleIndex }),
     [send]
   );
+  const respondToRestartVote = useCallback(
+  (choice: "stay" | "leave") => send({ type: "respond_to_restart_vote", choice }),
+  [send]
+);
   const leaveRoom = useCallback(() => send({ type: "leave_room" }), [send]);
   const closeRoom = useCallback(() => send({ type: "close_room" }), [send]);
   const forceReset = useCallback(() => send({ type: "force_reset" }), [send]);
@@ -177,6 +197,7 @@ export function useRoomSocket(roomId?: string) {
     sendContessaSelect,
     sendExchangeSelect,
     restartGame,
+    respondToRestartVote,
     leaveRoom,
     closeRoom,
     forceReset,
