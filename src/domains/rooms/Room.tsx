@@ -8,9 +8,10 @@ import {
 } from "@mui/material";
 import { useAuth } from "hooks/useAuth";
 import { useRoomSocket } from "hooks/useRoomSocket";
-import { CheckCircle, RestartAlt } from "@mui/icons-material";
+import { BugReport, CheckCircle, RestartAlt } from "@mui/icons-material";
 import ExchangeDialog from "./components/ExchangeDialog";
 import ContessaDialog from "./components/ContessaDialog";
+import DebugPanel from "./components/DebugPanel";
 
 
 const ROLE_LABELS_FA: Record<string, string> = {
@@ -48,6 +49,7 @@ export default function Room() {
   const [input, setInput] = useState("");
   const [targetDialogAction, setTargetDialogAction] = useState<string | null>(null);
   const [selectedTarget, setSelectedTarget] = useState("");
+  const [debugMode, setDebugMode] = useState(false);
 
   if (!connected || !loaded || !gameState) {
     return (
@@ -96,6 +98,12 @@ export default function Room() {
               <RestartAlt />
             </IconButton>
           )}
+          {
+            Auth.userInfo?.role === "admin" &&
+            <IconButton size="small" onClick={() => setDebugMode((d) => !d)}>
+              <BugReport   fontSize="small" />
+            </IconButton>
+          }
           <Chip size="small" color="success" label="متصل" />
         </Stack>
       </Stack>
@@ -156,6 +164,19 @@ export default function Room() {
           </Button>
         </DialogActions>
       </Dialog>
+      <DebugPanel
+        debugMode={debugMode}
+        data={{
+          phase: gameState.phase,
+          currentTurnIndex: gameState.currentTurnIndex,
+          turnOrder: gameState.turnOrder,
+          pendingAction: gameState.pendingAction,
+          revealPending: gameState.revealPending,
+          selectionPending: gameState.selectionPending,
+          myUserId,
+          privateState,
+        }}
+      />
 
       {gameState.phase === "waiting_for_players" && gameState.creatorId === myUserId && (
         <Button variant="contained" fullWidth sx={{ mb: 2 }} onClick={startGame}>
