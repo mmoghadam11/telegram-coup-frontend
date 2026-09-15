@@ -105,7 +105,7 @@ export default function Lobby() {
             )}
             {rooms?.map((room: any) => (
               <ListItem key={room.id} disablePadding>
-                <ListItemButton onClick={() => handleJoinRoom(room.id)}>
+                <ListItemButton disabled={Auth.userInfo?.active_room_id===room} onClick={() => handleJoinRoom(room.id)}>
                   <ListItemText primary={room.name} secondary={`${room.player_count} بازیکن`} />
                   <Chip size="small" label={room.status} />
                 </ListItemButton>

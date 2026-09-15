@@ -296,7 +296,7 @@ export default function Room() {
 
       {/* دیالوگ کور کردن کارت — وقتی نوبت خود شخصه که یه کارت رو ببازه */}
       <Dialog open={revealPending?.playerId === myUserId} disableEscapeKeyDown>
-        <DialogTitle>باید یه کارت رو کور کنید</DialogTitle>
+        <DialogTitle>باید یه کارت خود را فدا کنید</DialogTitle>
         <DialogContent>
           <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
             {privateState?.yourRoles.map((role, i) =>
