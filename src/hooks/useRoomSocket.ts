@@ -103,15 +103,35 @@ export function useRoomSocket(roomId?: string) {
     ws.onerror = () => ws.close();
 
     ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data.type === "state") {
-        setGameState(data.state);
-        setLoaded(true);
-      }
-      if (data.type === "private") {
-        setPrivateState(data.private);
-      }
-    };
+  const data = JSON.parse(event.data);
+
+  if (data.type === "state") {
+    const state = data.state;
+
+    const generatedPlayers = state.players.map((playerItem: PublicPlayer) => ({
+      ...playerItem,
+      stats: {
+        successfulBluffs: playerItem.stats?.successfulBluffs ?? 0,
+        caughtBluffs: playerItem.stats?.caughtBluffs ?? 0,
+        correctChallenges: playerItem.stats?.correctChallenges ?? 0,
+        wrongChallenges: playerItem.stats?.wrongChallenges ?? 0,
+        successfulSteals: playerItem.stats?.successfulSteals ?? 0,
+        kills: playerItem.stats?.kills ?? 0,
+      },
+    }));
+
+    setGameState({
+      ...state,
+      players: generatedPlayers,
+    });
+
+    setLoaded(true);
+  }
+
+  if (data.type === "private") {
+    setPrivateState(data.private);
+  }
+};
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roomId, Auth?.token]);
 
