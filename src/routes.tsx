@@ -26,8 +26,8 @@ const AppRoutes: React.FC = () => {
 
     // اگه از قبل توی همون روم نیست، ببرش اونجا
     if (!routerLocation.pathname.startsWith(`/room/${activeRoomId}`)) {
-      //navigate(`/room/${activeRoomId}`, { replace: true });
-      return
+      navigate(`/room/${activeRoomId}`, { replace: true });
+      // return
     }
   }, [auth?.authLoading, auth?.userInfo?.active_room_id, navigate, routerLocation.pathname]);
   const MENU_ITEMS: MenuItem[] = [
