@@ -17,6 +17,7 @@ import RestartVoteDialog from "./components/RestartVoteDialog";
 import BlockClaimDialog from "./components/proving/BlockClaimDialog";
 import ProveCardDialog from "./components/proving/ProveCardDialog";
 import ProveResultDialog from "./components/proving/ProveResultDialog";
+import { useCardPreload } from "hooks/useCardPreload";
 
 
 const ROLE_LABELS_FA: Record<string, string> = {
@@ -34,6 +35,7 @@ const ACTION_LABELS: Record<string, string> = {
 };
 
 export default function Room() {
+  useCardPreload();
   const Auth = useAuth();
   const { roomId } = useParams<{ roomId: string }>();
   const navigate = useNavigate();
