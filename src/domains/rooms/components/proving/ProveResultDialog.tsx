@@ -18,7 +18,8 @@ export default function ProveResultDialog({ event, onClose }: Props) {
       // بعضی مرورگرها بدون تعامل قبلی کاربر با صفحه، پخش خودکار صدا رو بلاک می‌کنن — بی‌خطره نادیده بگیریمش
     });
 
-    const timer = setTimeout(onClose, 2800);
+    // const timer = setTimeout(onClose, 2800);
+    const timer = setTimeout(onClose, 5000);
     return () => clearTimeout(timer);
   }, [event]);
 

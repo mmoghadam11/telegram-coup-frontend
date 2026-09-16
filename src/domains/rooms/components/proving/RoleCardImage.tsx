@@ -108,7 +108,7 @@ export default function RoleCardImage({
         }}
 
         transition={{
-          duration: 0.8,
+          duration: 2,
           ease: [0.22, 1, 0.36, 1],
         }}
         whileHover={

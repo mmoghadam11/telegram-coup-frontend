@@ -35,7 +35,7 @@ const ACTION_LABELS: Record<string, string> = {
 };
 
 export default function Room() {
-  useCardPreload();
+  const { playRevealSound } = useCardPreload();
   const Auth = useAuth();
   const { roomId } = useParams<{ roomId: string }>();
   const navigate = useNavigate();
@@ -47,6 +47,11 @@ export default function Room() {
     startGame, sendChat, sendAction, respond, blockAction, respondToBlock, revealCard, restartGame, leaveRoom, closeRoom, forceReset, sendContessaSelect, sendExchangeSelect, respondToRestartVote,
   } = useRoomSocket(roomId);
 
+  useEffect(() => {
+    if (!proofEvent) return;
+
+    playRevealSound();
+  }, [proofEvent, playRevealSound]);
   // وقتی روم بسته می‌شه، خودکار برگرد به لابی
   useEffect(() => {
     if (gameState?.phase === "room_closed") {
