@@ -11,7 +11,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
 import MenuIcon from "@mui/icons-material/Menu";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
-import { AdminPanelSettings, ChangeCircle, Logout, ManageAccounts, ManageAccountsRounded, Password } from "@mui/icons-material";
+import { AdminPanelSettings, ChangeCircle, Home, Logout, ManageAccounts, ManageAccountsRounded, Password } from "@mui/icons-material";
 import { DRAWER_WIDTH } from "./Layout";
 import { useAuth } from "hooks/useAuth";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
@@ -148,7 +148,7 @@ const NavbarOnly: React.FC<Props> = () => {
             sx={{ mt: 1, color: (theme) => theme.palette.text.primary }}
             color="primary"
             variant="contained"
-            endIcon={<AdminPanelSettings />}
+            endIcon={<Home />}
             onClick={()=>navigate("/")}
           >
             صفحه اصلی

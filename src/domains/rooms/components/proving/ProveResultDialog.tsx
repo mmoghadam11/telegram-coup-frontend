@@ -29,7 +29,7 @@ export default function ProveResultDialog({ event, onClose }: Props) {
       <audio ref={audioRef} src="/assets/sounds/reveal.wav" preload="auto" />
       <DialogContent>
         <Stack alignItems="center" spacing={2} sx={{ py: 2 }}>
-          <RoleCardImage role={event.role} size={130} fadeIn />
+          <RoleCardImage role={event.role} size={130} reveal />
           <Box textAlign="center">
             <Typography variant="subtitle1">{event.playerName}</Typography>
             <Typography variant="body2" color={event.success ? "success.main" : "error.main"}>
