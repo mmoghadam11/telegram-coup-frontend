@@ -53,6 +53,18 @@ interface SelectionPending {
   playerId: string;
   mode: "exchange" | "contessa";
 }
+
+interface ProofEvent {
+  playerId: string;
+  playerName: string;
+  role: string;
+  success: boolean;
+}
+
+interface ProvePending {
+  playerId: string;
+  claimedRole: string;
+}
 interface PublicGameState {
   phase: string;
   roomName: string | null;
@@ -64,6 +76,7 @@ interface PublicGameState {
   log: string[];
   pendingAction: PendingAction | null;
   revealPending: RevealPending | null;
+  provePending: ProvePending | null;
   selectionPending: SelectionPending | null;
   restartVote: RestartVoteState | null;
   winnerId: string | null;
@@ -86,6 +99,7 @@ export function useRoomSocket(roomId?: string) {
   const [loaded, setLoaded] = useState(false);
   const [gameState, setGameState] = useState<PublicGameState | null>(null);
   const [privateState, setPrivateState] = useState<PrivateState | null>(null);
+  const [proofEvent, setProofEvent] = useState<ProofEvent | null>(null);
 
   const connect = useCallback(() => {
     if (!roomId || !Auth?.token) return;
@@ -103,35 +117,38 @@ export function useRoomSocket(roomId?: string) {
     ws.onerror = () => ws.close();
 
     ws.onmessage = (event) => {
-  const data = JSON.parse(event.data);
+      const data = JSON.parse(event.data);
 
-  if (data.type === "state") {
-    const state = data.state;
+      if (data.type === "state") {
+        const state = data.state;
 
-    const generatedPlayers = state.players.map((playerItem: PublicPlayer) => ({
-      ...playerItem,
-      stats: {
-        successfulBluffs: playerItem.stats?.successfulBluffs ?? 0,
-        caughtBluffs: playerItem.stats?.caughtBluffs ?? 0,
-        correctChallenges: playerItem.stats?.correctChallenges ?? 0,
-        wrongChallenges: playerItem.stats?.wrongChallenges ?? 0,
-        successfulSteals: playerItem.stats?.successfulSteals ?? 0,
-        kills: playerItem.stats?.kills ?? 0,
-      },
-    }));
+        const generatedPlayers = state.players.map((playerItem: PublicPlayer) => ({
+          ...playerItem,
+          stats: {
+            successfulBluffs: playerItem.stats?.successfulBluffs ?? 0,
+            caughtBluffs: playerItem.stats?.caughtBluffs ?? 0,
+            correctChallenges: playerItem.stats?.correctChallenges ?? 0,
+            wrongChallenges: playerItem.stats?.wrongChallenges ?? 0,
+            successfulSteals: playerItem.stats?.successfulSteals ?? 0,
+            kills: playerItem.stats?.kills ?? 0,
+          },
+        }));
 
-    setGameState({
-      ...state,
-      players: generatedPlayers,
-    });
+        setGameState({
+          ...state,
+          players: generatedPlayers,
+        });
 
-    setLoaded(true);
-  }
+        setLoaded(true);
+      }
 
-  if (data.type === "private") {
-    setPrivateState(data.private);
-  }
-};
+      if (data.type === "private") {
+        setPrivateState(data.private);
+      }
+      if (data.type === "proof_result") {
+        setProofEvent(data.result);
+      }
+    };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roomId, Auth?.token]);
 
@@ -172,7 +189,10 @@ export function useRoomSocket(roomId?: string) {
     (response: "allow" | "challenge") => send({ type: "respond", response }),
     [send]
   );
-  const blockAction = useCallback(() => send({ type: "block" }), [send]);
+  const blockAction = useCallback(
+  (claimedRole: string) => send({ type: "block", claimedRole }),
+  [send]
+);
   const respondToBlock = useCallback(
     (response: "allow" | "challenge") => send({ type: "respond_to_block", response }),
     [send]
@@ -195,18 +215,24 @@ export function useRoomSocket(roomId?: string) {
     [send]
   );
   const respondToRestartVote = useCallback(
-  (choice: "stay" | "leave") => send({ type: "respond_to_restart_vote", choice }),
-  [send]
-);
+    (choice: "stay" | "leave") => send({ type: "respond_to_restart_vote", choice }),
+    [send]
+  );
   const leaveRoom = useCallback(() => send({ type: "leave_room" }), [send]);
   const closeRoom = useCallback(() => send({ type: "close_room" }), [send]);
   const forceReset = useCallback(() => send({ type: "force_reset" }), [send]);
+  const sendProveCard = useCallback(
+    (roleIndex: number) => send({ type: "prove_card", roleIndex }),
+    [send]
+  );
+  const clearProofEvent = useCallback(() => setProofEvent(null), []);
 
   return {
     connected,
     loaded,
     gameState,
     privateState,
+    proofEvent, sendProveCard, clearProofEvent,
     startGame,
     sendChat,
     sendAction,

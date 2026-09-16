@@ -14,6 +14,9 @@ import ContessaDialog from "./components/ContessaDialog";
 import DebugPanel from "./components/DebugPanel";
 import GameOverDialog from "./components/GameOverDialog";
 import RestartVoteDialog from "./components/RestartVoteDialog";
+import BlockClaimDialog from "./components/proving/BlockClaimDialog";
+import ProveCardDialog from "./components/proving/ProveCardDialog";
+import ProveResultDialog from "./components/proving/ProveResultDialog";
 
 
 const ROLE_LABELS_FA: Record<string, string> = {
@@ -38,7 +41,8 @@ export default function Room() {
   const [restartDialogOpen, setRestartDialogOpen] = useState(false);
   const {
     connected, loaded, gameState, privateState,
-    startGame, sendChat, sendAction, respond, blockAction, respondToBlock, revealCard, restartGame, leaveRoom, closeRoom, forceReset, sendContessaSelect, sendExchangeSelect,respondToRestartVote,
+    sendProveCard, proofEvent, clearProofEvent,
+    startGame, sendChat, sendAction, respond, blockAction, respondToBlock, revealCard, restartGame, leaveRoom, closeRoom, forceReset, sendContessaSelect, sendExchangeSelect, respondToRestartVote,
   } = useRoomSocket(roomId);
 
   // وقتی روم بسته می‌شه، خودکار برگرد به لابی
@@ -52,6 +56,12 @@ export default function Room() {
   const [targetDialogAction, setTargetDialogAction] = useState<string | null>(null);
   const [selectedTarget, setSelectedTarget] = useState("");
   const [debugMode, setDebugMode] = useState(false);
+  const [blockDialogOpen, setBlockDialogOpen] = useState(false);
+  const BLOCKING_ROLES_FA: Record<string, string[]> = {
+    foreign_aid: ["duke"],
+    assassinate: ["princess"],
+    steal: ["captain", "ambassador"],
+  };
 
   if (!connected || !loaded || !gameState) {
     return (
@@ -257,7 +267,9 @@ export default function Room() {
               )}
               {["foreign_aid", "assassinate", "steal"].includes(pending.action) &&
                 (pending.action !== "assassinate" && pending.action !== "steal" || pending.targetId === myUserId) && (
-                  <Button size="small" color="secondary" onClick={blockAction}>بلاک می‌کنم</Button>
+                  <Button size="small" color="secondary" onClick={() => setBlockDialogOpen(true)}>
+                    بلاک می‌کنم
+                  </Button>
                 )}
             </Stack>
           )}
@@ -338,6 +350,24 @@ export default function Room() {
           <Typography key={i} variant="body2" sx={{ p: 0.5 }}>{line}</Typography>
         ))}
       </Paper>
+      <BlockClaimDialog
+        open={blockDialogOpen}
+        options={pending ? BLOCKING_ROLES_FA[pending.action] || [] : []}
+        onClose={() => setBlockDialogOpen(false)}
+        onSelect={(role) => {
+          blockAction(role);
+          setBlockDialogOpen(false);
+        }}
+      />
+
+      <ProveCardDialog
+        open={gameState.provePending?.playerId === myUserId}
+        roles={privateState?.yourRoles}
+        revealed={privateState?.yourRevealed}
+        onSelect={(roleIndex) => sendProveCard(roleIndex)}
+      />
+
+      <ProveResultDialog event={proofEvent} onClose={clearProofEvent} />
       <GameOverDialog
         open={gameState.phase === "game_over"}
         winnerName={gameState.players.find((p) => p.id === gameState.winnerId)?.name}
