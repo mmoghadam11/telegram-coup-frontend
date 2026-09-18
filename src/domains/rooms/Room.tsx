@@ -18,6 +18,7 @@ import BlockClaimDialog from "./components/proving/BlockClaimDialog";
 import ProveCardDialog from "./components/proving/ProveCardDialog";
 import ProveResultDialog from "./components/proving/ProveResultDialog";
 import { useCardPreload } from "hooks/useCardPreload";
+import ConfirmBox from "components/confirmBox/ConfirmBox";
 
 
 const ROLE_LABELS_FA: Record<string, string> = {
@@ -63,6 +64,7 @@ export default function Room() {
   const [targetDialogAction, setTargetDialogAction] = useState<string | null>(null);
   const [selectedTarget, setSelectedTarget] = useState("");
   const [debugMode, setDebugMode] = useState(false);
+  const [closeWaitingConfirmOpen, setCloseWaitingConfirmOpen] = useState(false);
   const [blockDialogOpen, setBlockDialogOpen] = useState(false);
   const BLOCKING_ROLES_FA: Record<string, string[]> = {
     foreign_aid: ["duke"],
@@ -198,9 +200,15 @@ export default function Room() {
       />
 
       {gameState.phase === "waiting_for_players" && gameState.creatorId === myUserId && (
-        <Button variant="contained" fullWidth sx={{ mb: 2 }} onClick={startGame}>
-          شروع بازی ({gameState.players.length} بازیکن)
-        </Button>
+        <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
+          <Button variant="contained" fullWidth onClick={startGame}>
+            شروع بازی ({gameState.players.length} بازیکن)
+          </Button>
+          <Button variant="outlined" color="error" onClick={() => setCloseWaitingConfirmOpen(true)}>
+            بستن روم
+          </Button>
+        </Stack>
+
       )}
 
       {gameState.phase !== "waiting_for_players" && (
@@ -403,6 +411,15 @@ export default function Room() {
           respondToRestartVote("leave");
         }}
       />
+      <ConfirmBox
+        open={closeWaitingConfirmOpen}
+        handleClose={() => setCloseWaitingConfirmOpen(false)}
+        title={"بستن روم"}
+        message={"این روم بسته می‌شه و دیگه کسی نمی‌تونه واردش بشه. مطمئنید؟"}
+        handleSubmit={() => {
+          closeRoom();
+          setCloseWaitingConfirmOpen(false);
+        }} />
     </Container>
   );
 }

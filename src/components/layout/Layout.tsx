@@ -23,11 +23,11 @@ interface Props {
   children: React.ReactNode;
 }
 
-const Layout: React.FC<Props> = ({ hideRightMenu=false, children }) => {
+const Layout: React.FC<Props> = ({ hideRightMenu = false, children }) => {
   const [open, setOpen] = React.useState(false);
 
-  React.useEffect(()=>{
-    if(hideRightMenu)
+  React.useEffect(() => {
+    if (hideRightMenu)
       setOpen(false)
   }, [hideRightMenu])
 
@@ -46,11 +46,12 @@ const Layout: React.FC<Props> = ({ hideRightMenu=false, children }) => {
         // hideRightMenu ? null :
         // <RightMenu open={open} handleDrawerClose={handleDrawerClose} handleDrawerOpen={handleDrawerOpen}/>
       }
-      <Box component="div" sx={{ width: "100%", flexDirection: "column", overflowX: "hidden", height: "100vh",
+      <Box component="div" sx={{
+        width: "100%", flexDirection: "column", overflowX: "hidden", height: "100vh",
         // background: "#FCF8EF",
-        
-background: colorMode.mode !== "dark"?"radial-gradient(circle, rgba(252, 248, 239, 1) 0%, rgba(246, 240, 227, 1) 100%)":"default"
-       }}>
+
+        background: colorMode.mode !== "dark" ? "radial-gradient(circle, rgba(252, 248, 239, 1) 0%, rgba(246, 240, 227, 1) 100%)" : "default"
+      }}>
         {/* <Navbar open={open} hideRightMenu={hideRightMenu} handleDrawerOpen={handleDrawerOpen} /> */}
         <NavbarOnly />
         <Box

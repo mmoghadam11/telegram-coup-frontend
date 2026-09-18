@@ -99,9 +99,11 @@ export default function GameOverDialog({
               </Button>
             </>
           )}
-          <Button variant="outlined" onClick={onLeaveRoom}>
-            خروج از روم
-          </Button>
+          {!isCreator && ( 
+            <Button variant="outlined" onClick={onLeaveRoom}>
+              خروج از روم
+            </Button>
+          )}
         </DialogActions>
       </Dialog>
 
