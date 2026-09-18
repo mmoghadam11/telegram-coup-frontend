@@ -5,6 +5,7 @@ import RightMenu from "./RightMenu";
 import { styled } from "@mui/material/styles";
 import { CssBaseline } from "@mui/material";
 import NavbarOnly from "./NavbarOnly";
+import { ColorModeContext } from "App";
 
 export const DRAWER_WIDTH = 280;
 
@@ -37,7 +38,7 @@ const Layout: React.FC<Props> = ({ hideRightMenu=false, children }) => {
   const handleDrawerClose = () => {
     setOpen(false);
   };
-
+  const colorMode = React.useContext(ColorModeContext);
   return (
     <Box sx={{ display: "flex" }}>
       <CssBaseline />
@@ -45,7 +46,11 @@ const Layout: React.FC<Props> = ({ hideRightMenu=false, children }) => {
         // hideRightMenu ? null :
         // <RightMenu open={open} handleDrawerClose={handleDrawerClose} handleDrawerOpen={handleDrawerOpen}/>
       }
-      <Box component="div" sx={{ width: "100%", flexDirection: "column", overflowX: "hidden", height: "100vh" }}>
+      <Box component="div" sx={{ width: "100%", flexDirection: "column", overflowX: "hidden", height: "100vh",
+        // background: "#FCF8EF",
+        
+background: colorMode.mode !== "dark"?"radial-gradient(circle, rgba(252, 248, 239, 1) 0%, rgba(246, 240, 227, 1) 100%)":"default"
+       }}>
         {/* <Navbar open={open} hideRightMenu={hideRightMenu} handleDrawerOpen={handleDrawerOpen} /> */}
         <NavbarOnly />
         <Box

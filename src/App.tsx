@@ -62,16 +62,26 @@ function App() {
 
   const customPalette: CustomPalette = useMemo(() => ({
     light: {
+      // primary: {
+      //   // main: "#cddc39",
+      //   main: "#023e8a",
+      //   dark: "#006368",
+      //   light: "#00bdc7",
+      // },
+      // secondary: {
+      //   main: "#ffbe0b",
+      //   light: "#e7cb8c",
+      //   dark: "#e7cb8c",
+      // },
       primary: {
-        // main: "#cddc39",
-        main: "#023e8a",
-        dark: "#006368",
-        light: "#00bdc7",
+        main: '#8B3129',
       },
       secondary: {
-        main: "#ffbe0b",
-        light: "#e7cb8c",
-        dark: "#e7cb8c",
+        main: '#B3AA97',
+      },
+      background: {
+        default: '#f6f1e5',
+        paper: '#fdfaf3',
       },
     },
     dark: {
