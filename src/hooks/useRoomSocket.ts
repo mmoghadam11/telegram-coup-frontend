@@ -65,6 +65,14 @@ interface ProvePending {
   playerId: string;
   claimedRole: string;
 }
+
+interface AnarchistPendingState {
+  originalAttackerId: string;
+  currentTargetId: string;
+  chain: string[];
+  status: "awaiting_block_decision" | "awaiting_block_challenge" | "awaiting_pass_target";
+  blockChallengeResponses: Record<string, "allow" | "challenge">;
+}
 interface PublicGameState {
   phase: string;
   roomName: string | null;
@@ -74,6 +82,7 @@ interface PublicGameState {
   currentTurnIndex: number;
   deckCount: number;
   log: string[];
+  anarchistPending: AnarchistPendingState | null;
   pendingAction: PendingAction | null;
   revealPending: RevealPending | null;
   provePending: ProvePending | null;
@@ -190,9 +199,9 @@ export function useRoomSocket(roomId?: string) {
     [send]
   );
   const blockAction = useCallback(
-  (claimedRole: string) => send({ type: "block", claimedRole }),
-  [send]
-);
+    (claimedRole: string) => send({ type: "block", claimedRole }),
+    [send]
+  );
   const respondToBlock = useCallback(
     (response: "allow" | "challenge") => send({ type: "respond_to_block", response }),
     [send]
@@ -212,6 +221,18 @@ export function useRoomSocket(roomId?: string) {
   const sendContessaSelect = useCallback(
     (messageType: "contessa_self_select" | "contessa_other_select", roleIndex: number) =>
       send({ type: messageType, roleIndex }),
+    [send]
+  );
+  const anarchistRespond = useCallback(
+    (response: "allow" | "block") => send({ type: "anarchist_respond", response }),
+    [send]
+  );
+  const anarchistBlockRespond = useCallback(
+    (response: "allow" | "challenge") => send({ type: "anarchist_block_respond", response }),
+    [send]
+  );
+  const anarchistPass = useCallback(
+    (targetId: string) => send({ type: "anarchist_pass", targetId }),
     [send]
   );
   const respondToRestartVote = useCallback(
@@ -242,6 +263,9 @@ export function useRoomSocket(roomId?: string) {
     revealCard,
     sendContessaSelect,
     sendExchangeSelect,
+    anarchistRespond,
+    anarchistBlockRespond,
+    anarchistPass,
     restartGame,
     respondToRestartVote,
     leaveRoom,

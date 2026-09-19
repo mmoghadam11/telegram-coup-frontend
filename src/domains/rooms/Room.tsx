@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import {
   Box, Container, Typography, Chip, TextField, Button, Paper,
@@ -19,6 +19,8 @@ import ProveCardDialog from "./components/proving/ProveCardDialog";
 import ProveResultDialog from "./components/proving/ProveResultDialog";
 import { useCardPreload } from "hooks/useCardPreload";
 import ConfirmBox from "components/confirmBox/ConfirmBox";
+import AnarchistDialog from "./components/AnarchistDialog";
+import { useSnackbar } from "hooks/useSnackbar";
 
 
 const ROLE_LABELS_FA: Record<string, string> = {
@@ -26,13 +28,14 @@ const ROLE_LABELS_FA: Record<string, string> = {
   princess: "شاهدخت", assassin: "قاتل", contessa: "بازرس",
 };
 
-const ACTIONS_NEEDING_TARGET = ["coup", "assassinate", "steal", "contessa_other"];
+const ACTIONS_NEEDING_TARGET = ["coup", "assassinate", "steal", "contessa_other", "anarchist_attack"];
 
 const ACTION_LABELS: Record<string, string> = {
   income: "درآمد", foreign_aid: "کمک خارجی", coup: "کودتا",
   tax: "مالیات (بزرگ‌زاده)", assassinate: "ترور (قاتل)", steal: "دزدی (فرمانده)",
   exchange: "تعویض (سفیر)", contessa_self: "تعویض کارت خودم (بازرس)",
   contessa_other: "اجبار به تعویض (بازرس)",
+  anarchist_attack: "حمله‌ی آنارشیست", // این خط اضافه شد
 };
 
 export default function Room() {
@@ -40,11 +43,14 @@ export default function Room() {
   const Auth = useAuth();
   const { roomId } = useParams<{ roomId: string }>();
   const navigate = useNavigate();
+  const snackbar = useSnackbar();
+  const lastLogLineRef = useRef<string | null>(null);
+  const [showFullLog, setShowFullLog] = useState(false);
   const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
   const [restartDialogOpen, setRestartDialogOpen] = useState(false);
   const {
     connected, loaded, gameState, privateState,
-    sendProveCard, proofEvent, clearProofEvent,
+    sendProveCard, proofEvent, clearProofEvent, anarchistRespond, anarchistBlockRespond, anarchistPass,
     startGame, sendChat, sendAction, respond, blockAction, respondToBlock, revealCard, restartGame, leaveRoom, closeRoom, forceReset, sendContessaSelect, sendExchangeSelect, respondToRestartVote,
   } = useRoomSocket(roomId);
 
@@ -360,11 +366,19 @@ export default function Room() {
         <Button variant="contained" onClick={handleSend}>ارسال</Button>
       </Stack>
 
-      <Paper variant="outlined" sx={{ p: 1, maxHeight: 200, overflowY: "auto" }}>
-        {gameState.log.map((line, i) => (
-          <Typography key={i} variant="body2" sx={{ p: 0.5 }}>{line}</Typography>
-        ))}
-      </Paper>
+      <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 0.5 }}>
+        <Typography variant="caption" color="text.secondary">تاریخچه‌ی کامل</Typography>
+        <Button size="small" onClick={() => setShowFullLog((s) => !s)}>
+          {showFullLog ? "بستن" : "نمایش"}
+        </Button>
+      </Stack>
+      {showFullLog && (
+        <Paper variant="outlined" sx={{ p: 1, maxHeight: 200, overflowY: "auto" }}>
+          {gameState.log.map((line, i) => (
+            <Typography key={i} variant="body2" sx={{ p: 0.5 }}>{line}</Typography>
+          ))}
+        </Paper>
+      )}
       <BlockClaimDialog
         open={blockDialogOpen}
         options={pending ? BLOCKING_ROLES_FA[pending.action] || [] : []}
@@ -410,6 +424,17 @@ export default function Room() {
         onLeave={() => {
           respondToRestartVote("leave");
         }}
+      />
+      <AnarchistDialog
+        open={gameState.phase === "anarchist_in_progress"}
+        anarchist={gameState.anarchistPending}
+        players={gameState.players}
+        myUserId={myUserId}
+        onAllow={() => anarchistRespond("allow")}
+        onBlock={() => anarchistRespond("block")}
+        onBlockAllow={() => anarchistBlockRespond("allow")}
+        onBlockChallenge={() => anarchistBlockRespond("challenge")}
+        onPass={(targetId) => anarchistPass(targetId)}
       />
       <ConfirmBox
         open={closeWaitingConfirmOpen}
