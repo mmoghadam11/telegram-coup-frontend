@@ -41,9 +41,9 @@ export default function AnarchistDialog({
 
   if (!anarchist) return null;
 
-  const chain = [anarchist.originalAttackerId, ...anarchist.chain];
+  const chain = [anarchist.originalAttackerId, ...(anarchist.chain ?? [])];
   const isCurrentTarget = anarchist.currentTargetId === myUserId;
-  const alreadyRespondedToBlock = !!anarchist?.blockChallengeResponses[myUserId];
+  const alreadyRespondedToBlock = !!anarchist?.blockChallengeResponses?.[myUserId];
 
   const eligibleForPass = players.filter(
     (p) => p.id !== anarchist.originalAttackerId && !anarchist.chain.includes(p.id)
