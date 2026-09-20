@@ -27,6 +27,7 @@ interface Props {
   onBlockAllow: () => void;
   onBlockChallenge: () => void;
   onPass: (targetId: string) => void;
+  onNeutralize: () => void;
 }
 
 function nameOf(players: Player[], id: string) {
@@ -35,7 +36,7 @@ function nameOf(players: Player[], id: string) {
 
 export default function AnarchistDialog({
   open, anarchist, players, myUserId,
-  onAllow, onBlock, onBlockAllow, onBlockChallenge, onPass,
+  onAllow, onBlock, onBlockAllow, onBlockChallenge, onPass, onNeutralize,
 }: Props) {
   const [passTarget, setPassTarget] = useState("");
 
@@ -93,16 +94,25 @@ export default function AnarchistDialog({
         {anarchist.status === "awaiting_pass_target" && (
           isCurrentTarget ? (
             <Stack spacing={1} sx={{ mt: 1 }}>
-              <Typography variant="body2">بلاک شما تایید شد. کارت رو به کی pass می‌دید؟</Typography>
-              <Select size="small" value={passTarget} onChange={(e) => setPassTarget(e.target.value)}>
-                {eligibleForPass.map((p) => (
-                  <MenuItem key={p.id} value={p.id}>{p.name}</MenuItem>
-                ))}
-              </Select>
+              <Typography variant="body2">
+                بلاک شما تایید شد. می‌تونید کارت رو pass بدید یا حمله رو کامل خنثی کنید.
+              </Typography>
+              {eligibleForPass.length > 0 && (
+                <Select size="small" value={passTarget} onChange={(e) => setPassTarget(e.target.value)}>
+                  {eligibleForPass.map((p) => (
+                    <MenuItem key={p.id} value={p.id}>{p.name}</MenuItem>
+                  ))}
+                </Select>
+              )}
+              {eligibleForPass.length === 0 && (
+                <Typography variant="caption" color="text.secondary">
+                  کسی برای pass دادن باقی نمونده — فقط می‌تونید خنثی کنید.
+                </Typography>
+              )}
             </Stack>
           ) : (
             <Typography variant="body2" textAlign="center" color="text.secondary">
-              در انتظار pass دادن توسط {nameOf(players, anarchist.currentTargetId)}...
+              در انتظار تصمیم {nameOf(players, anarchist.currentTargetId)}...
             </Typography>
           )
         )}
@@ -123,10 +133,15 @@ export default function AnarchistDialog({
       )}
 
       {anarchist.status === "awaiting_pass_target" && isCurrentTarget && (
-        <DialogActions>
-          <Button variant="contained" disabled={!passTarget} onClick={() => onPass(passTarget)}>
-            تایید pass
+        <DialogActions sx={{ flexWrap: "wrap", justifyContent: "center", gap: 1 }}>
+          <Button color="secondary" onClick={onNeutralize}>
+            خنثی می‌کنم
           </Button>
+          {eligibleForPass.length > 0 && (
+            <Button variant="contained" disabled={!passTarget} onClick={() => onPass(passTarget)}>
+              تایید pass
+            </Button>
+          )}
         </DialogActions>
       )}
     </Dialog>

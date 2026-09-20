@@ -235,6 +235,10 @@ export function useRoomSocket(roomId?: string) {
     (targetId: string) => send({ type: "anarchist_pass", targetId }),
     [send]
   );
+  const anarchistNeutralize = useCallback(
+  () => send({ type: "anarchist_neutralize" }),
+  [send]
+);
   const respondToRestartVote = useCallback(
     (choice: "stay" | "leave") => send({ type: "respond_to_restart_vote", choice }),
     [send]
@@ -266,6 +270,7 @@ export function useRoomSocket(roomId?: string) {
     anarchistRespond,
     anarchistBlockRespond,
     anarchistPass,
+    anarchistNeutralize,
     restartGame,
     respondToRestartVote,
     leaveRoom,

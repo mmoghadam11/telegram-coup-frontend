@@ -50,7 +50,7 @@ export default function Room() {
   const [restartDialogOpen, setRestartDialogOpen] = useState(false);
   const {
     connected, loaded, gameState, privateState,
-    sendProveCard, proofEvent, clearProofEvent, anarchistRespond, anarchistBlockRespond, anarchistPass,
+    sendProveCard, proofEvent, clearProofEvent, anarchistRespond, anarchistBlockRespond, anarchistPass,anarchistNeutralize,
     startGame, sendChat, sendAction, respond, blockAction, respondToBlock, revealCard, restartGame, leaveRoom, closeRoom, forceReset, sendContessaSelect, sendExchangeSelect, respondToRestartVote,
   } = useRoomSocket(roomId);
 
@@ -435,6 +435,7 @@ export default function Room() {
         onBlockAllow={() => anarchistBlockRespond("allow")}
         onBlockChallenge={() => anarchistBlockRespond("challenge")}
         onPass={(targetId) => anarchistPass(targetId)}
+        onNeutralize={() => anarchistNeutralize()}
       />
       <ConfirmBox
         open={closeWaitingConfirmOpen}
