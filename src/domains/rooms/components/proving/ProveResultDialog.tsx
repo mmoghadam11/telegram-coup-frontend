@@ -27,7 +27,7 @@ export default function ProveResultDialog({ event, onClose }: Props) {
 
   return (
     <Dialog open={!!event} onClose={onClose}>
-      <audio ref={audioRef} src="/assets/sounds/reveal.wav" preload="auto" />
+      <audio ref={audioRef} src="/assets/sounds/reveal.mp3" preload="auto" />
       <DialogContent>
         <Stack alignItems="center" spacing={2} sx={{ py: 2 }}>
           <RoleCardImage role={event.role} size={130} reveal />

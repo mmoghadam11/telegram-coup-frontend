@@ -39,7 +39,7 @@ const ACTION_LABELS: Record<string, string> = {
 };
 
 export default function Room() {
-  const { playRevealSound } = useCardPreload();
+  const { playRevealSound, startAnarchistLoop, stopAnarchistLoop } = useCardPreload();
   const Auth = useAuth();
   const { roomId } = useParams<{ roomId: string }>();
   const navigate = useNavigate();
@@ -50,10 +50,18 @@ export default function Room() {
   const [restartDialogOpen, setRestartDialogOpen] = useState(false);
   const {
     connected, loaded, gameState, privateState,
-    sendProveCard, proofEvent, clearProofEvent, anarchistRespond, anarchistBlockRespond, anarchistPass,anarchistNeutralize,
+    sendProveCard, proofEvent, clearProofEvent, anarchistRespond, anarchistBlockRespond, anarchistPass, anarchistNeutralize,
     startGame, sendChat, sendAction, respond, blockAction, respondToBlock, revealCard, restartGame, leaveRoom, closeRoom, forceReset, sendContessaSelect, sendExchangeSelect, respondToRestartVote,
   } = useRoomSocket(roomId);
 
+  useEffect(() => {
+    if (gameState?.phase === "anarchist_in_progress") {
+      startAnarchistLoop();
+    } else {
+      stopAnarchistLoop();
+    }
+  }, [gameState?.phase]);
+  
   useEffect(() => {
     if (!proofEvent) return;
 
