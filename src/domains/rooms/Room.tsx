@@ -21,6 +21,8 @@ import { useCardPreload } from "hooks/useCardPreload";
 import ConfirmBox from "components/confirmBox/ConfirmBox";
 import AnarchistDialog from "./components/AnarchistDialog";
 import { useSnackbar } from "hooks/useSnackbar";
+import ActionCarousel from "components/cards/ActionCarousel";
+import { ACTION_CARD_DATA } from "shared/constants/actionCards";
 
 
 const ROLE_LABELS_FA: Record<string, string> = {
@@ -61,7 +63,7 @@ export default function Room() {
       stopAnarchistLoop();
     }
   }, [gameState?.phase]);
-  
+
   useEffect(() => {
     if (!proofEvent) return;
 
@@ -270,7 +272,7 @@ export default function Room() {
       </Paper>
 
       {/* دکمه‌های اکشن — فقط وقتی نوبت خودمه و منتظر اکشن جدید هستیم */}
-      {gameState.phase === "awaiting_action" && isMyTurn && (
+      {/* {gameState.phase === "awaiting_action" && isMyTurn && (
         <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap sx={{ mb: 2 }}>
           {Object.keys(ACTION_LABELS).map((action) => (
             <Button key={action} size="small" variant="outlined" onClick={() => handleActionClick(action)}>
@@ -278,6 +280,17 @@ export default function Room() {
             </Button>
           ))}
         </Stack>
+      )} */}
+      {gameState.phase === "awaiting_action" && isMyTurn && (
+        <Box sx={{ mb: 2 }}>
+          <ActionCarousel
+            actions={Object.keys(ACTION_CARD_DATA).map((action) => ({
+              action,
+              ...ACTION_CARD_DATA[action],
+            }))}
+            onSelect={handleActionClick}
+          />
+        </Box>
       )}
 
       {/* اکشن یکی دیگه در انتظار پاسخ بقیه‌ست */}
