@@ -1,6 +1,6 @@
 import { useCallback, useEffect, useRef } from "react";
 
-const ROLES = ["duke", "captain", "ambassador", "princess", "assassin", "contessa"];
+const actionCard = ["duke", "captain", "ambassador", "princess", "assassin", "contessa", "aid", "income", "coup"];
 
 export function useCardPreload() {
   const revealAudioRef = useRef<HTMLAudioElement | null>(null);
@@ -10,7 +10,7 @@ export function useCardPreload() {
   const sourceNodeRef = useRef<MediaElementAudioSourceNode | null>(null);
 
   useEffect(() => {
-    ROLES.forEach((role) => {
+    actionCard.forEach((role) => {
       const img = new Image();
       img.src = `/assets/images/cards/minimal/${role}.png`;
     });
