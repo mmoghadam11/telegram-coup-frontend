@@ -29,7 +29,7 @@ interface PlayerSeatProps {
   isCurrentTurn: boolean;
 }
 
-const AVATAR_SIZE = { xs: 32, sm: 38 };
+const AVATAR_SIZE = { xs: 30, sm: 36 };
 
 export default function PlayerSeat({ player, isMe, isCurrentTurn }: PlayerSeatProps) {
   const avatarLetter = player.name?.charAt(0) || "?";
@@ -37,103 +37,21 @@ export default function PlayerSeat({ player, isMe, isCurrentTurn }: PlayerSeatPr
   return (
     <Stack
       alignItems="center"
-      spacing={0.5}
+      spacing={0.4}
       sx={{
-        width: { xs: 84, sm: 100 },
+        width: { xs: 108, sm: 128 },
         userSelect: "none",
         opacity: player.isAlive ? 1 : 0.45,
       }}
     >
-      {/* آواتار + نقطه‌ی اتصال + نشان مرگ، همه نسبت به همین باکس */}
-      <Box sx={{ position: "relative", lineHeight: 0 }}>
-        <motion.div
-          animate={isCurrentTurn ? { scale: [1, 1.045, 1] } : { scale: 1 }}
-          transition={
-            isCurrentTurn
-              ? { duration: 1.6, repeat: Infinity, ease: "easeInOut" }
-              : { duration: 0.2 }
-          }
-          style={{ borderRadius: "50%", display: "inline-block" }}
-        >
-          <Box
-            sx={{
-              borderRadius: "50%",
-              p: "2px",
-              background: isCurrentTurn
-                ? "linear-gradient(135deg, #fff6b0, #e0a52f, #fff6b0)"
-                : isMe
-                ? "linear-gradient(135deg, #ffe9a3, #b98524)"
-                : "rgba(255,255,255,.22)",
-              boxShadow: isCurrentTurn
-                ? "0 0 8px 3px rgba(255,193,7,.7), 0 0 24px 7px rgba(255,193,7,.35)"
-                : isMe
-                ? "0 0 10px rgba(255,193,7,.35)"
-                : "0 4px 12px rgba(0,0,0,.45)",
-              transition: "all .3s ease",
-              display: "inline-flex",
-            }}
-          >
-            <Avatar
-              src={player.photo_url || undefined}
-              alt={player.name}
-              imgProps={{ referrerPolicy: "no-referrer" }}
-              sx={{
-                width: AVATAR_SIZE,
-                height: AVATAR_SIZE,
-                bgcolor: "background.paper",
-                color: "text.primary",
-                border: "1px solid",
-                borderColor: "background.paper",
-                fontSize: { xs: 16, sm: 19 },
-                fontWeight: 500,
-              }}
-            >
-              {avatarLetter}
-            </Avatar>
-          </Box>
-        </motion.div>
-
-        {/* وضعیت اتصال — حالا نسبت به همین باکس آواتار، نه کل seat */}
-        <Box
-          sx={{
-            position: "absolute",
-            bottom: 1,
-            right: 1,
-            width: 9,
-            height: 9,
-            borderRadius: "50%",
-            backgroundColor: player.connected ? "#31d158" : "#777",
-            border: "2px solid",
-            borderColor: "background.paper",
-            zIndex: 3,
-          }}
-        />
-
-        {/* نشان مرگ — روی خود آواتار، نه شناور بالای seat */}
-        {!player.isAlive && (
-          <Box
-            sx={{
-              position: "absolute",
-              inset: 0,
-              display: "flex",
-              alignItems: "center",
-              justifyContent: "center",
-              fontSize: { xs: 16, sm: 19 },
-              filter: "drop-shadow(0 1px 2px rgba(0,0,0,.8))",
-            }}
-          >
-            ☠️
-          </Box>
-        )}
-      </Box>
-
-      {/* اسم */}
-      <Box
+      {/* ردیف ۱: آواتار + اسم، کنار هم و هم‌سطح */}
+      <Stack
+        direction="row"
+        alignItems="center"
+        spacing={0.7}
         sx={{
-          px: { xs: 1, sm: 1.5 },
+          px: 0.8,
           py: 0.3,
-          minWidth: 60,
-          maxWidth: { xs: 84, sm: 100 },
           borderRadius: 10,
           backgroundColor: "rgba(0,0,0,.72)",
           border: "1px solid",
@@ -142,50 +60,126 @@ export default function PlayerSeat({ player, isMe, isCurrentTurn }: PlayerSeatPr
             : isMe
             ? "rgba(255,193,7,.55)"
             : "rgba(255,255,255,.12)",
-          textAlign: "center",
           boxShadow: isCurrentTurn ? "0 0 10px rgba(255,193,7,.25)" : "none",
+          maxWidth: "100%",
         }}
       >
+        <Box sx={{ position: "relative", lineHeight: 0, flexShrink: 0 }}>
+          <motion.div
+            animate={isCurrentTurn ? { scale: [1, 1.045, 1] } : { scale: 1 }}
+            transition={
+              isCurrentTurn
+                ? { duration: 1.6, repeat: Infinity, ease: "easeInOut" }
+                : { duration: 0.2 }
+            }
+            style={{ borderRadius: "50%", display: "inline-block" }}
+          >
+            <Box
+              sx={{
+                borderRadius: "50%",
+                p: "2px",
+                background: isCurrentTurn
+                  ? "linear-gradient(135deg, #fff6b0, #e0a52f, #fff6b0)"
+                  : isMe
+                  ? "linear-gradient(135deg, #ffe9a3, #b98524)"
+                  : "rgba(255,255,255,.22)",
+                display: "inline-flex",
+              }}
+            >
+              <Avatar
+                src={player.photo_url || undefined}
+                alt={player.name}
+                imgProps={{ referrerPolicy: "no-referrer" }}
+                sx={{
+                  width: AVATAR_SIZE,
+                  height: AVATAR_SIZE,
+                  bgcolor: "background.paper",
+                  color: "text.primary",
+                  fontSize: { xs: 15, sm: 18 },
+                  fontWeight: 500,
+                }}
+              >
+                {avatarLetter}
+              </Avatar>
+            </Box>
+          </motion.div>
+
+          <Box
+            sx={{
+              position: "absolute",
+              bottom: 0,
+              right: 0,
+              width: 8,
+              height: 8,
+              borderRadius: "50%",
+              backgroundColor: player.connected ? "#31d158" : "#777",
+              border: "2px solid",
+              borderColor: "background.paper",
+              zIndex: 3,
+            }}
+          />
+
+          {!player.isAlive && (
+            <Box
+              sx={{
+                position: "absolute",
+                inset: 0,
+                display: "flex",
+                alignItems: "center",
+                justifyContent: "center",
+                fontSize: { xs: 14, sm: 17 },
+                filter: "drop-shadow(0 1px 2px rgba(0,0,0,.8))",
+              }}
+            >
+              ☠️
+            </Box>
+          )}
+        </Box>
+
         <Typography
           noWrap
           sx={{
             fontSize: { xs: 9, sm: 11 },
             fontWeight: isMe || isCurrentTurn ? 800 : 500,
             color: isMe ? "warning.light" : "#fff",
+            minWidth: 0,
+            flex: 1,
           }}
         >
           {player.name}
           {isMe ? " (شما)" : ""}
         </Typography>
-      </Box>
+      </Stack>
 
-      {/* سکه — همیشه یه ردیف مجزا و هم‌مرکز */}
-      <CoinStack count={player.coins} />
-
-      {/* کارت‌های رو‌شده — همیشه یه ردیف مجزا زیر سکه، نه کنارش */}
-      {player.revealedRoles.length > 0 && (
-        <Stack direction="row" justifyContent="center" sx={{ mt: -0.2 }}>
-          {player.revealedRoles.map((role, index) => {
-            const image = ROLE_IMAGES[role];
-            if (!image) return null;
-            return (
-              <Box
-                key={`${player.id}-${role}-${index}`}
-                component="img"
-                src={image}
-                alt={role}
-                sx={{
-                  width: { xs: 22, sm: 28 },
-                  objectFit: "cover",
-                  borderRadius: "4px",
-                  border: "1px solid rgba(255,255,255,.5)",
-                  boxShadow: "0 2px 5px rgba(0,0,0,.5)",
-                  ml: index === 0 ? 0 : -0.9,
-                  zIndex: index,
-                }}
-              />
-            );
-          })}
+      {/* ردیف ۲: سکه + کارت‌های رو‌شده، کنار هم */}
+      {(player.coins > 0 || player.revealedRoles.length > 0) && (
+        <Stack direction="row" alignItems="center" spacing={0.5}>
+          {player.coins > 0 && <CoinStack count={player.coins} />}
+          {player.revealedRoles.length > 0 && (
+            <Stack direction="row">
+              {player.revealedRoles.map((role, index) => {
+                const image = ROLE_IMAGES[role];
+                if (!image) return null;
+                return (
+                  <Box
+                    key={`${player.id}-${role}-${index}`}
+                    component="img"
+                    src={image}
+                    alt={role}
+                    sx={{
+                      width: { xs: 20, sm: 26 },
+                      objectFit: "cover",
+                      borderRadius: "4px",
+                      border: "1px solid rgba(255,255,255,.5)",
+                      boxShadow: "0 2px 5px rgba(0,0,0,.5)",
+                      ml: index === 0 ? 0 : -0.8,
+                      zIndex: index,
+                    }}
+                  />
+                );
+              })}
+            </Stack>
+          )}
         </Stack>
       )}
     </Stack>
