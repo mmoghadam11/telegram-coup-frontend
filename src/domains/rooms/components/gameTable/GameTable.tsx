@@ -9,8 +9,8 @@ interface GameTableProps {
 }
 
 const BOTTOM_GAP_DEGREES = 70;
-const SEAT_RADIUS_PERCENT = 36;
-const MY_SEAT_TOP_PERCENT = 90;
+const SEAT_RADIUS_PERCENT = 30;
+const MY_SEAT_TOP_PERCENT = 80;
 
 export default function GameTable({ players, myUserId, currentTurnPlayerId }: GameTableProps) {
   const theme = useTheme();
