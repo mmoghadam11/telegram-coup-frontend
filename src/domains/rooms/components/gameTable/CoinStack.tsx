@@ -19,7 +19,7 @@ export default function CoinStack({ count }: CoinStackProps) {
     >
       <Box
         component="img"
-        src="/assets/images/coin.png"
+        src="/assets/images/cards/coin.png"
         alt="coin"
         sx={{
           width: 22,
