@@ -271,13 +271,17 @@ export default function Room() {
           ))}
         </List>
       </Paper> */}
-      <GameTable
-        players={gameState.players}
-        myUserId={myUserId}
-        currentTurnPlayerId={
-          gameState.turnOrder[gameState.currentTurnIndex]
-        }
-      />
+      {gameState.phase !== "waiting_for_players" && (
+        <GameTable
+          players={gameState.players}
+          myUserId={myUserId}
+          currentTurnPlayerId={
+            gameState.turnOrder[
+            gameState.currentTurnIndex
+            ]
+          }
+        />
+      )}
 
       {/* دکمه‌های اکشن — فقط وقتی نوبت خودمه و منتظر اکشن جدید هستیم */}
       {/* {gameState.phase === "awaiting_action" && isMyTurn && (

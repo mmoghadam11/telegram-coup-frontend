@@ -12,7 +12,7 @@ const ROLE_IMAGES: Record<string, string> = {
   contessa: "/assets/images/cards/minimal/contessa.png",
 };
 
-interface Player {
+export interface GameTablePlayer {
   id: string;
   name: string;
   connected: boolean;
@@ -20,10 +20,13 @@ interface Player {
   roleCount: number;
   revealedRoles: string[];
   isAlive: boolean;
+
+  // عکس پروفایل تلگرام
+  photo_url?: string | null;
 }
 
 interface PlayerSeatProps {
-  player: Player;
+  player: GameTablePlayer;
   isMe: boolean;
   isCurrentTurn: boolean;
 }
@@ -38,12 +41,20 @@ export default function PlayerSeat({
   return (
     <Box
       sx={{
-        width: 120,
+        width: {
+          xs: 88,
+          sm: 110,
+        },
+
         display: "flex",
         flexDirection: "column",
         alignItems: "center",
+
         userSelect: "none",
+
         opacity: player.isAlive ? 1 : 0.45,
+
+        position: "relative",
       }}
     >
       {/* Avatar */}
@@ -51,7 +62,7 @@ export default function PlayerSeat({
         animate={
           isCurrentTurn
             ? {
-                scale: [1, 1.06, 1],
+                scale: [1, 1.045, 1],
               }
             : {
                 scale: 1,
@@ -60,11 +71,13 @@ export default function PlayerSeat({
         transition={
           isCurrentTurn
             ? {
-                duration: 1.8,
+                duration: 1.6,
                 repeat: Infinity,
                 ease: "easeInOut",
               }
-            : undefined
+            : {
+                duration: 0.2,
+              }
         }
         style={{
           borderRadius: "50%",
@@ -75,24 +88,52 @@ export default function PlayerSeat({
           sx={{
             borderRadius: "50%",
             padding: "3px",
+
             background: isCurrentTurn
-              ? "linear-gradient(135deg, #fff3a0, #d69b24, #fff3a0)"
-              : "rgba(255,255,255,.25)",
+              ? "linear-gradient(135deg, #fff6b0, #e0a52f, #fff6b0)"
+              : isMe
+                ? "linear-gradient(135deg, #ffe9a3, #b98524)"
+                : "rgba(255,255,255,.22)",
+
             boxShadow: isCurrentTurn
-              ? "0 0 8px 3px rgba(255,193,7,.65), 0 0 25px rgba(255,193,7,.35)"
-              : "0 3px 10px rgba(0,0,0,.35)",
+              ? `
+                0 0 8px 3px rgba(255,193,7,.7),
+                0 0 24px 7px rgba(255,193,7,.35)
+              `
+              : isMe
+                ? "0 0 10px rgba(255,193,7,.35)"
+                : "0 4px 12px rgba(0,0,0,.45)",
+
             transition: "all .3s ease",
           }}
         >
           <Avatar
+            src={player.photo_url || undefined}
+            alt={player.name}
+            imgProps={{
+              referrerPolicy: "no-referrer",
+            }}
             sx={{
-              width: 62,
-              height: 62,
+              width: {
+                xs: 48,
+                sm: 60,
+              },
+              height: {
+                xs: 48,
+                sm: 60,
+              },
+
               bgcolor: "background.paper",
               color: "text.primary",
+
               border: "2px solid",
               borderColor: "background.paper",
-              fontSize: 25,
+
+              fontSize: {
+                xs: 20,
+                sm: 25,
+              },
+
               fontWeight: 700,
             }}
           >
@@ -101,29 +142,87 @@ export default function PlayerSeat({
         </Box>
       </motion.div>
 
+      {/* وضعیت اتصال */}
+      <Box
+        sx={{
+          position: "absolute",
+
+          top: {
+            xs: 40,
+            sm: 50,
+          },
+
+          right: {
+            xs: 13,
+            sm: 16,
+          },
+
+          width: 11,
+          height: 11,
+
+          borderRadius: "50%",
+
+          backgroundColor: player.connected
+            ? "#31d158"
+            : "#777",
+
+          border: "2px solid",
+          borderColor: "background.paper",
+
+          zIndex: 3,
+        }}
+      />
+
       {/* Name */}
       <Box
         sx={{
           mt: 0.5,
-          px: 1.5,
+
+          px: {
+            xs: 1,
+            sm: 1.5,
+          },
+
           py: 0.35,
-          minWidth: 80,
-          maxWidth: 115,
+
+          minWidth: 70,
+          maxWidth: 110,
+
           borderRadius: 10,
-          backgroundColor: "rgba(0,0,0,.65)",
+
+          backgroundColor: "rgba(0,0,0,.72)",
+
           border: "1px solid",
-          borderColor: isMe
-            ? "rgba(255,193,7,.7)"
-            : "rgba(255,255,255,.12)",
+
+          borderColor: isCurrentTurn
+            ? "rgba(255,193,7,.8)"
+            : isMe
+              ? "rgba(255,193,7,.55)"
+              : "rgba(255,255,255,.12)",
+
           textAlign: "center",
+
+          boxShadow: isCurrentTurn
+            ? "0 0 10px rgba(255,193,7,.25)"
+            : "none",
         }}
       >
         <Typography
           noWrap
           sx={{
-            fontSize: 12,
-            fontWeight: isMe || isCurrentTurn ? 700 : 500,
-            color: isMe ? "warning.light" : "#fff",
+            fontSize: {
+              xs: 10,
+              sm: 12,
+            },
+
+            fontWeight:
+              isMe || isCurrentTurn
+                ? 800
+                : 500,
+
+            color: isMe
+              ? "warning.light"
+              : "#fff",
           }}
         >
           {player.name}
@@ -142,37 +241,76 @@ export default function PlayerSeat({
           display: "flex",
           justifyContent: "center",
           alignItems: "flex-start",
+
           mt: 0.7,
-          minHeight: 50,
+
+          minHeight: {
+            xs: 42,
+            sm: 50,
+          },
         }}
       >
-        {player.revealedRoles.map((role, index) => (
-          <Box
-            key={`${player.id}-${role}-${index}`}
-            component="img"
-            src={ROLE_IMAGES[role]}
-            alt={role}
-            sx={{
-              width: 34,
-              height: 48,
-              objectFit: "cover",
-              borderRadius: "4px",
-              border: "1px solid rgba(255,255,255,.4)",
-              boxShadow: "0 2px 5px rgba(0,0,0,.4)",
-              ml: index === 0 ? 0 : -1.2,
-              zIndex: index,
-            }}
-          />
-        ))}
+        {player.revealedRoles.map((role, index) => {
+          const image = ROLE_IMAGES[role];
+
+          if (!image) return null;
+
+          return (
+            <Box
+              key={`${player.id}-${role}-${index}`}
+              component="img"
+              src={image}
+              alt={role}
+              sx={{
+                width: {
+                  xs: 28,
+                  sm: 36,
+                },
+
+                height: {
+                  xs: 40,
+                  sm: 50,
+                },
+
+                objectFit: "cover",
+
+                borderRadius: "4px",
+
+                border:
+                  "1px solid rgba(255,255,255,.5)",
+
+                boxShadow:
+                  "0 2px 6px rgba(0,0,0,.55)",
+
+                ml: index === 0 ? 0 : -1.3,
+
+                zIndex: index,
+              }}
+            />
+          );
+        })}
       </Box>
 
-      {/* Dead */}
+      {/* Dead player */}
       {!player.isAlive && (
         <Typography
           sx={{
             position: "absolute",
-            fontSize: 25,
-            mt: 1,
+
+            top: {
+              xs: 16,
+              sm: 20,
+            },
+
+            fontSize: {
+              xs: 22,
+              sm: 28,
+            },
+
+            zIndex: 5,
+
+            filter:
+              "drop-shadow(0 2px 3px rgba(0,0,0,.7))",
           }}
         >
           ☠️
