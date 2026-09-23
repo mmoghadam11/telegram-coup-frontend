@@ -1,5 +1,5 @@
 import React from "react";
-import { Avatar, Box, Typography } from "@mui/material";
+import { Avatar, Box, Stack, Typography } from "@mui/material";
 import { motion } from "motion/react";
 import CoinStack from "./CoinStack";
 
@@ -62,22 +62,22 @@ export default function PlayerSeat({
         animate={
           isCurrentTurn
             ? {
-                scale: [1, 1.045, 1],
-              }
+              scale: [1, 1.045, 1],
+            }
             : {
-                scale: 1,
-              }
+              scale: 1,
+            }
         }
         transition={
           isCurrentTurn
             ? {
-                duration: 1.6,
-                repeat: Infinity,
-                ease: "easeInOut",
-              }
+              duration: 1.6,
+              repeat: Infinity,
+              ease: "easeInOut",
+            }
             : {
-                duration: 0.2,
-              }
+              duration: 0.2,
+            }
         }
         style={{
           borderRadius: "50%",
@@ -87,7 +87,7 @@ export default function PlayerSeat({
         <Box
           sx={{
             borderRadius: "50%",
-            padding: "3px",
+            padding: "2px",
 
             background: isCurrentTurn
               ? "linear-gradient(135deg, #fff6b0, #e0a52f, #fff6b0)"
@@ -115,18 +115,18 @@ export default function PlayerSeat({
             }}
             sx={{
               width: {
-                xs: 48,
-                sm: 60,
+                xs: 30,
+                sm: 35,
               },
               height: {
-                xs: 48,
-                sm: 60,
+                xs: 30,
+                sm: 35,
               },
 
               bgcolor: "background.paper",
               color: "text.primary",
 
-              border: "2px solid",
+              border: "1px solid",
               borderColor: "background.paper",
 
               fontSize: {
@@ -134,7 +134,7 @@ export default function PlayerSeat({
                 sm: 25,
               },
 
-              fontWeight: 700,
+              fontWeight: 500,
             }}
           >
             {avatarLetter}
@@ -229,67 +229,69 @@ export default function PlayerSeat({
           {isMe ? " (شما)" : ""}
         </Typography>
       </Box>
+      <Stack direction={"row"}>
+        {/* Coins */}
+        <Box sx={{ mt: 0.6 }}>
+          <CoinStack count={player.coins} />
+        </Box>
 
-      {/* Coins */}
-      <Box sx={{ mt: 0.6 }}>
-        <CoinStack count={player.coins} />
-      </Box>
+        {/* Revealed Cards */}
+        <Box
+          sx={{
+            display: "flex",
+            justifyContent: "center",
+            alignItems: "flex-start",
 
-      {/* Revealed Cards */}
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "center",
-          alignItems: "flex-start",
+            mt: 0.6,
 
-          mt: 0.7,
+            minHeight: {
+              xs: 42,
+              sm: 50,
+            },
+          }}
+        >
+          {player.revealedRoles.map((role, index) => {
+            const image = ROLE_IMAGES[role];
 
-          minHeight: {
-            xs: 42,
-            sm: 50,
-          },
-        }}
-      >
-        {player.revealedRoles.map((role, index) => {
-          const image = ROLE_IMAGES[role];
+            if (!image) return null;
 
-          if (!image) return null;
+            return (
+              <Box
+                key={`${player.id}-${role}-${index}`}
+                component="img"
+                src={image}
+                alt={role}
+                sx={{
+                  width: {
+                    xs: 28,
+                    sm: 36,
+                  },
 
-          return (
-            <Box
-              key={`${player.id}-${role}-${index}`}
-              component="img"
-              src={image}
-              alt={role}
-              sx={{
-                width: {
-                  xs: 28,
-                  sm: 36,
-                },
+                  // height: {
+                  //   xs: 40,
+                  //   sm: 50,
+                  // },
 
-                height: {
-                  xs: 40,
-                  sm: 50,
-                },
+                  objectFit: "cover",
 
-                objectFit: "cover",
+                  borderRadius: "4px",
 
-                borderRadius: "4px",
+                  border:
+                    "1px solid rgba(255,255,255,.5)",
 
-                border:
-                  "1px solid rgba(255,255,255,.5)",
+                  boxShadow:
+                    "0 2px 6px rgba(0,0,0,.55)",
 
-                boxShadow:
-                  "0 2px 6px rgba(0,0,0,.55)",
+                  ml: index === 0 ? 0 : -1.3,
 
-                ml: index === 0 ? 0 : -1.3,
+                  zIndex: index,
+                }}
+              />
+            );
+          })}
+        </Box>
+      </Stack>
 
-                zIndex: index,
-              }}
-            />
-          );
-        })}
-      </Box>
 
       {/* Dead player */}
       {!player.isAlive && (
