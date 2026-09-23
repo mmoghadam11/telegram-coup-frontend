@@ -18,7 +18,7 @@ export default function ActionCard({ action, image, title, description, disabled
     <Card
       sx={{
         flex: "0 0 50%",
-        borderRadius: "5px",
+        borderRadius: "10px",
         position: "relative",
         width: "100%",
         cursor: disabled ? "default" : "pointer",
