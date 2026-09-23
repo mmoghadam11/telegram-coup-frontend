@@ -11,10 +11,11 @@ export default function CoinStack({ count }: CoinStackProps) {
   return (
     <Box
       sx={{
+        direction:"row",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        gap: 0.4,
+        gap: 0.2,
       }}
     >
       <Box
