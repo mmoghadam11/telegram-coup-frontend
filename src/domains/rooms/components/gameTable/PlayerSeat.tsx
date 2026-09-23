@@ -20,8 +20,6 @@ export interface GameTablePlayer {
   roleCount: number;
   revealedRoles: string[];
   isAlive: boolean;
-
-  // عکس پروفایل تلگرام
   photo_url?: string | null;
 }
 
@@ -31,230 +29,145 @@ interface PlayerSeatProps {
   isCurrentTurn: boolean;
 }
 
-export default function PlayerSeat({
-  player,
-  isMe,
-  isCurrentTurn,
-}: PlayerSeatProps) {
+const AVATAR_SIZE = { xs: 32, sm: 38 };
+
+export default function PlayerSeat({ player, isMe, isCurrentTurn }: PlayerSeatProps) {
   const avatarLetter = player.name?.charAt(0) || "?";
 
   return (
-    <Box
+    <Stack
+      alignItems="center"
+      spacing={0.5}
       sx={{
-        width: {
-          xs: 88,
-          sm: 110,
-        },
-
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-
+        width: { xs: 84, sm: 100 },
         userSelect: "none",
-
         opacity: player.isAlive ? 1 : 0.45,
-
-        position: "relative",
       }}
     >
-      {/* Avatar */}
-      <motion.div
-        animate={
-          isCurrentTurn
-            ? {
-              scale: [1, 1.045, 1],
-            }
-            : {
-              scale: 1,
-            }
-        }
-        transition={
-          isCurrentTurn
-            ? {
-              duration: 1.6,
-              repeat: Infinity,
-              ease: "easeInOut",
-            }
-            : {
-              duration: 0.2,
-            }
-        }
-        style={{
-          borderRadius: "50%",
-          padding: 4,
-        }}
-      >
-        <Box
-          sx={{
-            borderRadius: "50%",
-            padding: "2px",
-
-            background: isCurrentTurn
-              ? "linear-gradient(135deg, #fff6b0, #e0a52f, #fff6b0)"
-              : isMe
+      {/* آواتار + نقطه‌ی اتصال + نشان مرگ، همه نسبت به همین باکس */}
+      <Box sx={{ position: "relative", lineHeight: 0 }}>
+        <motion.div
+          animate={isCurrentTurn ? { scale: [1, 1.045, 1] } : { scale: 1 }}
+          transition={
+            isCurrentTurn
+              ? { duration: 1.6, repeat: Infinity, ease: "easeInOut" }
+              : { duration: 0.2 }
+          }
+          style={{ borderRadius: "50%", display: "inline-block" }}
+        >
+          <Box
+            sx={{
+              borderRadius: "50%",
+              p: "2px",
+              background: isCurrentTurn
+                ? "linear-gradient(135deg, #fff6b0, #e0a52f, #fff6b0)"
+                : isMe
                 ? "linear-gradient(135deg, #ffe9a3, #b98524)"
                 : "rgba(255,255,255,.22)",
-
-            boxShadow: isCurrentTurn
-              ? `
-                0 0 8px 3px rgba(255,193,7,.7),
-                0 0 24px 7px rgba(255,193,7,.35)
-              `
-              : isMe
+              boxShadow: isCurrentTurn
+                ? "0 0 8px 3px rgba(255,193,7,.7), 0 0 24px 7px rgba(255,193,7,.35)"
+                : isMe
                 ? "0 0 10px rgba(255,193,7,.35)"
                 : "0 4px 12px rgba(0,0,0,.45)",
-
-            transition: "all .3s ease",
-          }}
-        >
-          <Avatar
-            src={player.photo_url || undefined}
-            alt={player.name}
-            imgProps={{
-              referrerPolicy: "no-referrer",
-            }}
-            sx={{
-              width: {
-                xs: 30,
-                sm: 35,
-              },
-              height: {
-                xs: 30,
-                sm: 35,
-              },
-
-              bgcolor: "background.paper",
-              color: "text.primary",
-
-              border: "1px solid",
-              borderColor: "background.paper",
-
-              fontSize: {
-                xs: 20,
-                sm: 25,
-              },
-
-              fontWeight: 500,
+              transition: "all .3s ease",
+              display: "inline-flex",
             }}
           >
-            {avatarLetter}
-          </Avatar>
-        </Box>
-      </motion.div>
+            <Avatar
+              src={player.photo_url || undefined}
+              alt={player.name}
+              imgProps={{ referrerPolicy: "no-referrer" }}
+              sx={{
+                width: AVATAR_SIZE,
+                height: AVATAR_SIZE,
+                bgcolor: "background.paper",
+                color: "text.primary",
+                border: "1px solid",
+                borderColor: "background.paper",
+                fontSize: { xs: 16, sm: 19 },
+                fontWeight: 500,
+              }}
+            >
+              {avatarLetter}
+            </Avatar>
+          </Box>
+        </motion.div>
 
-      {/* وضعیت اتصال */}
+        {/* وضعیت اتصال — حالا نسبت به همین باکس آواتار، نه کل seat */}
+        <Box
+          sx={{
+            position: "absolute",
+            bottom: 1,
+            right: 1,
+            width: 9,
+            height: 9,
+            borderRadius: "50%",
+            backgroundColor: player.connected ? "#31d158" : "#777",
+            border: "2px solid",
+            borderColor: "background.paper",
+            zIndex: 3,
+          }}
+        />
+
+        {/* نشان مرگ — روی خود آواتار، نه شناور بالای seat */}
+        {!player.isAlive && (
+          <Box
+            sx={{
+              position: "absolute",
+              inset: 0,
+              display: "flex",
+              alignItems: "center",
+              justifyContent: "center",
+              fontSize: { xs: 16, sm: 19 },
+              filter: "drop-shadow(0 1px 2px rgba(0,0,0,.8))",
+            }}
+          >
+            ☠️
+          </Box>
+        )}
+      </Box>
+
+      {/* اسم */}
       <Box
         sx={{
-          position: "absolute",
-
-          top: {
-            xs: 40,
-            sm: 50,
-          },
-
-          right: {
-            xs: 13,
-            sm: 16,
-          },
-
-          width: 11,
-          height: 11,
-
-          borderRadius: "50%",
-
-          backgroundColor: player.connected
-            ? "#31d158"
-            : "#777",
-
-          border: "2px solid",
-          borderColor: "background.paper",
-
-          zIndex: 3,
-        }}
-      />
-
-      {/* Name */}
-      <Box
-        sx={{
-          mt: 0.5,
-
-          px: {
-            xs: 1,
-            sm: 1.5,
-          },
-
-          py: 0.35,
-
-          minWidth: 70,
-          maxWidth: 110,
-
+          px: { xs: 1, sm: 1.5 },
+          py: 0.3,
+          minWidth: 60,
+          maxWidth: { xs: 84, sm: 100 },
           borderRadius: 10,
-
           backgroundColor: "rgba(0,0,0,.72)",
-
           border: "1px solid",
-
           borderColor: isCurrentTurn
             ? "rgba(255,193,7,.8)"
             : isMe
-              ? "rgba(255,193,7,.55)"
-              : "rgba(255,255,255,.12)",
-
+            ? "rgba(255,193,7,.55)"
+            : "rgba(255,255,255,.12)",
           textAlign: "center",
-
-          boxShadow: isCurrentTurn
-            ? "0 0 10px rgba(255,193,7,.25)"
-            : "none",
+          boxShadow: isCurrentTurn ? "0 0 10px rgba(255,193,7,.25)" : "none",
         }}
       >
         <Typography
           noWrap
           sx={{
-            fontSize: {
-              xs: 10,
-              sm: 12,
-            },
-
-            fontWeight:
-              isMe || isCurrentTurn
-                ? 800
-                : 500,
-
-            color: isMe
-              ? "warning.light"
-              : "#fff",
+            fontSize: { xs: 9, sm: 11 },
+            fontWeight: isMe || isCurrentTurn ? 800 : 500,
+            color: isMe ? "warning.light" : "#fff",
           }}
         >
           {player.name}
           {isMe ? " (شما)" : ""}
         </Typography>
       </Box>
-      <Stack direction={"row"}>
-        {/* Coins */}
-        <Box sx={{ mt: 0.6 }}>
-          <CoinStack count={player.coins} />
-        </Box>
 
-        {/* Revealed Cards */}
-        <Box
-          sx={{
-            display: "flex",
-            justifyContent: "center",
-            alignItems: "flex-start",
+      {/* سکه — همیشه یه ردیف مجزا و هم‌مرکز */}
+      <CoinStack count={player.coins} />
 
-            mt: 0.6,
-
-            minHeight: {
-              xs: 42,
-              sm: 50,
-            },
-          }}
-        >
+      {/* کارت‌های رو‌شده — همیشه یه ردیف مجزا زیر سکه، نه کنارش */}
+      {player.revealedRoles.length > 0 && (
+        <Stack direction="row" justifyContent="center" sx={{ mt: -0.2 }}>
           {player.revealedRoles.map((role, index) => {
             const image = ROLE_IMAGES[role];
-
             if (!image) return null;
-
             return (
               <Box
                 key={`${player.id}-${role}-${index}`}
@@ -262,62 +175,19 @@ export default function PlayerSeat({
                 src={image}
                 alt={role}
                 sx={{
-                  width: {
-                    xs: 28,
-                    sm: 36,
-                  },
-
-                  // height: {
-                  //   xs: 40,
-                  //   sm: 50,
-                  // },
-
+                  width: { xs: 22, sm: 28 },
                   objectFit: "cover",
-
                   borderRadius: "4px",
-
-                  border:
-                    "1px solid rgba(255,255,255,.5)",
-
-                  boxShadow:
-                    "0 2px 6px rgba(0,0,0,.55)",
-
-                  ml: index === 0 ? 0 : -1.3,
-
+                  border: "1px solid rgba(255,255,255,.5)",
+                  boxShadow: "0 2px 5px rgba(0,0,0,.5)",
+                  ml: index === 0 ? 0 : -0.9,
                   zIndex: index,
                 }}
               />
             );
           })}
-        </Box>
-      </Stack>
-
-
-      {/* Dead player */}
-      {!player.isAlive && (
-        <Typography
-          sx={{
-            position: "absolute",
-
-            top: {
-              xs: 16,
-              sm: 20,
-            },
-
-            fontSize: {
-              xs: 22,
-              sm: 28,
-            },
-
-            zIndex: 5,
-
-            filter:
-              "drop-shadow(0 2px 3px rgba(0,0,0,.7))",
-          }}
-        >
-          ☠️
-        </Typography>
+        </Stack>
       )}
-    </Box>
+    </Stack>
   );
 }
