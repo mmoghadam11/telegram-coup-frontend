@@ -23,6 +23,7 @@ import AnarchistDialog from "./components/AnarchistDialog";
 import { useSnackbar } from "hooks/useSnackbar";
 import ActionCarousel from "components/cards/ActionCarousel";
 import { ACTION_CARD_DATA } from "shared/constants/actionCards";
+import GameTable from "./components/gameTable/GameTable";
 
 
 const ROLE_LABELS_FA: Record<string, string> = {
@@ -243,7 +244,7 @@ export default function Room() {
         </Paper>
       )}
 
-      <Paper variant="outlined" sx={{ mb: 2 }}>
+      {/* <Paper variant="outlined" sx={{ mb: 2 }}>
         <List dense>
           {gameState.players.map((p) => (
             <ListItem key={p.id} sx={{ opacity: p.isAlive ? 1 : 0.5 }}>
@@ -269,7 +270,14 @@ export default function Room() {
             </ListItem>
           ))}
         </List>
-      </Paper>
+      </Paper> */}
+      <GameTable
+        players={gameState.players}
+        myUserId={myUserId}
+        currentTurnPlayerId={
+          gameState.turnOrder[gameState.currentTurnIndex]
+        }
+      />
 
       {/* دکمه‌های اکشن — فقط وقتی نوبت خودمه و منتظر اکشن جدید هستیم */}
       {/* {gameState.phase === "awaiting_action" && isMyTurn && (
