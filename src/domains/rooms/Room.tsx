@@ -273,7 +273,7 @@ export default function Room() {
       </Paper> */}
       {gameState.phase !== "waiting_for_players" && (
         <GameTable
-          players={gameState.players}
+          players={gameState.players.map((p) => ({ ...p, photo_url: p.photoUrl }))}
           myUserId={myUserId}
           currentTurnPlayerId={
             gameState.turnOrder[

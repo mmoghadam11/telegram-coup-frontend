@@ -24,47 +24,47 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
   const otherPlayers = orderedPlayers.length - 1;
 
   const getSeatPosition = (index: number) => {
-  // خودمان همیشه پایین میز
-  if (index === 0) {
+    // خودمان همیشه پایین میز
+    if (index === 0) {
+      return {
+        top: MY_SEAT_TOP_PERCENT,
+        left: 50,
+      };
+    }
+
+    if (otherPlayers === 1) {
+      return {
+        top: 30,
+        left: 50,
+      };
+    }
+
+    /*
+     * بازیکنان دیگر روی نیم‌دایره‌ی بالای میز قرار می‌گیرند.
+     *
+     * 180°  = چپ
+     * 270°  = بالا
+     * 360°  = راست
+     */
+    const startAngle = 180;
+    const angleStep =
+      PLAYER_ARC_DEGREES / (otherPlayers - 1);
+
+    const angle =
+      startAngle + (index - 1) * angleStep;
+
+    const radians = (angle * Math.PI) / 180;
+
     return {
-      top: MY_SEAT_TOP_PERCENT,
-      left: 50,
+      top:
+        50 +
+        SEAT_RADIUS_PERCENT * Math.sin(radians),
+
+      left:
+        50 +
+        SEAT_RADIUS_PERCENT * Math.cos(radians),
     };
-  }
-
-  if (otherPlayers === 1) {
-    return {
-      top: 30,
-      left: 50,
-    };
-  }
-
-  /*
-   * بازیکنان دیگر روی نیم‌دایره‌ی بالای میز قرار می‌گیرند.
-   *
-   * 180°  = چپ
-   * 270°  = بالا
-   * 360°  = راست
-   */
-  const startAngle = 180;
-  const angleStep =
-    PLAYER_ARC_DEGREES / (otherPlayers - 1);
-
-  const angle =
-    startAngle + (index - 1) * angleStep;
-
-  const radians = (angle * Math.PI) / 180;
-
-  return {
-    top:
-      50 +
-      SEAT_RADIUS_PERCENT * Math.sin(radians),
-
-    left:
-      50 +
-      SEAT_RADIUS_PERCENT * Math.cos(radians),
   };
-};
 
   return (
     <Box

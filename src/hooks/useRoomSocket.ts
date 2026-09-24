@@ -18,6 +18,7 @@ interface PlayerStats {
 interface PublicPlayer {
   id: string;
   name: string;
+  photoUrl: string | null;
   connected: boolean;
   coins: number;
   roleCount: number;
