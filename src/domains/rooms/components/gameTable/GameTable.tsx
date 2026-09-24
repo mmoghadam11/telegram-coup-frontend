@@ -39,7 +39,7 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
 
     if (otherPlayers === 1) {
       return {
-        top: 30,
+        top: 20,
         left: 50,
       };
     }
