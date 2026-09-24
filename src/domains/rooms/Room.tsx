@@ -5,6 +5,7 @@ import {
   Stack, List, ListItem, ListItemText, CircularProgress, Dialog,
   DialogTitle, DialogContent, DialogActions, MenuItem, Select,
   IconButton,
+  ListItemButton,
 } from "@mui/material";
 import { useAuth } from "hooks/useAuth";
 import { useRoomSocket } from "hooks/useRoomSocket";
@@ -24,6 +25,7 @@ import { useSnackbar } from "hooks/useSnackbar";
 import ActionCarousel from "components/cards/ActionCarousel";
 import { ACTION_CARD_DATA } from "shared/constants/actionCards";
 import GameTable from "./components/gameTable/GameTable";
+import ActionButton from "./components/ActionButton";
 
 
 const ROLE_LABELS_FA: Record<string, string> = {
@@ -294,10 +296,13 @@ export default function Room() {
         </Stack>
       )} */}
       {gameState.phase === "awaiting_action" && isMyTurn && (
-        <Box sx={{ mb: 2 }}>
+        <Box sx={{ mb: 2, mt: 2 }}>
           <ActionCarousel
             actions={Object.keys(ACTION_CARD_DATA)
               .filter((action) => {
+                if (["income", "foreign_aid", "coup"].includes(action)) {
+                  return false;
+                }
                 const myCoins = gameState.players.find((p) => p.id === myUserId)?.coins ?? 0;
                 return myCoins >= ACTION_CARD_DATA[action].cost;
               })
@@ -307,6 +312,37 @@ export default function Room() {
               }))}
             onSelect={handleActionClick}
           />
+          <Stack
+            direction="row"
+            spacing={1}
+            alignItems="stretch"
+            justifyContent="center"
+            sx={{ mt: 1 }}
+          >
+            {/* Income + Foreign Aid */}
+            <Stack spacing={1}>
+              <ActionButton
+                action="income"
+                onClick={handleActionClick}
+              />
+
+              <ActionButton
+                action="foreign_aid"
+                onClick={handleActionClick}
+              />
+            </Stack>
+
+            {/* Coup */}
+            {(gameState.players.find((p) => p.id === myUserId)?.coins ?? 0) >= ACTION_CARD_DATA.coup.cost && (
+              <ActionButton
+                action="coup"
+                onClick={handleActionClick}
+                sx={{
+                  width: { xs: 70, sm: 85 },
+                }}
+              />
+            )}
+          </Stack>
         </Box>
       )}
 
