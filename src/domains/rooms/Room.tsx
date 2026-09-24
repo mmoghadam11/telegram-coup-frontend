@@ -296,11 +296,12 @@ export default function Room() {
         </Stack>
       )} */}
       {gameState.phase === "awaiting_action" && isMyTurn && (
-        <Box sx={{
-          mb: 2, mt: 2, display: "flex", width: "100%",
-          gap: 1,
-          alignItems: "stretch",
-        }}>
+        <Stack direction={"row"}
+          spacing={1}
+          sx={{
+            mb: 2, mt: 2, width: "100%",
+            alignItems: "stretch",
+          }}>
           <Box
             sx={{
               width: "70%",
@@ -329,7 +330,7 @@ export default function Room() {
             spacing={1}
             alignItems="stretch"
             justifyContent="center"
-            sx={{ mt: 1, width: "30%" }}
+            sx={{ width: "30%" }}
           >
             {/* Income + Foreign Aid */}
             <Stack spacing={1}>
@@ -355,7 +356,7 @@ export default function Room() {
               />
             )}
           </Stack>
-        </Box>
+        </Stack>
       )}
 
       {/* اکشن یکی دیگه در انتظار پاسخ بقیه‌ست */}
