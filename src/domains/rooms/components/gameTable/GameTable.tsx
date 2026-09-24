@@ -10,17 +10,22 @@ interface GameTableProps {
 
 const BOTTOM_GAP_DEGREES = 70;
 const SEAT_RADIUS_PERCENT = 20;
-const MY_SEAT_TOP_PERCENT = 70;
+const MY_SEAT_TOP_PERCENT = 85;
 const PLAYER_ARC_DEGREES = 160;
 
 export default function GameTable({ players, myUserId, currentTurnPlayerId }: GameTableProps) {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
 
-  const orderedPlayers = [
-    ...players.filter((p) => p.id === myUserId),
-    ...players.filter((p) => p.id !== myUserId),
-  ];
+  const myIndex = players.findIndex((p) => p.id === myUserId);
+
+  const orderedPlayers =
+    myIndex === -1
+      ? players
+      : [
+        ...players.slice(myIndex),
+        ...players.slice(0, myIndex),
+      ];
   const otherPlayers = orderedPlayers.length - 1;
 
   const getSeatPosition = (index: number) => {
@@ -76,7 +81,8 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
         boxSizing: "border-box",
         // موبایل: باکس بلندتر از عریض (فضای عمودی بیشتر برای بازیکن بالا/پایین)
         // دسکتاپ: نزدیک مربع، چون عرض کافیه
-        aspectRatio: { xs: "3 / 4", sm: "4 / 4.4", md: "1 / 1" },
+        // aspectRatio: { xs: "3 / 4", sm: "4 / 4.4", md: "1 / 1" },
+        aspectRatio: { xs: "4 / 3", sm: "4 / 4.4", md: "1 / 1" },
         overflow: "visible",
         borderRadius: 4,
         background: isDark
