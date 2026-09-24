@@ -304,7 +304,7 @@ export default function Room() {
           }}>
           <Box
             sx={{
-              width: "70%",
+              width: "60%",
               minWidth: 0,
             }}
           >
