@@ -296,10 +296,15 @@ export default function Room() {
       {gameState.phase === "awaiting_action" && isMyTurn && (
         <Box sx={{ mb: 2 }}>
           <ActionCarousel
-            actions={Object.keys(ACTION_CARD_DATA).map((action) => ({
-              action,
-              ...ACTION_CARD_DATA[action],
-            }))}
+            actions={Object.keys(ACTION_CARD_DATA)
+              .filter((action) => {
+                const myCoins = gameState.players.find((p) => p.id === myUserId)?.coins ?? 0;
+                return myCoins >= ACTION_CARD_DATA[action].cost;
+              })
+              .map((action) => ({
+                action,
+                ...ACTION_CARD_DATA[action],
+              }))}
             onSelect={handleActionClick}
           />
         </Box>
