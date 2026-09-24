@@ -76,9 +76,7 @@ function AvatarBubble({
               fontSize: { xs: 14, sm: 17 },
               fontWeight: 500,
             }}
-          >
-            {avatarLetter}
-          </Avatar>
+          />
         </Box>
       </motion.div>
 
