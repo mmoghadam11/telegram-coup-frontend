@@ -76,7 +76,9 @@ function AvatarBubble({
               fontSize: { xs: 14, sm: 17 },
               fontWeight: 500,
             }}
-          />
+          >
+            {avatarLetter}
+          </Avatar>
         </Box>
       </motion.div>
 
@@ -192,7 +194,7 @@ export default function PlayerSeat({ player, isMe, isCurrentTurn }: PlayerSeatPr
           <CoinsAndCards player={player} />
         </Box>
         <AvatarBubble player={player} isMe={isMe} isCurrentTurn={isCurrentTurn} />
-        <Box sx={{ mt: -0.9 }}>
+        <Box sx={{ mt: -0.4 }}>
           <NameBadge player={player} isMe={isMe} isCurrentTurn={isCurrentTurn} />
         </Box>
       </Stack>
