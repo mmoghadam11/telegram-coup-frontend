@@ -297,27 +297,35 @@ export default function Room() {
       )} */}
       {gameState.phase === "awaiting_action" && isMyTurn && (
         <Box sx={{ mb: 2, mt: 2 }}>
-          <ActionCarousel
-            actions={Object.keys(ACTION_CARD_DATA)
-              .filter((action) => {
-                if (["income", "foreign_aid", "coup"].includes(action)) {
-                  return false;
-                }
-                const myCoins = gameState.players.find((p) => p.id === myUserId)?.coins ?? 0;
-                return myCoins >= ACTION_CARD_DATA[action].cost;
-              })
-              .map((action) => ({
-                action,
-                ...ACTION_CARD_DATA[action],
-              }))}
-            onSelect={handleActionClick}
-          />
+          <Box
+            sx={{
+              width: "70%",
+              minWidth: 0,
+            }}
+          >
+            <ActionCarousel
+              actions={Object.keys(ACTION_CARD_DATA)
+                .filter((action) => {
+                  if (["income", "foreign_aid", "coup"].includes(action)) {
+                    return false;
+                  }
+                  const myCoins = gameState.players.find((p) => p.id === myUserId)?.coins ?? 0;
+                  return myCoins >= ACTION_CARD_DATA[action].cost;
+                })
+                .map((action) => ({
+                  action,
+                  ...ACTION_CARD_DATA[action],
+                }))}
+              onSelect={handleActionClick}
+            />
+          </Box>
+
           <Stack
             direction="row"
             spacing={1}
             alignItems="stretch"
             justifyContent="center"
-            sx={{ mt: 1 }}
+            sx={{ mt: 1 , width: "30%"}}
           >
             {/* Income + Foreign Aid */}
             <Stack spacing={1}>
