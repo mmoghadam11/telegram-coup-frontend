@@ -299,7 +299,7 @@ export default function Room() {
       {gameState.phase === "awaiting_action" && isMyTurn && (
         <Grid container spacing={1}>
           {/* ActionCarousel */}
-          <Grid item xs={8}>
+          <Grid item xs={7}>
 
             <ActionCarousel
               actions={Object.keys(ACTION_CARD_DATA)
@@ -318,7 +318,7 @@ export default function Room() {
             />
           </Grid>
 
-          <Grid item xs={4} display={"flex"}>
+          <Grid item xs={5} display={"flex"}>
             {/* Income + Foreign Aid */}
             <Stack
               direction="column"
