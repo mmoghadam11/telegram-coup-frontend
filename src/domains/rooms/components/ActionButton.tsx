@@ -18,7 +18,7 @@ export default function ActionButton({
     <ListItemButton
       onClick={() => onClick(action)}
       sx={{
-        minWidth: { xs: 150, sm: 180 },
+        // minWidth: { xs: 150, sm: 180 },
         minHeight: 55,
         px: 1,
         py: 0.5,
