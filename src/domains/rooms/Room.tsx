@@ -6,6 +6,7 @@ import {
   DialogTitle, DialogContent, DialogActions, MenuItem, Select,
   IconButton,
   ListItemButton,
+  Grid,
 } from "@mui/material";
 import { useAuth } from "hooks/useAuth";
 import { useRoomSocket } from "hooks/useRoomSocket";
@@ -296,18 +297,10 @@ export default function Room() {
         </Stack>
       )} */}
       {gameState.phase === "awaiting_action" && isMyTurn && (
-        <Stack direction={"row"}
-          spacing={1}
-          sx={{
-            mb: 2, mt: 2, width: "100%",
-            alignItems: "stretch",
-          }}>
-          <Box
-            sx={{
-              width: "60%",
-              minWidth: 0,
-            }}
-          >
+        <Grid container spacing={1}>
+          {/* ActionCarousel */}
+          <Grid item xs={8}>
+
             <ActionCarousel
               actions={Object.keys(ACTION_CARD_DATA)
                 .filter((action) => {
@@ -323,17 +316,14 @@ export default function Room() {
                 }))}
               onSelect={handleActionClick}
             />
-          </Box>
+          </Grid>
 
-          <Stack
-            direction="row"
-            spacing={1}
-            alignItems="stretch"
-            justifyContent="center"
-            sx={{ width: "30%" }}
-          >
+          <Grid item xs={4} display={"flex"}>
             {/* Income + Foreign Aid */}
-            <Stack spacing={1}>
+            <Stack
+              direction="column"
+              spacing={1}
+              sx={{ height: "100%" }}>
               <ActionButton
                 action="income"
                 onClick={handleActionClick}
@@ -355,8 +345,8 @@ export default function Room() {
                 }}
               />
             )}
-          </Stack>
-        </Stack>
+          </Grid>
+        </Grid>
       )}
 
       {/* اکشن یکی دیگه در انتظار پاسخ بقیه‌ست */}
