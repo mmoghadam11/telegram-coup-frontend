@@ -42,7 +42,7 @@ export default function ActionButton({
         alt={data.title}
         sx={{
         //   width: 34,
-          width: 40,
+          height:"100%",
           aspectRatio:"3/4",
         //   height: 46,
           objectFit: "cover",
