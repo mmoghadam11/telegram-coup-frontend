@@ -20,7 +20,7 @@ export default function ActionCard({ action, image, title, description, disabled
         flex: "0 0 50%",
         borderRadius: "10px",
         position: "relative",
-        width: "40%",
+        // width: "40%",
         cursor: disabled ? "default" : "pointer",
         opacity: disabled ? 0.45 : 1,
         transition: "transform 0.15s",

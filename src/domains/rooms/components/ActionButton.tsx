@@ -41,8 +41,10 @@ export default function ActionButton({
         src={data.image}
         alt={data.title}
         sx={{
-          width: 34,
-          height: 46,
+        //   width: 34,
+          width: 40,
+          aspectRatio:"3/4",
+        //   height: 46,
           objectFit: "cover",
           borderRadius: 0.7,
           flexShrink: 0,
