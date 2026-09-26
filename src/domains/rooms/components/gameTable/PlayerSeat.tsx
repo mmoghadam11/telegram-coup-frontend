@@ -133,7 +133,7 @@ function CoinsAndCards({ player }: { player: GameTablePlayer }) {
                 src={image}
                 alt={role}
                 sx={{
-                  width: { xs: 18, sm: 24 },
+                  width: { xs: 24, sm: 30 },
                   objectFit: "cover",
                   borderRadius: "4px",
                   border: "1px solid rgba(255,255,255,.5)",
