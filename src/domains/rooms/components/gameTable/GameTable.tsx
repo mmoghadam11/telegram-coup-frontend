@@ -55,14 +55,14 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
     if (index === 0) {
       return {
         top: tableRadiusPercent+SEAT_OFFSET_FROM_TABLE,
-        left: 50,
+        right: 50,
       };
     }
 
     if (otherPlayers === 1) {
       return {
         top: 20,
-        left: 50,
+        right: 50,
       };
     }
 
@@ -81,7 +81,7 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
         50 +
         seatRadiusPercent * Math.sin(radians),
 
-      left:
+      right:
         50 +
         seatRadiusPercent * Math.cos(radians),
     };
@@ -108,7 +108,7 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
         50 +
         seatRadiusPercent * Math.sin(radians),
 
-      left:
+      right:
         50 +
         seatRadiusPercent * Math.cos(radians),
     };
@@ -117,7 +117,6 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
   return (
     <Box
       sx={{
-        direction:"ltr",
         position: "relative",
         width: "100%",
         // maxWidth: 760,
@@ -140,7 +139,7 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
         sx={{
           position: "absolute",
           top: "50%",
-          left: "50%",
+          right: "50%",
           transform: "translate(-50%, -50%)",
           width: `${tableRadiusPercent}%`,
           aspectRatio: "1 / 1",
@@ -160,7 +159,7 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
             position: "absolute",
             width: "42%",
             aspectRatio: "1 / 1",
-            left: "29%",
+            right: "29%",
             top: "29%",
             borderRadius: "50%",
             border: "2px solid rgba(255,210,140,.18)",
@@ -172,7 +171,7 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
             position: "absolute",
             width: "30%",
             aspectRatio: "1 / 1",
-            left: "35%",
+            right: "35%",
             top: "35%",
             borderRadius: "50%",
             border: "1px solid rgba(255,210,140,.12)",
@@ -181,7 +180,7 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
         <Box
           sx={{
             position: "absolute",
-            left: "50%",
+            right: "50%",
             top: "50%",
             transform: "translate(-50%, -50%)",
             width: { xs: 44, sm: 56 },
@@ -213,10 +212,10 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
             sx={{
               position: "absolute",
               top: `${position.top}%`,
-              left: `${position.left}%`,
+              right: `${position.right}%`,
               transform: "translate(-50%, -50%)",
               zIndex: isCurrentTurn ? 30 : 10,
-              transition: "top .35s ease, left .35s ease",
+              transition: "top .35s ease, right .35s ease",
             }}
           >
             <PlayerSeat player={player} isMe={isMe} isCurrentTurn={isCurrentTurn} />
