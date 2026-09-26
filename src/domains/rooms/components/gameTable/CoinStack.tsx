@@ -18,7 +18,7 @@ export default function CoinStack({ count }: CoinStackProps) {
     >
       <Badge
         badgeContent={count}
-        color={count<9?"default":"secondary"}
+        color={count<9?"secondary":"warning"}
         // max={99}
         // sx={{
         //   "& .MuiBadge-badge": {
@@ -37,8 +37,8 @@ export default function CoinStack({ count }: CoinStackProps) {
           src="/assets/images/cards/coin.png"
           alt="coin"
           sx={{
-            width: 28,
-            height: 28,
+            width: 24,
+            height: 24,
             objectFit: "contain",
             filter: "drop-shadow(0 2px 2px rgba(0,0,0,.35))",
           }}
