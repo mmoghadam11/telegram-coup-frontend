@@ -24,7 +24,7 @@ const TABLE_RADIUS_BY_PLAYER_COUNT: number[] = [
   77, // 7 نفر
   // 74, // 8 نفر — میز بازتر برای جا دادن صندلی‌های بیشتر
 ];
-const SEAT_OFFSET_FROM_TABLE = 0;
+const SEAT_OFFSET_FROM_TABLE = 4;
 
 function getTableRadiusPercent(playerCount: number): number {
   const clamped = Math.min(playerCount, TABLE_RADIUS_BY_PLAYER_COUNT.length - 1);
@@ -48,13 +48,13 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
   const otherPlayers = orderedPlayers.length - 1;
 
   const tableRadiusPercent = getTableRadiusPercent(playerCount);
-  const seatRadiusPercent = tableRadiusPercent / 2 + SEAT_OFFSET_FROM_TABLE;
+  const seatRadiusPercent = tableRadiusPercent / 2 - SEAT_OFFSET_FROM_TABLE;
 
   const getSeatPosition = (index: number) => {
     // خودمان همیشه پایین میز
     if (index === 0) {
       return {
-        top: tableRadiusPercent,
+        top: tableRadiusPercent+SEAT_OFFSET_FROM_TABLE,
         left: 50,
       };
     }
