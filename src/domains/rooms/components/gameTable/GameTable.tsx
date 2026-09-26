@@ -122,6 +122,7 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
         // maxWidth: 760,
         mx: "auto",
         py:2,
+        mb:2,
         boxSizing: "border-box",
         // موبایل: باکس بلندتر از عریض (فضای عمودی بیشتر برای بازیکن بالا/پایین)
         // دسکتاپ: نزدیک مربع، چون عرض کافیه
