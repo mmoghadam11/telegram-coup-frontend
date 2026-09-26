@@ -13,6 +13,24 @@ const SEAT_RADIUS_PERCENT = 20;
 const MY_SEAT_TOP_PERCENT = 85;
 const PLAYER_ARC_DEGREES = 160;
 
+const TABLE_RADIUS_BY_PLAYER_COUNT: number[] = [
+  68, // 0 — بلااستفاده
+  68, // 1 — بلااستفاده
+  60, // 2 نفر — میز جمع‌وجورتر
+  63, // 3 نفر
+  66, // 4 نفر
+  68, // 5 نفر
+  70, // 6 نفر
+  72, // 7 نفر
+  // 74, // 8 نفر — میز بازتر برای جا دادن صندلی‌های بیشتر
+];
+const SEAT_OFFSET_FROM_TABLE = 14;
+
+function getTableRadiusPercent(playerCount: number): number {
+  const clamped = Math.min(playerCount, TABLE_RADIUS_BY_PLAYER_COUNT.length - 1);
+  return TABLE_RADIUS_BY_PLAYER_COUNT[clamped];
+}
+
 export default function GameTable({ players, myUserId, currentTurnPlayerId }: GameTableProps) {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
@@ -26,7 +44,11 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
         ...players.slice(myIndex),
         ...players.slice(0, myIndex),
       ];
+  const playerCount = orderedPlayers.length;
   const otherPlayers = orderedPlayers.length - 1;
+
+  const tableRadiusPercent = getTableRadiusPercent(playerCount);
+  const seatRadiusPercent = tableRadiusPercent / 2 + SEAT_OFFSET_FROM_TABLE;
 
   const getSeatPosition = (index: number) => {
     // خودمان همیشه پایین میز
@@ -63,11 +85,11 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
     return {
       top:
         50 +
-        SEAT_RADIUS_PERCENT * Math.sin(radians),
+        seatRadiusPercent * Math.sin(radians),
 
       left:
         50 +
-        SEAT_RADIUS_PERCENT * Math.cos(radians),
+        seatRadiusPercent * Math.cos(radians),
     };
   };
 
@@ -98,7 +120,7 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
           top: "50%",
           left: "50%",
           transform: "translate(-50%, -50%)",
-          width: "68%",
+          width: `${tableRadiusPercent}%`,
           aspectRatio: "1 / 1",
           borderRadius: "50%",
           background: isDark
@@ -108,7 +130,7 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
           boxShadow: isDark
             ? `inset 0 0 0 3px rgba(255,200,120,.12), inset 0 0 55px rgba(0,0,0,.75), 0 25px 55px rgba(0,0,0,.75)`
             : `inset 0 0 0 3px rgba(255,220,170,.28), inset 0 0 55px rgba(80,30,0,.25), 0 25px 55px rgba(60,30,0,.35)`,
-          transition: "background .35s ease, border .35s ease, box-shadow .35s ease",
+          transition: "width .35s ease, background .35s ease, border .35s ease, box-shadow .35s ease",
         }}
       >
         <Box
@@ -152,7 +174,7 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
           }}
         >
           <Typography sx={{ fontSize: { xs: 20, sm: 28 }, color: "#d5a94c", textShadow: "0 2px 4px rgba(0,0,0,.5)" }}>
-            ♛
+            👑
           </Typography>
         </Box>
       </Box>
