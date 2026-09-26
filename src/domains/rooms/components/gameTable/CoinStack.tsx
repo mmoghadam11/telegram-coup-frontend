@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Typography } from "@mui/material";
+import { Badge, Box, Typography } from "@mui/material";
 
 interface CoinStackProps {
   count: number;
@@ -11,35 +11,39 @@ export default function CoinStack({ count }: CoinStackProps) {
   return (
     <Box
       sx={{
-        direction:"column",
         display: "flex",
         alignItems: "center",
         justifyContent: "center",
-        gap: 0.2,
       }}
     >
-      <Box
-        component="img"
-        src="/assets/images/cards/coin.png"
-        alt="coin"
+      <Badge
+        badgeContent={count}
+        color="warning"
+        max={99}
         sx={{
-          width: 22,
-          height: 22,
-          objectFit: "contain",
-          filter: "drop-shadow(0 2px 2px rgba(0,0,0,.35))",
-        }}
-      />
-
-      <Typography
-        sx={{
-          fontSize: 14,
-          fontWeight: 700,
-          color: "text.primary",
-          lineHeight: 1,
+          "& .MuiBadge-badge": {
+            fontSize: 11,
+            fontWeight: 700,
+            height: 18,
+            minWidth: 18,
+            border: "1.5px solid",
+            borderColor: "background.paper",
+            color: "#3b2200",
+          },
         }}
       >
-        {count}
-      </Typography>
+        <Box
+          component="img"
+          src="/assets/images/cards/coin.png"
+          alt="coin"
+          sx={{
+            width: 28,
+            height: 28,
+            objectFit: "contain",
+            filter: "drop-shadow(0 2px 2px rgba(0,0,0,.35))",
+          }}
+        />
+      </Badge>
     </Box>
   );
 }
