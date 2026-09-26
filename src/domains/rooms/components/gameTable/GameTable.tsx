@@ -17,11 +17,11 @@ const TABLE_RADIUS_BY_PLAYER_COUNT: number[] = [
   68, // 0 — بلااستفاده
   68, // 1 — بلااستفاده
   68, // 2 نفر — میز جمع‌وجورتر
-  70, // 3 نفر
-  72, // 4 نفر
-  74, // 5 نفر
-  76, // 6 نفر
-  77, // 7 نفر
+  75, // 3 نفر
+  80, // 4 نفر
+  85, // 5 نفر
+  90, // 6 نفر
+  100, // 7 نفر
   // 74, // 8 نفر — میز بازتر برای جا دادن صندلی‌های بیشتر
 ];
 const SEAT_OFFSET_FROM_TABLE = 14;
@@ -212,7 +212,7 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
             sx={{
               position: "absolute",
               top: `${position.top}%`,
-              left: `${position.left}%`,
+              right: `${position.left}%`,
               transform: "translate(-50%, -50%)",
               zIndex: isCurrentTurn ? 30 : 10,
               transition: "top .35s ease, left .35s ease",
