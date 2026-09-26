@@ -82,7 +82,7 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
         seatRadiusPercent * Math.sin(radians),
 
       right:
-        50 +
+        50 -
         seatRadiusPercent * Math.cos(radians),
     };
     }
@@ -109,7 +109,7 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
         seatRadiusPercent * Math.sin(radians),
 
       right:
-        50 +
+        50 -
         seatRadiusPercent * Math.cos(radians),
     };
   };
@@ -140,7 +140,7 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
           position: "absolute",
           top: "50%",
           right: "50%",
-          transform: "translate(-50%, -50%)",
+          transform: "translate(50%, -50%)",
           width: `${tableRadiusPercent}%`,
           aspectRatio: "1 / 1",
           borderRadius: "50%",
@@ -182,7 +182,7 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
             position: "absolute",
             right: "50%",
             top: "50%",
-            transform: "translate(-50%, -50%)",
+            transform: "translate(50%, -50%)",
             width: { xs: 44, sm: 56 },
             height: { xs: 60, sm: 76 },
             borderRadius: 1.5,
@@ -213,7 +213,7 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
               position: "absolute",
               top: `${position.top}%`,
               right: `${position.right}%`,
-              transform: "translate(-50%, -50%)",
+              transform: "translate(50%, -50%)",
               zIndex: isCurrentTurn ? 30 : 10,
               transition: "top .35s ease, right .35s ease",
             }}
