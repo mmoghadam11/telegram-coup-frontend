@@ -16,15 +16,15 @@ const PLAYER_ARC_DEGREES = 160;
 const TABLE_RADIUS_BY_PLAYER_COUNT: number[] = [
   68, // 0 — بلااستفاده
   68, // 1 — بلااستفاده
-  60, // 2 نفر — میز جمع‌وجورتر
-  63, // 3 نفر
-  66, // 4 نفر
-  68, // 5 نفر
-  70, // 6 نفر
-  72, // 7 نفر
+  68, // 2 نفر — میز جمع‌وجورتر
+  70, // 3 نفر
+  72, // 4 نفر
+  74, // 5 نفر
+  76, // 6 نفر
+  77, // 7 نفر
   // 74, // 8 نفر — میز بازتر برای جا دادن صندلی‌های بیشتر
 ];
-const SEAT_OFFSET_FROM_TABLE = 14;
+const SEAT_OFFSET_FROM_TABLE = 4;
 
 function getTableRadiusPercent(playerCount: number): number {
   const clamped = Math.min(playerCount, TABLE_RADIUS_BY_PLAYER_COUNT.length - 1);
