@@ -212,7 +212,7 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
             sx={{
               position: "absolute",
               top: `${position.top}%`,
-              right: `${position.left}%`,
+              left: `${position.left}%`,
               transform: "translate(-50%, -50%)",
               zIndex: isCurrentTurn ? 30 : 10,
               transition: "top .35s ease, left .35s ease",
