@@ -119,7 +119,7 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
       sx={{
         position: "relative",
         width: "100%",
-        maxWidth: 760,
+        // maxWidth: 760,
         mx: "auto",
         boxSizing: "border-box",
         // موبایل: باکس بلندتر از عریض (فضای عمودی بیشتر برای بازیکن بالا/پایین)
