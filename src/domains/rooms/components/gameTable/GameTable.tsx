@@ -125,7 +125,7 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
         boxSizing: "border-box",
         // موبایل: باکس بلندتر از عریض (فضای عمودی بیشتر برای بازیکن بالا/پایین)
         // دسکتاپ: نزدیک مربع، چون عرض کافیه
-        aspectRatio: { xs: playerCount!==2?"6 / 4":"1/1", sm: "4 / 4.4", md: "1 / 1" },
+        aspectRatio: { xs: playerCount===2?"6 / 4":"1/1", sm: "4 / 4.4", md: "1 / 1" },
         overflow: "visible",
         borderRadius: 4,
         background: isDark
