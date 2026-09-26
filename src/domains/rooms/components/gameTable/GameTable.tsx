@@ -121,11 +121,11 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
         width: "100%",
         // maxWidth: 760,
         mx: "auto",
+        py:2,
         boxSizing: "border-box",
         // موبایل: باکس بلندتر از عریض (فضای عمودی بیشتر برای بازیکن بالا/پایین)
         // دسکتاپ: نزدیک مربع، چون عرض کافیه
-        // aspectRatio: { xs: "3 / 4", sm: "4 / 4.4", md: "1 / 1" },
-        aspectRatio: { xs: "4 / 3", sm: "4 / 4.4", md: "1 / 1" },
+        // aspectRatio: { xs: "4 / 3", sm: "4 / 4.4", md: "1 / 1" },
         overflow: "visible",
         borderRadius: 4,
         background: isDark

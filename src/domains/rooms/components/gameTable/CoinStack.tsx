@@ -18,19 +18,19 @@ export default function CoinStack({ count }: CoinStackProps) {
     >
       <Badge
         badgeContent={count}
-        color="warning"
-        max={99}
-        sx={{
-          "& .MuiBadge-badge": {
-            fontSize: 11,
-            fontWeight: 700,
-            height: 18,
-            minWidth: 18,
-            border: "1.5px solid",
-            borderColor: "background.paper",
-            color: "#3b2200",
-          },
-        }}
+        color={count<9?"default":"secondary"}
+        // max={99}
+        // sx={{
+        //   "& .MuiBadge-badge": {
+        //     fontSize: 11,
+        //     fontWeight: 700,
+        //     height: 18,
+        //     minWidth: 18,
+        //     border: "1.5px solid",
+        //     borderColor: "background.paper",
+        //     color: "#3b2200",
+        //   },
+        // }}
       >
         <Box
           component="img"
