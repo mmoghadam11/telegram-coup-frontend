@@ -54,7 +54,9 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
     // خودمان همیشه پایین میز
     if (index === 0) {
       return {
-        top:(tableRadiusPercent/2) + 50 -7 ,
+        // top:(playerCount===2 ?0:-4)+tableRadiusPercent + SEAT_OFFSET_FROM_TABLE ,
+        // top:`calc(${(tableRadiusPercent/2) + 50}% -10px)` ,
+        top:(tableRadiusPercent/2) + 50 -10 ,
         right: 50,
       };
     }
