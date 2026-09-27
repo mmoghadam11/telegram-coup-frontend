@@ -54,7 +54,7 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
     // خودمان همیشه پایین میز
     if (index === 0) {
       return {
-        top:`calc(${(tableRadiusPercent/2) + 50}% -10px)` ,
+        top:(tableRadiusPercent/2) + 50 -7 ,
         right: 50,
       };
     }
