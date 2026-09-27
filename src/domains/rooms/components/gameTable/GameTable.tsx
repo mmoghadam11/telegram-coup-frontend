@@ -56,7 +56,7 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
       return {
         // top:(playerCount===2 ?0:-4)+tableRadiusPercent + SEAT_OFFSET_FROM_TABLE ,
         // top:`calc(${(tableRadiusPercent/2) + 50}% -10px)` ,
-        top:(tableRadiusPercent/2) + 50 -10 ,
+        top:(tableRadiusPercent/2) + 50 -(playerCount===2 ?0:10) ,
         right: 50,
       };
     }
