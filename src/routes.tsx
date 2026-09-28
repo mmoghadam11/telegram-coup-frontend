@@ -11,6 +11,7 @@ import Lobby from "domains/lobby/Lobby";
 import Room from "domains/rooms/Room";
 import Layout from "components/layout/Layout";
 import AdminPage from "domains/admin/AdminPage";
+import Leaderboard from "domains/leaderboard/Leaderboard";
 
 
 const AppRoutes: React.FC = () => {
@@ -39,17 +40,10 @@ const AppRoutes: React.FC = () => {
     }
   }, [auth?.authLoading, auth?.userInfo?.active_room_id, navigate, routerLocation.pathname]);
   const MENU_ITEMS: MenuItem[] = [
-    {
-      url: "lobby",
-      access: ["player", "admin"],
-      component: <Lobby />,
-    },
-    {
-      url: "room/:roomId",
-      access: ["player", "admin"],
-      component: <Room />,
-    },
+    { url: "lobby", access: ["player", "admin"], component: <Lobby />, },
+    { url: "room/:roomId", access: ["player", "admin"], component: <Room />, },
     { url: "admin", access: ["admin"], component: <AdminPage /> },
+    { url: "leaderboard", access: ["player", "admin"], component: <Leaderboard /> },
   ];
   return (
     <Routes>

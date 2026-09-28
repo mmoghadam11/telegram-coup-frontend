@@ -44,7 +44,7 @@ const menuItems: MenuItem[] = [
   {
     title: "امتیازات",
     // url: "accountant-user/cartable",
-    url: "accountant-user/disciplinary-order",
+    url: "leaderboard",
     access: ["accountant-showmenu"],
     description: "رتبه ها و امتیازات",
     icon: <Numbers fontSize={"small"}/>,
