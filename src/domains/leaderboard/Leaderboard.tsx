@@ -1,18 +1,91 @@
 import React from "react";
 import { useQuery } from "@tanstack/react-query";
-import { Container, Typography, Paper, List, ListItem, ListItemAvatar, Avatar, ListItemText, Chip, Stack, Box } from "@mui/material";
+import { Container, Typography, Paper, List, ListItem, ListItemAvatar, Avatar, ListItemText, Chip, Stack, Box, Button, Dialog, DialogContent, DialogTitle } from "@mui/material";
 import { useAuth } from "hooks/useAuth";
 import PowerRadar from "./components/PowerRadar";
 import MedalStat from "./components/MedalStat";
 
 export default function Leaderboard() {
   const Auth = useAuth();
+  const [errorOpen, setErrorOpen] = React.useState(true);
 
-  const { data, isLoading } = useQuery({
+  const { data, isLoading,error} = useQuery({
     queryKey: ["leaderboard"],
     queryFn: Auth?.getRequest,
     select: (res: any) => res,
   });
+
+  if (error) {
+    return (
+      <>
+        <Container maxWidth="sm" sx={{ py: 3 }}>
+          <Typography textAlign="center">
+            دریافت اطلاعات با خطا مواجه شد.
+          </Typography>
+        </Container>
+
+        <Dialog
+          open={errorOpen}
+          onClose={() => setErrorOpen(false)}
+          fullWidth
+          maxWidth="md"
+        >
+          <DialogTitle>خطای API</DialogTitle>
+
+          <DialogContent>
+            <Box
+              component="pre"
+              sx={{
+                mt: 1,
+                p: 2,
+                backgroundColor: "#111",
+                color: "#fff",
+                borderRadius: 1,
+                overflow: "auto",
+                direction: "ltr",
+                textAlign: "left",
+                fontSize: 13,
+                whiteSpace: "pre-wrap",
+                wordBreak: "break-word",
+              }}
+            >
+              {JSON.stringify(
+                {
+                  message: (error as any)?.message,
+
+                  // اگر AxiosError باشد
+                  status: (error as any)?.response?.status,
+
+                  statusText: (error as any)?.response?.statusText,
+
+                  responseData: (error as any)?.response?.data,
+
+                  responseHeaders: (error as any)?.response?.headers,
+
+                  requestUrl: (error as any)?.config?.url,
+
+                  method: (error as any)?.config?.method,
+
+                  error,
+                },
+                null,
+                2
+              )}
+            </Box>
+
+            <Button
+              fullWidth
+              sx={{ mt: 2 }}
+              variant="contained"
+              onClick={() => setErrorOpen(false)}
+            >
+              بستن
+            </Button>
+          </DialogContent>
+        </Dialog>
+      </>
+    );
+  }
 
   if (isLoading || !data) {
     return (
