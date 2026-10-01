@@ -16,8 +16,8 @@ export default function ActionCarousel({ actions, onSelect }: Props) {
   return (
     <Box ref={emblaRef} overflow="hidden">
       <Box display="flex">
-        {actions.map((item) => (
-          <ActionCard key={item.action} {...item} onClick={onSelect} />
+        {actions.map((item,cardIndex) => (
+          <ActionCard key={cardIndex} {...item} onClick={onSelect} />
         ))}
       </Box>
     </Box>
