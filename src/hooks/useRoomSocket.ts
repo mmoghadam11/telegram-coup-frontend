@@ -77,6 +77,10 @@ interface AnarchistPendingState {
 interface PublicGameState {
   phase: string;
   roomName: string | null;
+  origin: "matchmaking" | "lobby" | "group"; // این خط اضافه شد
+  roomPhase: "waiting" | "starting" | "playing" | "closed"; // این خط اضافه شد
+  countdownEndsAt: number | null; // این خط اضافه شد
+  handResultEndsAt: number | null; // این خط اضافه شد
   creatorId: string | null;
   players: PublicPlayer[];
   turnOrder: string[];
@@ -237,9 +241,11 @@ export function useRoomSocket(roomId?: string) {
     [send]
   );
   const anarchistNeutralize = useCallback(
-  () => send({ type: "anarchist_neutralize" }),
-  [send]
-);
+    () => send({ type: "anarchist_neutralize" }),
+    [send]
+  );
+  const fold = useCallback(() => send({ type: "fold" }), [send]);
+  const mmLeave = useCallback(() => send({ type: "mm_leave" }), [send]);
   const respondToRestartVote = useCallback(
     (choice: "stay" | "leave") => send({ type: "respond_to_restart_vote", choice }),
     [send]
@@ -272,6 +278,8 @@ export function useRoomSocket(roomId?: string) {
     anarchistBlockRespond,
     anarchistPass,
     anarchistNeutralize,
+    mmLeave,
+    fold,
     restartGame,
     respondToRestartVote,
     leaveRoom,

@@ -27,6 +27,9 @@ import ActionCarousel from "components/cards/ActionCarousel";
 import { ACTION_CARD_DATA } from "shared/constants/actionCards";
 import GameTable from "./components/gameTable/GameTable";
 import ActionButton from "./components/ActionButton";
+import MatchmakingLobbyView from "./components/MatchmakingLobbyView";
+import HandResultOverlay from "./components/HandResultOverlay";
+import { MAX_PLAYERS_PER_ROOM, MIN_PLAYERS_TO_START } from "./constants/matchmaking";
 
 
 const ROLE_LABELS_FA: Record<string, string> = {
@@ -55,7 +58,7 @@ export default function Room() {
   const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
   const [restartDialogOpen, setRestartDialogOpen] = useState(false);
   const {
-    connected, loaded, gameState, privateState,
+    connected, loaded, gameState, privateState, mmLeave, fold,
     sendProveCard, proofEvent, clearProofEvent, anarchistRespond, anarchistBlockRespond, anarchistPass, anarchistNeutralize,
     startGame, sendChat, sendAction, respond, blockAction, respondToBlock, revealCard, restartGame, leaveRoom, closeRoom, forceReset, sendContessaSelect, sendExchangeSelect, respondToRestartVote,
   } = useRoomSocket(roomId);
@@ -128,6 +131,24 @@ export default function Room() {
   };
 
   const otherAlivePlayers = gameState.players.filter((p) => p.id !== myUserId && p.isAlive);
+
+  // این بلوک جدید اضافه شد: برای روم‌های matchmaking، قبل از playing، صفحه‌ی لابی/شمارش معکوس رو نشون بده
+  if (gameState.origin === "matchmaking" && (gameState.roomPhase === "waiting" || gameState.roomPhase === "starting")) {
+    return (
+      <MatchmakingLobbyView
+        roomPhase={gameState.roomPhase}
+        players={gameState.players}
+        myUserId={myUserId}
+        countdownEndsAt={gameState.countdownEndsAt}
+        minPlayers={MIN_PLAYERS_TO_START}
+        maxPlayers={MAX_PLAYERS_PER_ROOM}
+        onLeave={() => {
+          mmLeave();
+          navigate("/");
+        }}
+      />
+    );
+  }
 
   return (
     <Container maxWidth="sm" sx={{ py: 3 }}>
@@ -284,6 +305,18 @@ export default function Room() {
             ]
           }
         />
+      )}
+      {gameState.origin === "matchmaking" && gameState.roomPhase === "waiting" && gameState.handResultEndsAt && (
+        <HandResultOverlay
+          winnerName={gameState.players.find((p) => p.id === gameState.winnerId)?.name}
+          handResultEndsAt={gameState.handResultEndsAt}
+        />
+      )}
+
+      {gameState.origin === "matchmaking" && gameState.phase === "awaiting_action" && (
+        <Button size="small" color="warning" variant="outlined" onClick={fold} sx={{ mb: 1 }}>
+          فولد (این دست رو بازی نکنم)
+        </Button>
       )}
 
       {/* دکمه‌های اکشن — فقط وقتی نوبت خودمه و منتظر اکشن جدید هستیم */}
