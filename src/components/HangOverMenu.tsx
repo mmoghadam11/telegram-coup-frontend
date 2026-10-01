@@ -12,6 +12,7 @@ import {
   CardActions,
   CardContent,
   CardHeader,
+  CircularProgress,
   Grid,
   Typography,
   useTheme,
@@ -20,6 +21,7 @@ import Carousel from "components/Carousel/Carousel";
 import EmblaCarousel from "components/Carousel/EmblaCarouselWithScaleAndLazy";
 import { useAuthorization } from "hooks/useAutorization";
 import { AccountBalance, BusinessCenter, Numbers, People, PlayCircle } from "@mui/icons-material";
+import { useMutation } from "@tanstack/react-query";
 interface CarouselItem {
   id: number;
   title: string;
@@ -32,14 +34,16 @@ interface MenuItem {
   url: string;
   description: string;
   access?: string[];
+  action?: "navigate" | "matchmake";
 }
 const menuItems: MenuItem[] = [
   {
     title: "ورود به بازی",
-    url: "COUP/disciplinary-order",
+    url: "",
     access: ["administrator", "city-showmenu"],
     description: "وارد شوید",
-    icon: <PlayCircle fontSize={"small"}/>,
+    icon: <PlayCircle fontSize={"small"} />,
+    action: "matchmake",
   },
   {
     title: "امتیازات",
@@ -47,14 +51,14 @@ const menuItems: MenuItem[] = [
     url: "leaderboard",
     access: ["accountant-showmenu"],
     description: "رتبه ها و امتیازات",
-    icon: <Numbers fontSize={"small"}/>,
+    icon: <Numbers fontSize={"small"} />,
   },
   {
     title: "لابی",
     url: "lobby",
     access: ["accountant-showmenu"],
     description: "ورود به لیست میزها",
-    icon: <AccountBalance fontSize={"small"}/>,
+    icon: <AccountBalance fontSize={"small"} />,
   },
 ];
 const carouselItems: CarouselItem[] = [
@@ -81,7 +85,24 @@ function HangOverMenu() {
   const Auth = useAuth();
   const theme = useTheme();
   const authFunctions = useAuthorization();
-  const navigate=useNavigate();
+  const navigate = useNavigate();
+  const { mutate: startMatchmaking, isLoading: matchmakingLoading } = useMutation({
+  mutationFn: Auth?.serverCall,
+  onSuccess: (res: any) => {
+    navigate(`/room/${res.roomId}`);
+  },
+  onError: () => {
+    // اگه snackbar دارید اینجا نشونش بدید
+  },
+});
+
+const handleMenuItemClick = (item: MenuItem) => {
+  if (item.action === "matchmake") {
+    startMatchmaking({ entity: "matchmake", method: "post" } as any);
+  } else {
+    navigate(item.url);
+  }
+};
   return (
     <Grid container item md={12} mb={"15vh"} justifyContent={"center"}>
       {/* <Grid item md={4}>
@@ -101,9 +122,9 @@ function HangOverMenu() {
         // display={"flex"}
         justifyContent={"space-around"}
         sx={{
-          width:"90%",
+          width: "90%",
           height: "17vh",
-          backgroundColor:`${alpha(theme.palette.primary.main, 0.4)}`,
+          backgroundColor: `${alpha(theme.palette.primary.main, 0.4)}`,
           // backgroundColor: theme.palette.primary.light,
           // border:`2px dashed ${theme.palette.primary.main}`,
           overflow: "visible",
@@ -114,69 +135,79 @@ function HangOverMenu() {
         <Box p={1} mb={-1} width={"100%"} display={"flex"} justifyContent={"center"}>
           <Typography variant="h5" color={"white"}>پر کاربرد های شما</Typography>
         </Box>
-        <Grid container display={"flex"} width={"100%"}  justifyContent={"space-around"}>
+        <Grid container display={"flex"} width={"100%"} justifyContent={"space-around"}>
           {menuItems
-          // ?.filter((item) => {
-          //   return authFunctions?.hasMenuAccess(item.access);
-          // })
-          ?.map((item, index) => (
-            <Grid
-              item
-              md={3}
-              xs={3.5}
-              sx={{
-                // position: "relative",
-                display: "flex",
-                justifyContent: "center",
-                mb:1,
-              }}
-            >
-              <Card
+            // ?.filter((item) => {
+            //   return authFunctions?.hasMenuAccess(item.access);
+            // })
+            ?.map((item, index) => (
+              <Grid
+                item
+                md={3}
+                xs={3.5}
                 sx={{
-                  borderRadius: "5px",
-                  position: "relative",
-                  top: "18px", // کارت از پایین گرید بیرون می‌زند بدون افزایش ارتفاع
-                  width: "100%",
-                  height: "20vh",
-                  // aspectRatio: "15/16",
+                  // position: "relative",
+                  display: "flex",
+                  justifyContent: "center",
+                  mb: 1,
                 }}
               >
-                {/* <CardHeader title={item.title} /> */}
-                <CardContent
-                // sx={{ height: "100%" }}
+                <Card
+                  sx={{
+                    borderRadius: "5px",
+                    position: "relative",
+                    top: "18px", // کارت از پایین گرید بیرون می‌زند بدون افزایش ارتفاع
+                    width: "100%",
+                    height: "20vh",
+                    // aspectRatio: "15/16",
+                  }}
                 >
-                  <Box display={"flex"} alignItems={"center"} gap={1}>
-                    {item.icon}
-                    <Typography  variant={"body2"} fontWeight={"bold"} fontSize={{xs:"0.8rem",md:"1.2rem"}} component="div">
-                      {item.title}
-                    </Typography>
-                  </Box>
-                  <Typography variant="body2" sx={{ color: "text.secondary" }}>
-                    {item.description}
-                  </Typography>
-                </CardContent>
-                <CardActions>
-                  <Button sx={{position: "absolute",
-                     left:{md:"7%",xs:"10%"}, bottom: {md:20,xs:10},width:{md:"20%",xs:"80%"}}} size="small" onClick={()=>{navigate(item.url)}} variant="contained">مشاهده</Button>
-                  <Typography
-                    variant="body2"
-                    sx={{
-                      position: "absolute",
-                      bottom: {md:22,xs:33},
-                      right: 16,
-                      // color: slide.image ? "white" : "text.secondary",
-                      zIndex: 2,
-                      display:{xs:"none",md:"block"}
-                    }}
+                  {/* <CardHeader title={item.title} /> */}
+                  <CardContent
+                  // sx={{ height: "100%" }}
                   >
-                    {index + 1} / {menuItems.length}
-                  </Typography>
-                </CardActions>
-              </Card>
-            </Grid>
-          ))}
+                    <Box display={"flex"} alignItems={"center"} gap={1}>
+                      {item.icon}
+                      <Typography variant={"body2"} fontWeight={"bold"} fontSize={{ xs: "0.8rem", md: "1.2rem" }} component="div">
+                        {item.title}
+                      </Typography>
+                    </Box>
+                    <Typography variant="body2" sx={{ color: "text.secondary" }}>
+                      {item.description}
+                    </Typography>
+                  </CardContent>
+                  <CardActions>
+                    <Button
+                      sx={{
+                        position: "absolute",
+                        left: { md: "7%", xs: "10%" }, bottom: { md: 20, xs: 10 }, width: { md: "20%", xs: "80%" }
+                      }}
+                      size="small"
+                      onClick={() => handleMenuItemClick(item)}
+                      variant="contained"
+                      disabled={item.action === "matchmake" && matchmakingLoading}
+                    >
+                      {item.action === "matchmake" && matchmakingLoading ? <CircularProgress size={16} /> : "مشاهده"}
+                    </Button>
+                    <Typography
+                      variant="body2"
+                      sx={{
+                        position: "absolute",
+                        bottom: { md: 22, xs: 33 },
+                        right: 16,
+                        // color: slide.image ? "white" : "text.secondary",
+                        zIndex: 2,
+                        display: { xs: "none", md: "block" }
+                      }}
+                    >
+                      {index + 1} / {menuItems.length}
+                    </Typography>
+                  </CardActions>
+                </Card>
+              </Grid>
+            ))}
         </Grid>
-        
+
       </Box>
     </Grid>
   );
