@@ -285,7 +285,7 @@ function RoomsGrid() {
           >
             <MenuItem value="waiting">waiting</MenuItem>
             <MenuItem value="playing">playing</MenuItem>
-            <MenuItem value="finished">finished</MenuItem>
+            <MenuItem value="closed">closed</MenuItem>
           </Select>
         </DialogContent>
         <DialogActions>
