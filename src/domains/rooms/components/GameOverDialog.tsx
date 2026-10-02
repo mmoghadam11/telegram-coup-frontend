@@ -1,8 +1,11 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   Dialog, DialogTitle, DialogContent, DialogActions, Typography, Button,
   Stack, Table, TableHead, TableRow, TableCell, TableBody, Chip, Divider,
+  Box,
+  LinearProgress,
 } from "@mui/material";
+import { progress } from "motion/dist/react";
 
 interface PlayerRow {
   id: string;
@@ -22,6 +25,8 @@ interface Props {
   winnerName?: string;
   players: PlayerRow[];
   isCreator: boolean;
+  isMatchmaking?: boolean;          // ✅ جدید
+  countdownEndsAt?: number | null;
   onRestart: (reopenForJoining: boolean) => void;
   onCloseRoom: () => void;
   onLeaveRoom: () => void;
@@ -34,14 +39,36 @@ function findTop(players: PlayerRow[], key: keyof PlayerRow["stats"]) {
 }
 
 export default function GameOverDialog({
-  open, winnerName, players, isCreator, onRestart, onCloseRoom, onLeaveRoom,
+  open, winnerName, players, isCreator, onRestart, onCloseRoom, onLeaveRoom, isMatchmaking, countdownEndsAt
 }: Props) {
   const [restartConfirmOpen, setRestartConfirmOpen] = useState(false);
+  const [remaining, setRemaining] = useState(0);
+
+  // ✅ شمارش معکوس برای matchmaking
+  useEffect(() => {
+    if (!open || !isMatchmaking || !countdownEndsAt) {
+      setRemaining(0);
+      return;
+    }
+    const update = () => {
+      const left = Math.max(0, Math.ceil((countdownEndsAt - Date.now()) / 1000));
+      setRemaining(left);
+    };
+    update();
+    const interval = setInterval(update, 200);
+    return () => clearInterval(interval);
+  }, [open, isMatchmaking, countdownEndsAt]);
 
   const topBluffer = findTop(players, "successfulBluffs");
   const topKiller = findTop(players, "kills");
   const topStealer = findTop(players, "successfulSteals");
   const topChallenger = findTop(players, "correctChallenges");
+
+  // برای matchmaking، درصد پیشرفت شمارش
+  const totalSeconds = 8; // HAND_RESULT_DISPLAY_SECONDS
+  const progress = isMatchmaking && remaining > 0
+    ? ((totalSeconds - remaining) / totalSeconds) * 100
+    : 0;
 
   return (
     <>
@@ -87,24 +114,36 @@ export default function GameOverDialog({
               ))}
             </TableBody>
           </Table>
+
+          {/* ✅ شمارش معکوس فقط برای matchmaking */}
+          {isMatchmaking && countdownEndsAt && (
+            <Box sx={{ mt: 3, textAlign: "center" }}>
+              <Typography variant="body2" color="text.secondary" sx={{ mb: 1 }}>
+                دست بعدی تا {remaining} ثانیه‌ی دیگه شروع می‌شه...
+              </Typography>
+              <LinearProgress variant="determinate" value={progress} />
+            </Box>
+          )}
         </DialogContent>
-        <DialogActions sx={{ flexWrap: "wrap", justifyContent: "center", gap: 1, p: 2 }}>
-          {isCreator && (
-            <>
-              <Button variant="contained" onClick={() => setRestartConfirmOpen(true)}>
-                شروع مجدد
+        {!isMatchmaking && (
+          <DialogActions sx={{ flexWrap: "wrap", justifyContent: "center", gap: 1, p: 2 }}>
+            {isCreator && (
+              <>
+                <Button variant="contained" onClick={() => setRestartConfirmOpen(true)}>
+                  شروع مجدد
+                </Button>
+                <Button variant="outlined" color="error" onClick={onCloseRoom}>
+                  بستن کامل روم
+                </Button>
+              </>
+            )}
+            {!isCreator && (
+              <Button variant="outlined" onClick={onLeaveRoom}>
+                خروج از روم
               </Button>
-              <Button variant="outlined" color="error" onClick={onCloseRoom}>
-                بستن کامل روم
-              </Button>
-            </>
-          )}
-          {!isCreator && ( 
-            <Button variant="outlined" onClick={onLeaveRoom}>
-              خروج از روم
-            </Button>
-          )}
-        </DialogActions>
+            )}
+          </DialogActions>
+        )}
       </Dialog>
 
       <Dialog open={restartConfirmOpen} onClose={() => setRestartConfirmOpen(false)}>
