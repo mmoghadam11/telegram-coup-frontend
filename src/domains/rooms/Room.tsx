@@ -131,7 +131,14 @@ export default function Room() {
   };
 
   const otherAlivePlayers = gameState.players.filter((p) => p.id !== myUserId && p.isAlive);
-
+  if (gameState.origin === "matchmaking" && gameState.roomPhase === "playing" && gameState.phase === "game_over" && gameState.handResultEndsAt) {
+  return (
+    <HandResultOverlay
+      winnerName={gameState.players.find((p) => p.id === gameState.winnerId)?.name}
+      handResultEndsAt={gameState.handResultEndsAt}
+    />
+  );
+}
   // این بلوک جدید اضافه شد: برای روم‌های matchmaking، قبل از playing، صفحه‌ی لابی/شمارش معکوس رو نشون بده
   if (gameState.origin === "matchmaking" && (gameState.roomPhase === "waiting" || gameState.roomPhase === "starting")) {
     return (
@@ -306,12 +313,12 @@ export default function Room() {
           }
         />
       )}
-      {gameState.origin === "matchmaking" && gameState.roomPhase === "waiting" && gameState.handResultEndsAt && (
+      {/* {gameState.origin === "matchmaking" && gameState.roomPhase === "playing" && gameState.phase === "game_over" && gameState.handResultEndsAt && (
         <HandResultOverlay
           winnerName={gameState.players.find((p) => p.id === gameState.winnerId)?.name}
           handResultEndsAt={gameState.handResultEndsAt}
         />
-      )}
+      )} */}
 
       {gameState.origin === "matchmaking" && gameState.phase === "awaiting_action" && (
         <Button size="small" color="warning" variant="outlined" onClick={fold} sx={{ mb: 1 }}>
