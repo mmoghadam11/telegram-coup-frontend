@@ -30,6 +30,7 @@ import ActionButton from "./components/ActionButton";
 import MatchmakingLobbyView from "./components/MatchmakingLobbyView";
 import HandResultOverlay from "./components/HandResultOverlay";
 import { MAX_PLAYERS_PER_ROOM, MIN_PLAYERS_TO_START } from "./constants/matchmaking";
+import AwaitingResponses from "./components/AwaitingResponses";
 
 
 const ROLE_LABELS_FA: Record<string, string> = {
@@ -391,8 +392,16 @@ export default function Room() {
             {ACTION_LABELS[pending.action] || pending.action} کرد
             {pending.targetId && ` علیه ${gameState.players.find((p) => p.id === pending.targetId)?.name}`}
           </Typography>
+
+          <AwaitingResponses
+            players={pending.awaitingResponseFrom
+              .map((id) => gameState.players.find((p) => p.id === id))
+              .filter(Boolean) as any}
+            respondedIds={Object.keys(pending.responses)}
+          />
+
           {pending.actorId !== myUserId && pending.awaitingResponseFrom.includes(myUserId) && !pending.responses[myUserId] && (
-            <Stack direction="row" spacing={1}>
+            <Stack direction="row" spacing={1} sx={{ mt: 1.5 }}>
               <Button size="small" variant="contained" onClick={() => respond("allow")}>قبول</Button>
               {pending.claimedRole && (
                 <Button size="small" color="warning" onClick={() => respond("challenge")}>چالش (بلوفه!)</Button>
@@ -415,8 +424,14 @@ export default function Room() {
             {gameState.players.find((p) => p.id === pending.blockedBy!.playerId)?.name} با ادعای{" "}
             {ROLE_LABELS_FA[pending.blockedBy.claimedRole]} بلاک کرد
           </Typography>
+
+          <AwaitingResponses
+            players={gameState.players.filter((p) => p.id !== pending.blockedBy!.playerId && p.isAlive)}
+            respondedIds={Object.keys(pending.blockChallengeResponses || {})}
+          />
+
           {pending.blockedBy.playerId !== myUserId && !pending.blockChallengeResponses?.[myUserId] && (
-            <Stack direction="row" spacing={1}>
+            <Stack direction="row" spacing={1} sx={{ mt: 1.5 }}>
               <Button size="small" variant="contained" onClick={() => respondToBlock("allow")}>قبول</Button>
               <Button size="small" color="warning" onClick={() => respondToBlock("challenge")}>چالش (بلوفه!)</Button>
             </Stack>
