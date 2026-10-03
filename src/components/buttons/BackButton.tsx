@@ -31,9 +31,10 @@ const BackButton: React.FC<Props> = ({ onBack, text = "بازگشت", sx }) => {
           onClick={() => onBack()}
           color="default"
           sx={{ ...sx, mb: 2 }}
+          title="<"
         >
           {/* <ReplyIcon /> */}
-          <ArrowBackIos/>
+          {/* <ArrowBackIos/> */}
         </Fab>
       </Tooltip>
     );
