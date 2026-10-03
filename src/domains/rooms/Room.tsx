@@ -152,6 +152,7 @@ export default function Room() {
         maxPlayers={MAX_PLAYERS_PER_ROOM}
         onLeave={() => {
           mmLeave();
+          Auth?.setUserInfo({ ...Auth.userInfo, active_room_id: null });
           navigate("/");
         }}
       />
