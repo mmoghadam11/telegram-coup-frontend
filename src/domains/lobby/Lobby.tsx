@@ -71,7 +71,7 @@ export default function Lobby() {
 
   return (
     <Container maxWidth="sm" sx={{ py: 3 }}>
-      <Stack direction={"row"}>
+      <Stack direction={"row"}  justifyContent={"space-between"}>
         <Typography variant="h6" sx={{ mb: 2 }} textAlign="center">
           لابی بازی
         </Typography>
