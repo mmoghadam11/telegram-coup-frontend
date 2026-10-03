@@ -336,12 +336,12 @@ export default function Room() {
       {gameState.phase === "awaiting_action" && isMyTurn && (
         <Grid container spacing={1}>
           {/* ActionCarousel */}
-          <Grid item xs={7}>
-
+          {(gameState.players.find((p) => p.id === myUserId)?.coins??0)<10&&
+            <Grid item xs={7}>
             <ActionCarousel
               actions={Object.keys(ACTION_CARD_DATA)
                 .filter((action) => {
-                  if (["income", "foreign_aid", "coup"].includes(action)) {
+                  if (["income", "foreign_aid", "coup","coup1"].includes(action)) {
                     return false;
                   }
                   const myCoins = gameState.players.find((p) => p.id === myUserId)?.coins ?? 0;
@@ -353,8 +353,8 @@ export default function Room() {
                 }))}
               onSelect={handleActionClick}
             />
-          </Grid>
-
+          </Grid>}
+          {(gameState.players.find((p) => p.id === myUserId)?.coins??0)<10&&
           <Grid item xs={5} display={"flex"}>
             {/* Income + Foreign Aid */}
             <Stack
@@ -372,6 +372,7 @@ export default function Room() {
               />
             </Stack>
           </Grid>
+          }
           {/* Coup */}
           {(gameState.players.find((p) => p.id === myUserId)?.coins ?? 0) >= ACTION_CARD_DATA.coup1.cost && (
             <Grid item xs={12}>
