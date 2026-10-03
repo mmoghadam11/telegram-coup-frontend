@@ -89,6 +89,7 @@ function HangOverMenu() {
   const { mutate: startMatchmaking, isLoading: matchmakingLoading } = useMutation({
   mutationFn: Auth?.serverCall,
   onSuccess: (res: any) => {
+    Auth?.setUserInfo({ ...Auth.userInfo, active_room_id: res.roomId });
     navigate(`/room/${res.roomId}`);
   },
   onError: () => {
