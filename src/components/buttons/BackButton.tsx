@@ -2,7 +2,7 @@ import { Button, Fab, Tooltip } from "@mui/material";
 import React from "react";
 import ReplyIcon from "@mui/icons-material/Reply";
 import { isMobile } from "react-device-detect";
-import { ArrowBackIos } from "@mui/icons-material";
+import { ArrowBackIosNew } from "@mui/icons-material";
 
 type Props = {
   onBack: () => void;
@@ -16,7 +16,7 @@ const BackButton: React.FC<Props> = ({ onBack, text = "بازگشت", sx }) => {
       <Button
         variant="outlined"
         onClick={() => onBack()}
-        endIcon={<ArrowBackIos />}
+        endIcon={<ArrowBackIosNew />}
         color="warning"
         sx={{ ...sx, minWidth: "150px", mb: 2 }}
       >
@@ -31,10 +31,9 @@ const BackButton: React.FC<Props> = ({ onBack, text = "بازگشت", sx }) => {
           onClick={() => onBack()}
           color="default"
           sx={{ ...sx, mb: 2 }}
-          title="<"
         >
           {/* <ReplyIcon /> */}
-          {/* <ArrowBackIos/> */}
+          <ArrowBackIosNew/>
         </Fab>
       </Tooltip>
     );
