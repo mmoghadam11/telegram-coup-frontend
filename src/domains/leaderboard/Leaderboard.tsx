@@ -4,12 +4,15 @@ import { Container, Typography, Paper, List, ListItem, ListItemAvatar, Avatar, L
 import { useAuth } from "hooks/useAuth";
 import PowerRadar from "./components/PowerRadar";
 import MedalStat from "./components/MedalStat";
+import BackButton from "components/buttons/BackButton";
+import { useNavigate } from "react-router-dom";
 
 export default function Leaderboard() {
   const Auth = useAuth();
+  const navigate = useNavigate();
   const [errorOpen, setErrorOpen] = React.useState(true);
 
-  const { data, isLoading,error} = useQuery({
+  const { data, isLoading, error } = useQuery({
     queryKey: ["leaderboard"],
     queryFn: Auth?.getRequest,
     select: (res: any) => res,
@@ -99,9 +102,12 @@ export default function Leaderboard() {
 
   return (
     <Container maxWidth="sm" sx={{ py: 3 }}>
-      <Typography variant="h6" gutterBottom textAlign="center">
-        🏆 لیدربورد
-      </Typography>
+      <Box display={"flex"}>
+        <Typography variant="h6" gutterBottom textAlign="center">
+          🏆 لیدربورد
+        </Typography>
+        <BackButton onBack={() => navigate(-1)} />
+      </Box>
 
       <Paper variant="outlined" sx={{ mb: 3 }}>
         <List dense>

@@ -20,6 +20,7 @@ import {
 import { useAuth } from "hooks/useAuth";
 import { useSnackbar } from "hooks/useSnackbar";
 import { AddCircleOutline } from "@mui/icons-material";
+import BackButton from "components/buttons/BackButton";
 
 export default function Lobby() {
   const Auth = useAuth();
@@ -70,9 +71,12 @@ export default function Lobby() {
 
   return (
     <Container maxWidth="sm" sx={{ py: 3 }}>
-      <Typography variant="h6" sx={{ mb: 2 }} textAlign="center">
-        لابی بازی
-      </Typography>
+      <Stack>
+        <Typography variant="h6" sx={{ mb: 2 }} textAlign="center">
+          لابی بازی
+        </Typography>
+        <BackButton onBack={() => navigate(-1)} />
+      </Stack>
 
       <Grid container spacing={1} sx={{ mb: 2 }}>
         <Grid item sm={9} xs={7}>
@@ -85,9 +89,9 @@ export default function Lobby() {
           />
         </Grid>
         <Grid item textAlign={"end"} sm={3} xs={5}>
-          <Button startIcon={creating? null :<AddCircleOutline/>} variant="contained" onClick={handleCreateRoom} disabled={creating}>
+          <Button startIcon={creating ? null : <AddCircleOutline />} variant="contained" onClick={handleCreateRoom} disabled={creating}>
             {creating ? <CircularProgress size={20} /> : "ساخت روم"}
-          </Button> 
+          </Button>
         </Grid>
       </Grid>
 
