@@ -102,7 +102,7 @@ export default function Leaderboard() {
 
   return (
     <Container maxWidth="sm" sx={{ py: 3 }}>
-      <Box display={"flex"}>
+      <Box display={"flex"} justifyContent={"space-between"}>
         <Typography variant="h6" gutterBottom textAlign="center">
           🏆 لیدربورد
         </Typography>
