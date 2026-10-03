@@ -31,6 +31,7 @@ import MatchmakingLobbyView from "./components/MatchmakingLobbyView";
 import HandResultOverlay from "./components/HandResultOverlay";
 import { MAX_PLAYERS_PER_ROOM, MIN_PLAYERS_TO_START } from "./constants/matchmaking";
 import AwaitingResponses from "./components/AwaitingResponses";
+import CoupCardItem from "./components/CoupCardItem";
 
 
 const ROLE_LABELS_FA: Record<string, string> = {
@@ -370,18 +371,22 @@ export default function Room() {
                 onClick={handleActionClick}
               />
             </Stack>
-
-            {/* Coup */}
-            {(gameState.players.find((p) => p.id === myUserId)?.coins ?? 0) >= ACTION_CARD_DATA.coup.cost && (
-              <ActionButton
-                action="coup"
+          </Grid>
+          {/* Coup */}
+          {(gameState.players.find((p) => p.id === myUserId)?.coins ?? 0) >= ACTION_CARD_DATA.coup1.cost && (
+            <Grid item xs={12}>
+              {/* <ActionButton
+                action="coup1"
                 onClick={handleActionClick}
                 sx={{
                   width: { xs: 70, sm: 85 },
                 }}
+              /> */}
+              <CoupCardItem
+                onClick={() => handleActionClick("coup")}
               />
-            )}
-          </Grid>
+            </Grid>
+          )}
         </Grid>
       )}
 

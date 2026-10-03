@@ -20,11 +20,11 @@ export default function ActionCard({ action, image, title, description, disabled
         flex: "0 0 50%",
         borderRadius: "10px",
         position: "relative",
-        // width: "40%",
+        width: "100%",
         cursor: disabled ? "default" : "pointer",
-        opacity: disabled ? 0.45 : 1,
-        transition: "transform 0.15s",
-        "&:hover": disabled ? {} : { transform: "scale(1.02)" },
+        // opacity: disabled ? 0.45 : 1,
+        // transition: "transform 0.15s",
+        // "&:hover": disabled ? {} : { transform: "scale(1.02)" },
       }}
       onClick={() => !disabled && onClick(action)}
     >
@@ -49,12 +49,12 @@ export default function ActionCard({ action, image, title, description, disabled
           zIndex: 3,
         }}
       >
-        <Typography variant="body1" fontWeight="bold" fontSize="0.9rem" gutterBottom>
+        <Typography variant="body1" fontWeight="bold" fontSize="0.65rem" gutterBottom>
           {title}
         </Typography>
         <Typography
           variant="caption"
-          fontSize="0.7rem"
+          fontSize="0.6rem"
           sx={{ display: "-webkit-box", WebkitLineClamp: 2, WebkitBoxOrient: "vertical", overflow: "hidden" }}
         >
           {description}
