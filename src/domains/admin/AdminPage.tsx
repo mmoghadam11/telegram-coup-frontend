@@ -10,6 +10,7 @@ import { GridColDef } from "@mui/x-data-grid";
 import { useAuth } from "hooks/useAuth";
 import TavanaDataGrid from "components/dataGrid/TavanaDataGrid";
 import { PAGINATION_DEFAULT_VALUE } from "shared/paginationValue";
+import { Send } from "@mui/icons-material";
 
 export default function AdminPage() {
   const [tab, setTab] = useState(0);
@@ -69,6 +70,12 @@ function UsersGrid() {
     onSuccess: () => queryClient.invalidateQueries({ queryKey: ["admin/users"] }),
   });
 
+  const { mutate: sendTestReminder } = useMutation({
+    mutationFn: Auth?.serverCall,
+    onSuccess: () => alert("پیام ارسال شد"),
+    onError: (err: any) => alert("خطا: " + JSON.stringify(err?.data || err)),
+  });
+
   const columns: GridColDef[] = [
     {
       field: "photo_url",
@@ -91,12 +98,21 @@ function UsersGrid() {
     {
       field: "actions",
       headerName: "عملیات",
-      width: 100,
+      width: 140,
       sortable: false,
       renderCell: (params) => (
         <>
           <IconButton size="small" onClick={() => setEditUser(params.row)}>
             <EditIcon fontSize="small" />
+          </IconButton>
+          <IconButton
+            size="small"
+            color="primary"
+            onClick={() =>
+              sendTestReminder({ entity: `admin/test-reminder/${params.row.id}`, method: "post" } as any)
+            }
+          >
+            <Send fontSize="small" />
           </IconButton>
           <IconButton
             size="small"
