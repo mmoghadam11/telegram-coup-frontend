@@ -35,15 +35,17 @@ interface MenuItem {
   description: string;
   access?: string[];
   action?: "navigate" | "matchmake";
+  btn?:string
 }
 const menuItems: MenuItem[] = [
   {
-    title: "ورود به بازی",
+    title: "بازی سریع",
     url: "",
     access: ["administrator", "city-showmenu"],
     description: "وارد شوید",
     icon: <PlayCircle fontSize={"small"} />,
     action: "matchmake",
+    btn:"ورود",
   },
   {
     title: "امتیازات",
@@ -52,13 +54,15 @@ const menuItems: MenuItem[] = [
     access: ["accountant-showmenu"],
     description: "رتبه ها و امتیازات",
     icon: <Numbers fontSize={"small"} />,
+    btn:"مشاهده"
   },
   {
     title: "لابی",
     url: "lobby",
     access: ["accountant-showmenu"],
-    description: "ورود به لیست میزها",
+    description: "لیست میزها",
     icon: <AccountBalance fontSize={"small"} />,
+    // btn:"ورود به تالار"
   },
 ];
 const carouselItems: CarouselItem[] = [
@@ -167,7 +171,7 @@ const handleMenuItemClick = (item: MenuItem) => {
                   <CardContent
                   // sx={{ height: "100%" }}
                   >
-                    <Box display={"flex"} alignItems={"center"} gap={1}>
+                    <Box display={"flex"} alignItems={"center"} justifyContent={"center"}>
                       {item.icon}
                       <Typography variant={"body2"} fontWeight={"bold"} fontSize={{ xs: "0.8rem", md: "1.2rem" }} component="div">
                         {item.title}
@@ -188,7 +192,7 @@ const handleMenuItemClick = (item: MenuItem) => {
                       variant="contained"
                       disabled={item.action === "matchmake" && matchmakingLoading}
                     >
-                      {item.action === "matchmake" && matchmakingLoading ? <CircularProgress size={16} /> : "مشاهده"}
+                      {item.action === "matchmake" && matchmakingLoading ? <CircularProgress size={16} /> : item.btn??"مشاهده"}
                     </Button>
                     <Typography
                       variant="body2"

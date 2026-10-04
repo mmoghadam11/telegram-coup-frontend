@@ -136,9 +136,9 @@ function Welcome() {
         <Grid item md={11} xs={11} p={4}>
           <AllCard />
         </Grid>
-        <Grid item md={11} xs={11} p={4} justifyContent={"center"} alignContent={"center"} display={"flex"}>
+        {/* <Grid item md={11} xs={11} p={4} justifyContent={"center"} alignContent={"center"} display={"flex"}>
           <PushButton size={200} onClick={() => console.log("Button Pressed!")} />
-        </Grid>
+        </Grid> */}
       </Grid>
     </Box>
 
