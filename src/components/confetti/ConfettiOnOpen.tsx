@@ -2,157 +2,119 @@ import { useEffect } from "react";
 import confetti from "canvas-confetti";
 
 const DEFAULT_COLORS = [
-  "#e0a52f", // طلایی
-  "#ffd700", // طلایی روشن
-  "#ff3d68", // صورتی
-  "#00d4ff", // آبی
-  "#a855f7", // بنفش
-  "#ff8c00", // نارنجی
-  "#34d399", // سبز
-  "#fbbf24", // کهربایی
+  "#e0a52f", "#ffd700", "#ff3d68", "#00d4ff",
+  "#ff00a2", "#ff8c00", "#34d399", "#fbbf24",
 ];
 
-const DEFAULT_Z_INDEX = 9999;
-
-export interface ConfettiProps {
-  /** فعال بودن افکت — با true شدن، انیمیشن شروع می‌شه */
+interface Props {
   active: boolean;
-
-  /** رنگ کاغذها */
   colors?: string[];
-
-  /** اندازه کاغذها — پیش‌فرض 1 */
-  scalar?: number;
-
-  /** تعداد کاغذهای انفجار اولیه */
-  particleCount?: number;
-
-  /** تعداد کاغذهای جریان مداوم (هر طرف، در هر تیک) */
-  streamParticleCount?: number;
-
-  /** فاصله بین تیک‌های جریان (ms) */
-  streamInterval?: number;
-
-  /** سرعت پرش کاغذها */
-  startVelocity?: number;
-
-  /** گرانش — بیشتر یعنی سریع‌تر پایین میاد */
-  gravity?: number;
-
-  /** z-index کانواس */
-  zIndex?: number;
-
-  /** مدت زمان اجرا (ms) — اگه untilTimestamp نداری */
-  duration?: number;
-
-  /** اگه ست بشه، انیمیشن تا این timestamp ادامه پیدا می‌کنه */
   untilTimestamp?: number | null;
-
-  /** کاغذها فقط از بالا می‌ریزن (بدون جریان دو طرف) */
-  topOnly?: boolean;
+  fallbackDuration?: number;
+  /** ✅ z-index قابل تنظیم — پیش‌فرض خیلی بالا */
+  zIndex?: number;
+  /** ✅ اندازه کاغذ */
+  scalar?: number;
 }
+
+// حداکثر z-index ممکن — بالاتر از هر چیزی که MUI می‌سازه
+const DEFAULT_Z_INDEX = 2147483000;
 
 export default function ConfettiOnOpen({
   active,
   colors = DEFAULT_COLORS,
-  scalar = 1,
-  particleCount = 60,
-  streamParticleCount = 2,
-  streamInterval = 220,
-  startVelocity = 42,
-  gravity = 0.85,
+  untilTimestamp,
+  fallbackDuration = 8000,
   zIndex = DEFAULT_Z_INDEX,
-  duration = 8000,
-  untilTimestamp = null,
-  topOnly = false,
-}: ConfettiProps) {
+  scalar = 2.2,
+}: Props) {
   useEffect(() => {
     if (!active) return;
 
-    const endTime = untilTimestamp ?? (Date.now() + duration);
+    const endTime = untilTimestamp ?? (Date.now() + fallbackDuration);
+
+    // ✅ هر canvas با aria-hidden=true رو boost کن
+    const boostAllCanvases = () => {
+      const canvases = document.querySelectorAll(
+        'canvas[aria-hidden="true"]'
+      );
+      canvases.forEach((c) => {
+        const el = c as HTMLCanvasElement;
+        el.style.zIndex = String(zIndex);
+        el.style.pointerEvents = "none";
+        el.style.position = "fixed";
+        el.style.top = "0";
+        el.style.left = "0";
+      });
+    };
+
+    // ✅ MutationObserver: هر وقت canvas جدید اضافه شد، فوراً boost کن
+    const observer = new MutationObserver(boostAllCanvases);
+    observer.observe(document.body, {
+      childList: true,
+      subtree: true,
+      attributes: true,
+      attributeFilter: ["style"],
+    });
+
+    // ✅ به‌عنوان fallback، هر ۲۰۰ms هم boost کن
+    const interval = setInterval(boostAllCanvases, 200);
+
+    // ✅ اولین boost فوری
+    boostAllCanvases();
 
     // ✅ انفجار اولیه
     confetti({
-      particleCount,
+      particleCount: 60,
       spread: 110,
       origin: { y: 0 },
       colors,
       scalar,
-      gravity,
+      gravity: 0.85,
       drift: 0.4,
       ticks: 500,
-      startVelocity,
+      startVelocity: 42,
     });
 
-    // ✅ جریان دو طرف (مگه topOnly باشه)
-    const interval = topOnly
-      ? null
-      : setInterval(() => {
-          if (Date.now() >= endTime) {
-            if (interval) clearInterval(interval);
-            return;
-          }
-
-          // سمت چپ
-          confetti({
-            particleCount: streamParticleCount,
-            angle: 60,
-            spread: 55,
-            origin: { x: 0, y: 0.7 },
-            colors,
-            scalar,
-            gravity,
-            drift: 0.4,
-            ticks: 450,
-          });
-
-          // سمت راست
-          confetti({
-            particleCount: streamParticleCount,
-            angle: 120,
-            spread: 55,
-            origin: { x: 1, y: 0.7 },
-            colors,
-            scalar,
-            gravity,
-            drift: -0.4,
-            ticks: 450,
-          });
-        }, streamInterval);
-
-    // ✅ boost z-index کانواس (چون canvas-confetti خودش z-index نمی‌ذاره)
-    const boostCanvas = () => {
-      const canvas = document.querySelector(
-        'canvas[aria-hidden="true"]'
-      ) as HTMLCanvasElement | null;
-      if (canvas) {
-        canvas.style.zIndex = String(zIndex);
-        canvas.style.pointerEvents = "none";
+    // ✅ جریان دو طرف
+    const streamInterval = setInterval(() => {
+      if (Date.now() >= endTime) {
+        clearInterval(streamInterval);
+        return;
       }
-    };
 
-    boostCanvas();
-    const boostInterval = setInterval(boostCanvas, 300);
+      confetti({
+        particleCount: 2,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0, y: 0.7 },
+        colors,
+        scalar,
+        gravity: 0.85,
+        drift: 0.4,
+        ticks: 450,
+      });
+
+      confetti({
+        particleCount: 2,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1, y: 0.7 },
+        colors,
+        scalar,
+        gravity: 0.85,
+        drift: -0.4,
+        ticks: 450,
+      });
+    }, 220);
 
     return () => {
-      if (interval) clearInterval(interval);
-      clearInterval(boostInterval);
+      clearInterval(streamInterval);
+      clearInterval(interval);
+      observer.disconnect();
       confetti.reset();
     };
-  }, [
-    active,
-    untilTimestamp,
-    duration,
-    colors,
-    scalar,
-    particleCount,
-    streamParticleCount,
-    streamInterval,
-    startVelocity,
-    gravity,
-    zIndex,
-    topOnly,
-  ]);
+  }, [active, untilTimestamp, fallbackDuration, colors, zIndex, scalar]);
 
   return null;
 }
