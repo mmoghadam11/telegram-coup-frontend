@@ -32,6 +32,8 @@ import HandResultOverlay from "./components/HandResultOverlay";
 import { MAX_PLAYERS_PER_ROOM, MIN_PLAYERS_TO_START } from "./constants/matchmaking";
 import AwaitingResponses from "./components/AwaitingResponses";
 import CoupCardItem from "./components/CoupCardItem";
+import EliminationAnnouncement from "./components/EliminationAnnouncement";
+import RevealResultDialog from "./components/RevealResultDialog";
 
 
 const ROLE_LABELS_FA: Record<string, string> = {
@@ -61,7 +63,7 @@ export default function Room() {
   const [restartDialogOpen, setRestartDialogOpen] = useState(false);
   const {
     connected, loaded, gameState, privateState, mmLeave, fold,
-    sendProveCard, proofEvent, clearProofEvent, anarchistRespond, anarchistBlockRespond, anarchistPass, anarchistNeutralize,
+    sendProveCard, proofEvent, clearProofEvent, anarchistRespond, anarchistBlockRespond, anarchistPass, anarchistNeutralize, revealResultEvent, clearRevealResultEvent,
     startGame, sendChat, sendAction, respond, blockAction, respondToBlock, revealCard, restartGame, leaveRoom, closeRoom, forceReset, sendContessaSelect, sendExchangeSelect, respondToRestartVote,
   } = useRoomSocket(roomId);
 
@@ -333,45 +335,45 @@ export default function Room() {
           ))}
         </Stack>
       )} */}
-      {gameState.phase === "awaiting_action" && isMyTurn && (
+      {gameState.phase === "awaiting_action" && isMyTurn && !gameState.revealPending && (
         <Grid container spacing={1}>
           {/* ActionCarousel */}
-          {(gameState.players.find((p) => p.id === myUserId)?.coins??0)<10&&
+          {(gameState.players.find((p) => p.id === myUserId)?.coins ?? 0) < 10 &&
             <Grid item xs={7}>
-            <ActionCarousel
-              actions={Object.keys(ACTION_CARD_DATA)
-                .filter((action) => {
-                  if (["income", "foreign_aid", "coup","coup1"].includes(action)) {
-                    return false;
-                  }
-                  const myCoins = gameState.players.find((p) => p.id === myUserId)?.coins ?? 0;
-                  return myCoins >= ACTION_CARD_DATA[action].cost;
-                })
-                .map((action) => ({
-                  action,
-                  ...ACTION_CARD_DATA[action],
-                }))}
-              onSelect={handleActionClick}
-            />
-          </Grid>}
-          {(gameState.players.find((p) => p.id === myUserId)?.coins??0)<10&&
-          <Grid item xs={5} display={"flex"}>
-            {/* Income + Foreign Aid */}
-            <Stack
-              direction="column"
-              spacing={1}
-              sx={{ height: "100%" }}>
-              <ActionButton
-                action="income"
-                onClick={handleActionClick}
+              <ActionCarousel
+                actions={Object.keys(ACTION_CARD_DATA)
+                  .filter((action) => {
+                    if (["income", "foreign_aid", "coup", "coup1"].includes(action)) {
+                      return false;
+                    }
+                    const myCoins = gameState.players.find((p) => p.id === myUserId)?.coins ?? 0;
+                    return myCoins >= ACTION_CARD_DATA[action].cost;
+                  })
+                  .map((action) => ({
+                    action,
+                    ...ACTION_CARD_DATA[action],
+                  }))}
+                onSelect={handleActionClick}
               />
+            </Grid>}
+          {(gameState.players.find((p) => p.id === myUserId)?.coins ?? 0) < 10 &&
+            <Grid item xs={5} display={"flex"}>
+              {/* Income + Foreign Aid */}
+              <Stack
+                direction="column"
+                spacing={1}
+                sx={{ height: "100%" }}>
+                <ActionButton
+                  action="income"
+                  onClick={handleActionClick}
+                />
 
-              <ActionButton
-                action="foreign_aid"
-                onClick={handleActionClick}
-              />
-            </Stack>
-          </Grid>
+                <ActionButton
+                  action="foreign_aid"
+                  onClick={handleActionClick}
+                />
+              </Stack>
+            </Grid>
           }
           {/* Coup */}
           {(gameState.players.find((p) => p.id === myUserId)?.coins ?? 0) >= ACTION_CARD_DATA.coup1.cost && (
@@ -463,7 +465,7 @@ export default function Room() {
       </Dialog>
 
       {/* دیالوگ کور کردن کارت — وقتی نوبت خود شخصه که یه کارت رو ببازه */}
-      <Dialog open={revealPending?.playerId === myUserId} disableEscapeKeyDown>
+      {/* <Dialog open={revealPending?.playerId === myUserId} disableEscapeKeyDown>
         <DialogTitle>باید یه کارت خود را فدا کنید</DialogTitle>
         <DialogContent>
           <Stack direction="row" spacing={1} sx={{ mt: 1 }}>
@@ -476,7 +478,20 @@ export default function Room() {
             )}
           </Stack>
         </DialogContent>
-      </Dialog>
+      </Dialog> */}
+      {revealPending && (
+        <EliminationAnnouncement
+          playerId={revealPending.playerId}
+          reason={revealPending.reason}
+          actorId={revealPending.actorId}
+          myUserId={myUserId}
+          playerName={gameState.players.find((p) => p.id === revealPending.playerId)?.name || ""}
+          actorName={revealPending.actorId ? gameState.players.find((p) => p.id === revealPending.actorId)?.name : undefined}
+          roles={privateState?.yourRoles}
+          revealed={privateState?.yourRevealed}
+          onSelect={(roleIndex) => revealCard(roleIndex)}
+        />
+      )}
       <ExchangeDialog
         open={gameState.selectionPending?.mode === "exchange" && gameState.selectionPending.playerId === myUserId}
         pool={privateState?.exchangePool}
@@ -530,6 +545,7 @@ export default function Room() {
       />
 
       <ProveResultDialog event={proofEvent} onClose={clearProofEvent} />
+      <RevealResultDialog event={revealResultEvent} onClose={clearRevealResultEvent} />
       <GameOverDialog
         open={gameState.phase === "game_over"}
         winnerName={gameState.players.find((p) => p.id === gameState.winnerId)?.name}

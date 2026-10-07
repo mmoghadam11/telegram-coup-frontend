@@ -48,6 +48,14 @@ interface PendingAction {
 interface RevealPending {
   playerId: string;
   reason: string;
+  actorId: string | null;
+}
+
+interface RevealResultEvent {
+  playerId: string;
+  playerName: string;
+  role: string;
+  eliminated: boolean;
 }
 
 interface SelectionPending {
@@ -114,6 +122,7 @@ export function useRoomSocket(roomId?: string) {
   const [gameState, setGameState] = useState<PublicGameState | null>(null);
   const [privateState, setPrivateState] = useState<PrivateState | null>(null);
   const [proofEvent, setProofEvent] = useState<ProofEvent | null>(null);
+  const [revealResultEvent, setRevealResultEvent] = useState<RevealResultEvent | null>(null);
 
   const connect = useCallback(() => {
     if (!roomId || !Auth?.token) return;
@@ -161,6 +170,9 @@ export function useRoomSocket(roomId?: string) {
       }
       if (data.type === "proof_result") {
         setProofEvent(data.result);
+      }
+      if (data.type === "reveal_result") {
+        setRevealResultEvent(data.result);
       }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -215,6 +227,7 @@ export function useRoomSocket(roomId?: string) {
     (roleIndex: number) => send({ type: "reveal_card", roleIndex }),
     [send]
   );
+  const clearRevealResultEvent = useCallback(() => setRevealResultEvent(null), []);
   const restartGame = useCallback(
     (reopenForJoining: boolean) => send({ type: "restart_game", reopenForJoining }),
     [send]
@@ -272,6 +285,8 @@ export function useRoomSocket(roomId?: string) {
     blockAction,
     respondToBlock,
     revealCard,
+    revealResultEvent,
+    clearRevealResultEvent,
     sendContessaSelect,
     sendExchangeSelect,
     anarchistRespond,
