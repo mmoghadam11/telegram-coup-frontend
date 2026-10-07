@@ -84,7 +84,7 @@ export default function ConfettiOnOpen({
       }
 
       confetti({
-        particleCount: 2,
+        particleCount: 50,
         angle: 60,
         spread: 55,
         origin: { x: 0, y: 0.7 },
@@ -92,11 +92,11 @@ export default function ConfettiOnOpen({
         scalar,
         gravity: 0.85,
         drift: 0.4,
-        ticks: 450,
+        // ticks: 450,
       });
 
       confetti({
-        particleCount: 2,
+        particleCount: 50,
         angle: 120,
         spread: 55,
         origin: { x: 1, y: 0.7 },
@@ -104,7 +104,7 @@ export default function ConfettiOnOpen({
         scalar,
         gravity: 0.85,
         drift: -0.4,
-        ticks: 450,
+        // ticks: 450,
       });
     }, 220);
 
