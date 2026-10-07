@@ -61,11 +61,24 @@ export default function Room() {
   const [showFullLog, setShowFullLog] = useState(false);
   const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
   const [restartDialogOpen, setRestartDialogOpen] = useState(false);
+  const [showGameOverDialog, setShowGameOverDialog] = useState(false);
   const {
     connected, loaded, gameState, privateState, mmLeave, fold,
     sendProveCard, proofEvent, clearProofEvent, anarchistRespond, anarchistBlockRespond, anarchistPass, anarchistNeutralize, revealResultEvent, clearRevealResultEvent,
     startGame, sendChat, sendAction, respond, blockAction, respondToBlock, revealCard, restartGame, leaveRoom, closeRoom, forceReset, sendContessaSelect, sendExchangeSelect, respondToRestartVote,
   } = useRoomSocket(roomId);
+
+  useEffect(() => {
+    if (gameState?.phase !== "game_over") {
+      setShowGameOverDialog(false);
+      return;
+    }
+
+    // اگه همین الان یه revealResultEvent باز هست، صبر کن تا بسته بشه
+    if (revealResultEvent) return;
+
+    setShowGameOverDialog(true);
+  }, [gameState?.phase, revealResultEvent]);
 
   useEffect(() => {
     if (gameState?.phase === "anarchist_in_progress") {
@@ -547,7 +560,7 @@ export default function Room() {
       <ProveResultDialog event={proofEvent} onClose={clearProofEvent} />
       <RevealResultDialog event={revealResultEvent} onClose={clearRevealResultEvent} />
       <GameOverDialog
-        open={gameState.phase === "game_over"}
+        open={showGameOverDialog}
         winnerName={gameState.players.find((p) => p.id === gameState.winnerId)?.name}
         players={gameState.players.map((p) => ({ id: p.id, name: p.name, stats: p.stats }))}
         isCreator={gameState.creatorId === myUserId}
