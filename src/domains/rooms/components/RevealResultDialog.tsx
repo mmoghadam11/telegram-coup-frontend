@@ -20,7 +20,7 @@ export default function RevealResultDialog({ event, onClose }: Props) {
     <Dialog open={!!event} onClose={onClose}>
       <DialogContent>
         <Stack alignItems="center" spacing={2} sx={{ py: 2 }}>
-          <RoleCardImage role={event.role} size={130} />
+          <RoleCardImage role={event.role} size={130} reveal/>
           <Box textAlign="center">
             <Typography variant="subtitle1">{event.playerName}</Typography>
             <Typography variant="body2" color={event.eliminated ? "error.main" : "text.secondary"}>
