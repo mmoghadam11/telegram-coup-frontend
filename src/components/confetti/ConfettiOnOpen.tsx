@@ -44,7 +44,7 @@ export default function ConfettiOnOpen({
 
     // ✅ یه انفجار از چپ
     confetti({
-      particleCount: 120,
+      particleCount: 50,
       angle: 60,
       spread: 70,
       origin: { x: 0, y: 0.7 },
@@ -57,7 +57,7 @@ export default function ConfettiOnOpen({
 
     // ✅ یه انفجار از راست
     confetti({
-      particleCount: 120,
+      particleCount: 50,
       angle: 120,
       spread: 70,
       origin: { x: 1, y: 0.7 },
