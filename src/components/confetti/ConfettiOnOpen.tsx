@@ -1,77 +1,158 @@
 import { useEffect } from "react";
 import confetti from "canvas-confetti";
 
-interface Props {
-  /** فعال بودن افکت */
+const DEFAULT_COLORS = [
+  "#e0a52f", // طلایی
+  "#ffd700", // طلایی روشن
+  "#ff3d68", // صورتی
+  "#00d4ff", // آبی
+  "#a855f7", // بنفش
+  "#ff8c00", // نارنجی
+  "#34d399", // سبز
+  "#fbbf24", // کهربایی
+];
+
+const DEFAULT_Z_INDEX = 9999;
+
+export interface ConfettiProps {
+  /** فعال بودن افکت — با true شدن، انیمیشن شروع می‌شه */
   active: boolean;
+
   /** رنگ کاغذها */
   colors?: string[];
-  /** مدت کل انیمیشن (ms) */
+
+  /** اندازه کاغذها — پیش‌فرض 1 */
+  scalar?: number;
+
+  /** تعداد کاغذهای انفجار اولیه */
+  particleCount?: number;
+
+  /** تعداد کاغذهای جریان مداوم (هر طرف، در هر تیک) */
+  streamParticleCount?: number;
+
+  /** فاصله بین تیک‌های جریان (ms) */
+  streamInterval?: number;
+
+  /** سرعت پرش کاغذها */
+  startVelocity?: number;
+
+  /** گرانش — بیشتر یعنی سریع‌تر پایین میاد */
+  gravity?: number;
+
+  /** z-index کانواس */
+  zIndex?: number;
+
+  /** مدت زمان اجرا (ms) — اگه untilTimestamp نداری */
   duration?: number;
+
+  /** اگه ست بشه، انیمیشن تا این timestamp ادامه پیدا می‌کنه */
+  untilTimestamp?: number | null;
+
+  /** کاغذها فقط از بالا می‌ریزن (بدون جریان دو طرف) */
+  topOnly?: boolean;
 }
 
 export default function ConfettiOnOpen({
   active,
-  colors = ["#e0a52f", "#f5d76e", "#fff8dc", "#b8860b", "#ffd700"],
-  duration = 3000,
-}: Props) {
+  colors = DEFAULT_COLORS,
+  scalar = 1,
+  particleCount = 60,
+  streamParticleCount = 2,
+  streamInterval = 220,
+  startVelocity = 42,
+  gravity = 0.85,
+  zIndex = DEFAULT_Z_INDEX,
+  duration = 8000,
+  untilTimestamp = null,
+  topOnly = false,
+}: ConfettiProps) {
   useEffect(() => {
     if (!active) return;
 
-    const end = Date.now() + duration;
+    const endTime = untilTimestamp ?? (Date.now() + duration);
 
-    // انیمیشن اول: پاشش از دو طرف
-    const frame = () => {
-      // از سمت چپ
-      confetti({
-        particleCount: 3,
-        angle: 60,
-        spread: 55,
-        origin: { x: 0, y: 0.7 },
-        colors,
-        scalar: 1.2,
-        gravity: 0.9,
-        drift: 0.5,
-        ticks: 400,
-      });
-      // از سمت راست
-      confetti({
-        particleCount: 3,
-        angle: 120,
-        spread: 55,
-        origin: { x: 1, y: 0.7 },
-        colors,
-        scalar: 1.2,
-        gravity: 0.9,
-        drift: -0.5,
-        ticks: 400,
-      });
+    // ✅ انفجار اولیه
+    confetti({
+      particleCount,
+      spread: 110,
+      origin: { y: 0 },
+      colors,
+      scalar,
+      gravity,
+      drift: 0.4,
+      ticks: 500,
+      startVelocity,
+    });
 
-      if (Date.now() < end) {
-        requestAnimationFrame(frame);
+    // ✅ جریان دو طرف (مگه topOnly باشه)
+    const interval = topOnly
+      ? null
+      : setInterval(() => {
+          if (Date.now() >= endTime) {
+            if (interval) clearInterval(interval);
+            return;
+          }
+
+          // سمت چپ
+          confetti({
+            particleCount: streamParticleCount,
+            angle: 60,
+            spread: 55,
+            origin: { x: 0, y: 0.7 },
+            colors,
+            scalar,
+            gravity,
+            drift: 0.4,
+            ticks: 450,
+          });
+
+          // سمت راست
+          confetti({
+            particleCount: streamParticleCount,
+            angle: 120,
+            spread: 55,
+            origin: { x: 1, y: 0.7 },
+            colors,
+            scalar,
+            gravity,
+            drift: -0.4,
+            ticks: 450,
+          });
+        }, streamInterval);
+
+    // ✅ boost z-index کانواس (چون canvas-confetti خودش z-index نمی‌ذاره)
+    const boostCanvas = () => {
+      const canvas = document.querySelector(
+        'canvas[aria-hidden="true"]'
+      ) as HTMLCanvasElement | null;
+      if (canvas) {
+        canvas.style.zIndex = String(zIndex);
+        canvas.style.pointerEvents = "none";
       }
     };
 
-    // یه انفجار اولیه از بالا
-    confetti({
-      particleCount: 150,
-      spread: 100,
-      origin: { y: 0 },
-      colors,
-      scalar: 1.1,
-      gravity: 0.8,
-      drift: 0.3,
-      ticks: 500,
-      startVelocity: 45,
-    });
-
-    // شروع انیمیشن دو طرف
-    frame();
+    boostCanvas();
+    const boostInterval = setInterval(boostCanvas, 300);
 
     return () => {
+      if (interval) clearInterval(interval);
+      clearInterval(boostInterval);
       confetti.reset();
     };
-  }, [active, colors, duration]);
+  }, [
+    active,
+    untilTimestamp,
+    duration,
+    colors,
+    scalar,
+    particleCount,
+    streamParticleCount,
+    streamInterval,
+    startVelocity,
+    gravity,
+    zIndex,
+    topOnly,
+  ]);
 
   return null;
 }

@@ -175,7 +175,7 @@ export default function GameOverDialog({
           </Button>
         </DialogActions>
       </Dialog>
-      <ConfettiOnOpen active={open} />
+      <ConfettiOnOpen active={open} scalar={2.2}/>
     </>
   );
 }
