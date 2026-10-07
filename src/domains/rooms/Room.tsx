@@ -574,7 +574,7 @@ export default function Room() {
         onSelect={(roleIndex) => sendProveCard(roleIndex)}
       />
 
-      <ProveResultDialog event={proofEvent} onClose={clearProofEvent} />
+      <ProveResultDialog open={!showGameOverDialog} event={proofEvent} onClose={clearProofEvent} />
       <RevealResultDialog event={revealResultEvent} onClose={clearRevealResultEvent} />
       {/* <GameOverDialog
         open={showGameOverDialog}

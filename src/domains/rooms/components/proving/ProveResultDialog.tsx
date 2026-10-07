@@ -3,11 +3,12 @@ import { Dialog, DialogContent, Typography, Stack, Box } from "@mui/material";
 import RoleCardImage from "./RoleCardImage";
 
 interface Props {
+  open:boolean;
   event: { playerId: string; playerName: string; role: string; success: boolean } | null;
   onClose: () => void;
 }
 
-export default function ProveResultDialog({ event, onClose }: Props) {
+export default function ProveResultDialog({ event, onClose, open }: Props) {
   const audioRef = useRef<HTMLAudioElement | null>(null);
 
   useEffect(() => {
@@ -26,7 +27,7 @@ export default function ProveResultDialog({ event, onClose }: Props) {
   if (!event) return null;
 
   return (
-    <Dialog open={!!event}
+    <Dialog open={!!event&&open}
       onClose={(_, reason) => {
         // ✅ فقط کلیک روی backdrop و ESC رو بلاک کن
         if (reason === "backdropClick" || reason === "escapeKeyDown") return;
