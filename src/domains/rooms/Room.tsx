@@ -34,6 +34,7 @@ import AwaitingResponses from "./components/AwaitingResponses";
 import CoupCardItem from "./components/CoupCardItem";
 import EliminationAnnouncement from "./components/EliminationAnnouncement";
 import RevealResultDialog from "./components/RevealResultDialog";
+import GameOverPannel from "./components/GameOverPannel";
 
 
 const ROLE_LABELS_FA: Record<string, string> = {
@@ -320,7 +321,7 @@ export default function Room() {
           ))}
         </List>
       </Paper> */}
-      {gameState.phase !== "waiting_for_players" && (
+      {gameState.phase !== "waiting_for_players" && !showGameOverDialog && (
         <GameTable
           players={gameState.players.map((p) => ({ ...p, photo_url: p.photoUrl }))}
           myUserId={myUserId}
@@ -329,6 +330,22 @@ export default function Room() {
             gameState.currentTurnIndex
             ]
           }
+        />
+      )}
+      {showGameOverDialog && (
+        <GameOverPannel
+          winnerName={gameState.players.find((p) => p.id === gameState.winnerId)?.name}
+          players={gameState.players.map((p) => ({ id: p.id, name: p.name, stats: p.stats }))}
+          isCreator={gameState.creatorId === myUserId}
+          isMatchmaking={gameState.origin === "matchmaking"}
+          countdownEndsAt={gameState.handResultEndsAt ?? null}
+          onRestart={(reopenForJoining) => restartGame(reopenForJoining)}
+          onCloseRoom={closeRoom}
+          onLeaveRoom={() => {
+            leaveRoom();
+            Auth?.setUserInfo({ ...Auth.userInfo, active_room_id: null });
+            navigate("/lobby");
+          }}
         />
       )}
 
@@ -559,7 +576,7 @@ export default function Room() {
 
       <ProveResultDialog event={proofEvent} onClose={clearProofEvent} />
       <RevealResultDialog event={revealResultEvent} onClose={clearRevealResultEvent} />
-      <GameOverDialog
+      {/* <GameOverDialog
         open={showGameOverDialog}
         winnerName={gameState.players.find((p) => p.id === gameState.winnerId)?.name}
         players={gameState.players.map((p) => ({ id: p.id, name: p.name, stats: p.stats }))}
@@ -573,7 +590,7 @@ export default function Room() {
           Auth?.setUserInfo({ ...Auth.userInfo, active_room_id: null });
           navigate("/lobby");
         }}
-      />
+      /> */}
 
       <RestartVoteDialog
         open={gameState.phase === "restart_vote"}
