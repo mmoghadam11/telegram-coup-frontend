@@ -76,10 +76,10 @@ export default function Room() {
     }
 
     // اگه همین الان یه revealResultEvent باز هست، صبر کن تا بسته بشه
-    if (revealResultEvent) return;
+    if (revealResultEvent || proofEvent) return;
 
     setShowGameOverDialog(true);
-  }, [gameState?.phase, revealResultEvent]);
+  }, [gameState?.phase, revealResultEvent , proofEvent]);
 
   useEffect(() => {
     if (gameState?.phase === "anarchist_in_progress") {
