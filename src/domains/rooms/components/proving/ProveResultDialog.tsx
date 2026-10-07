@@ -26,7 +26,14 @@ export default function ProveResultDialog({ event, onClose }: Props) {
   if (!event) return null;
 
   return (
-    <Dialog open={!!event} onClose={onClose}>
+    <Dialog open={!!event}
+      onClose={(_, reason) => {
+        // ✅ فقط کلیک روی backdrop و ESC رو بلاک کن
+        if (reason === "backdropClick" || reason === "escapeKeyDown") return;
+        onClose();
+      }}
+      disableEscapeKeyDown
+    >
       <audio ref={audioRef} src="/assets/sounds/reveal.mp3" preload="auto" />
       <DialogContent>
         <Stack alignItems="center" spacing={2} sx={{ py: 2 }}>
