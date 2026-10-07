@@ -6,6 +6,7 @@ import {
   LinearProgress,
 } from "@mui/material";
 import { progress } from "motion/dist/react";
+import ConfettiOnOpen from "components/confetti/ConfettiOnOpen";
 
 interface PlayerRow {
   id: string;
@@ -174,6 +175,7 @@ export default function GameOverDialog({
           </Button>
         </DialogActions>
       </Dialog>
+      <ConfettiOnOpen active={open} />
     </>
   );
 }
