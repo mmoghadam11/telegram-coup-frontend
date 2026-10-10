@@ -82,6 +82,15 @@ interface AnarchistPendingState {
   status: "awaiting_block_decision" | "awaiting_block_challenge" | "awaiting_pass_target";
   blockChallengeResponses: Record<string, "allow" | "challenge">;
 }
+
+interface ShowcaseState {
+  kind: "proof" | "reveal" | "replacement";
+  playerId: string;
+  role: string | null;
+  success: boolean | null;
+  eliminated: boolean | null;
+  endsAt: number;
+}
 interface PublicGameState {
   phase: string;
   roomName: string | null;
@@ -96,6 +105,7 @@ interface PublicGameState {
   deckCount: number;
   log: string[];
   anarchistPending: AnarchistPendingState | null;
+  showcase: ShowcaseState | null;
   pendingAction: PendingAction | null;
   revealPending: RevealPending | null;
   provePending: ProvePending | null;
@@ -109,6 +119,7 @@ interface PrivateState {
   yourRevealed: boolean[];
   exchangePool?: string[];
   exchangeKeepCount?: number;
+  replacedIndex?: number;
 }
 
 export function useRoomSocket(roomId?: string) {
@@ -121,8 +132,8 @@ export function useRoomSocket(roomId?: string) {
   const [loaded, setLoaded] = useState(false);
   const [gameState, setGameState] = useState<PublicGameState | null>(null);
   const [privateState, setPrivateState] = useState<PrivateState | null>(null);
-  const [proofEvent, setProofEvent] = useState<ProofEvent | null>(null);
-  const [revealResultEvent, setRevealResultEvent] = useState<RevealResultEvent | null>(null);
+  // const [proofEvent, setProofEvent] = useState<ProofEvent | null>(null);
+  // const [revealResultEvent, setRevealResultEvent] = useState<RevealResultEvent | null>(null);
 
   const connect = useCallback(() => {
     if (!roomId || !Auth?.token) return;
@@ -168,12 +179,12 @@ export function useRoomSocket(roomId?: string) {
       if (data.type === "private") {
         setPrivateState(data.private);
       }
-      if (data.type === "proof_result") {
-        setProofEvent(data.result);
-      }
-      if (data.type === "reveal_result") {
-        setRevealResultEvent(data.result);
-      }
+      // if (data.type === "proof_result") {
+      //   setProofEvent(data.result);
+      // }
+      // if (data.type === "reveal_result") {
+      //   setRevealResultEvent(data.result);
+      // }
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [roomId, Auth?.token]);
@@ -227,7 +238,8 @@ export function useRoomSocket(roomId?: string) {
     (roleIndex: number) => send({ type: "reveal_card", roleIndex }),
     [send]
   );
-  const clearRevealResultEvent = useCallback(() => setRevealResultEvent(null), []);
+  // const clearRevealResultEvent = useCallback(() => setRevealResultEvent(null), []);
+  // const clearProofEvent = useCallback(() => setProofEvent(null), []);
   const restartGame = useCallback(
     (reopenForJoining: boolean) => send({ type: "restart_game", reopenForJoining }),
     [send]
@@ -270,14 +282,17 @@ export function useRoomSocket(roomId?: string) {
     (roleIndex: number) => send({ type: "prove_card", roleIndex }),
     [send]
   );
-  const clearProofEvent = useCallback(() => setProofEvent(null), []);
 
   return {
     connected,
     loaded,
     gameState,
     privateState,
-    proofEvent, sendProveCard, clearProofEvent,
+    // proofEvent,
+    // clearProofEvent,
+    // revealResultEvent,
+    // clearRevealResultEvent,
+    sendProveCard,
     startGame,
     sendChat,
     sendAction,
@@ -285,8 +300,6 @@ export function useRoomSocket(roomId?: string) {
     blockAction,
     respondToBlock,
     revealCard,
-    revealResultEvent,
-    clearRevealResultEvent,
     sendContessaSelect,
     sendExchangeSelect,
     anarchistRespond,

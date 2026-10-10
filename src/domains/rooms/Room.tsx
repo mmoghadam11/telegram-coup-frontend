@@ -35,6 +35,8 @@ import CoupCardItem from "./components/CoupCardItem";
 import EliminationAnnouncement from "./components/EliminationAnnouncement";
 import RevealResultDialog from "./components/RevealResultDialog";
 import GameOverPannel from "./components/GameOverPannel";
+import ShowcaseDialog from "./components/ShowcaseDialog";
+import ReplacementDialog from "./components/ReplacementDialog";
 
 
 const ROLE_LABELS_FA: Record<string, string> = {
@@ -62,24 +64,26 @@ export default function Room() {
   const [showFullLog, setShowFullLog] = useState(false);
   const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
   const [restartDialogOpen, setRestartDialogOpen] = useState(false);
-  const [showGameOverDialog, setShowGameOverDialog] = useState(false);
+  // const [showGameOverDialog, setShowGameOverDialog] = useState(false);
   const {
+    // proofEvent, clearProofEvent,
+    // revealResultEvent, clearRevealResultEvent,
     connected, loaded, gameState, privateState, mmLeave, fold,
-    sendProveCard, proofEvent, clearProofEvent, anarchistRespond, anarchistBlockRespond, anarchistPass, anarchistNeutralize, revealResultEvent, clearRevealResultEvent,
+    sendProveCard, anarchistRespond, anarchistBlockRespond, anarchistPass, anarchistNeutralize,
     startGame, sendChat, sendAction, respond, blockAction, respondToBlock, revealCard, restartGame, leaveRoom, closeRoom, forceReset, sendContessaSelect, sendExchangeSelect, respondToRestartVote,
   } = useRoomSocket(roomId);
 
-  useEffect(() => {
-    if (gameState?.phase !== "game_over") {
-      setShowGameOverDialog(false);
-      return;
-    }
+  // useEffect(() => {
+  //   if (gameState?.phase !== "game_over") {
+  //     setShowGameOverDialog(false);
+  //     return;
+  //   }
 
-    // اگه همین الان یه revealResultEvent باز هست، صبر کن تا بسته بشه
-    if (revealResultEvent || proofEvent) return;
+  //   // اگه همین الان یه revealResultEvent باز هست، صبر کن تا بسته بشه
+  //   if (revealResultEvent || proofEvent) return;
 
-    setShowGameOverDialog(true);
-  }, [gameState?.phase, revealResultEvent , proofEvent]);
+  //   setShowGameOverDialog(true);
+  // }, [gameState?.phase, revealResultEvent, proofEvent]);
 
   useEffect(() => {
     if (gameState?.phase === "anarchist_in_progress") {
@@ -89,11 +93,15 @@ export default function Room() {
     }
   }, [gameState?.phase]);
 
-  useEffect(() => {
-    if (!proofEvent) return;
+  // useEffect(() => {
+  //   if (!proofEvent) return;
 
+  //   playRevealSound();
+  // }, [proofEvent, playRevealSound]);
+  useEffect(() => {
+    if (!gameState?.showcase || gameState.showcase.kind === "replacement") return;
     playRevealSound();
-  }, [proofEvent, playRevealSound]);
+  }, [gameState?.showcase?.endsAt]);
   // وقتی روم بسته می‌شه، خودکار برگرد به لابی
   useEffect(() => {
     if (gameState?.phase === "room_closed") {
@@ -122,6 +130,8 @@ export default function Room() {
   }
 
   const myUserId = String(Auth?.userInfo?.id);
+  const showGameOverPanel = gameState.phase === "game_over";
+  const showcasePlayerName = gameState.players.find((p) => p.id === gameState.showcase?.playerId)?.name ?? "";
   const isMyTurn = gameState.turnOrder[gameState.currentTurnIndex] === myUserId;
   const pending = gameState.pendingAction;
   const revealPending = gameState.revealPending;
@@ -321,7 +331,7 @@ export default function Room() {
           ))}
         </List>
       </Paper> */}
-      {gameState.phase !== "waiting_for_players" && !showGameOverDialog && (
+      {gameState.phase !== "waiting_for_players" && !showGameOverPanel && (
         <GameTable
           players={gameState.players.map((p) => ({ ...p, photo_url: p.photoUrl }))}
           myUserId={myUserId}
@@ -332,7 +342,7 @@ export default function Room() {
           }
         />
       )}
-      {showGameOverDialog && (
+      {showGameOverPanel && (
         <GameOverPannel
           winnerName={gameState.players.find((p) => p.id === gameState.winnerId)?.name}
           players={gameState.players.map((p) => ({ id: p.id, name: p.name, stats: p.stats }))}
@@ -349,7 +359,7 @@ export default function Room() {
         />
       )}
 
-      {gameState.origin === "matchmaking" && gameState.phase === "awaiting_action" && (
+      {gameState.origin === "matchmaking" && gameState.phase === "awaiting_action" && !gameState.showcase && (
         <Button size="small" color="warning" variant="outlined" onClick={fold} sx={{ mb: 1 }}>
           فولد (این دست رو بازی نکنم)
         </Button>
@@ -365,7 +375,7 @@ export default function Room() {
           ))}
         </Stack>
       )} */}
-      {gameState.phase === "awaiting_action" && isMyTurn && !gameState.revealPending && (
+      {gameState.phase === "awaiting_action" && isMyTurn && !gameState.revealPending && !gameState.showcase && (
         <Grid container spacing={1}>
           {/* ActionCarousel */}
           {(gameState.players.find((p) => p.id === myUserId)?.coins ?? 0) < 10 &&
@@ -574,8 +584,20 @@ export default function Room() {
         onSelect={(roleIndex) => sendProveCard(roleIndex)}
       />
 
-      <ProveResultDialog open={!showGameOverDialog} event={proofEvent} onClose={clearProofEvent} />
-      <RevealResultDialog event={revealResultEvent} onClose={clearRevealResultEvent} />
+      {/* <ProveResultDialog open={!showGameOverDialog} event={proofEvent} onClose={clearProofEvent} />
+      <RevealResultDialog event={revealResultEvent} onClose={clearRevealResultEvent} /> */}
+      <ShowcaseDialog showcase={gameState.showcase} playerName={showcasePlayerName} />
+      <ReplacementDialog
+        open={gameState.showcase?.kind === "replacement"}
+        endsAt={gameState.showcase?.endsAt}
+        playerName={showcasePlayerName}
+        isMe={gameState.showcase?.playerId === myUserId}
+        newRole={
+          privateState?.replacedIndex !== undefined
+            ? privateState.yourRoles[privateState.replacedIndex]
+            : undefined
+        }
+      />
       {/* <GameOverDialog
         open={showGameOverDialog}
         winnerName={gameState.players.find((p) => p.id === gameState.winnerId)?.name}
