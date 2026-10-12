@@ -120,6 +120,7 @@ interface PrivateState {
   exchangePool?: string[];
   exchangeKeepCount?: number;
   replacedIndex?: number;
+  forcedProofIndex?: number;
 }
 
 export function useRoomSocket(roomId?: string) {
@@ -219,7 +220,7 @@ export function useRoomSocket(roomId?: string) {
   const startGame = useCallback(() => send({ type: "start_game" }), [send]);
   const sendChat = useCallback((text: string) => send({ type: "chat", text }), [send]);
   const sendAction = useCallback(
-    (action: string, targetId?: string) => send({ type: "action", action, targetId }),
+    (action: string, targetId?: string, cardIndex?: number) => send({ type: "action", action, targetId , cardIndex}),
     [send]
   );
   const respond = useCallback(

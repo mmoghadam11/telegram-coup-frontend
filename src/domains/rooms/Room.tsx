@@ -37,6 +37,7 @@ import RevealResultDialog from "./components/RevealResultDialog";
 import GameOverPannel from "./components/GameOverPannel";
 import ShowcaseDialog from "./components/ShowcaseDialog";
 import ReplacementDialog from "./components/ReplacementDialog";
+import SelfSwapPickDialog from "./components/SelfSwapPickDialog";
 
 
 const ROLE_LABELS_FA: Record<string, string> = {
@@ -65,6 +66,7 @@ export default function Room() {
   const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
   const [restartDialogOpen, setRestartDialogOpen] = useState(false);
   // const [showGameOverDialog, setShowGameOverDialog] = useState(false);
+  const [selfSwapPickerOpen, setSelfSwapPickerOpen] = useState(false);
   const {
     // proofEvent, clearProofEvent,
     // revealResultEvent, clearRevealResultEvent,
@@ -143,6 +145,10 @@ export default function Room() {
   };
 
   const handleActionClick = (action: string) => {
+    if (action === "contessa_self") {
+      setSelfSwapPickerOpen(true);
+      return;
+    }
     if (ACTIONS_NEEDING_TARGET.includes(action)) {
       setTargetDialogAction(action);
       setSelectedTarget("");
@@ -613,6 +619,16 @@ export default function Room() {
           navigate("/lobby");
         }}
       /> */}
+      <SelfSwapPickDialog
+        open={selfSwapPickerOpen}
+        roles={privateState?.yourRoles}
+        revealed={privateState?.yourRevealed}
+        onClose={() => setSelfSwapPickerOpen(false)}
+        onSelect={(i) => {
+          sendAction("contessa_self", undefined, i);
+          setSelfSwapPickerOpen(false);
+        }}
+      />
 
       <RestartVoteDialog
         open={gameState.phase === "restart_vote"}
