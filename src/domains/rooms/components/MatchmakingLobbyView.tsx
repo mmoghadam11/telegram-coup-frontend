@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Box, Container, Typography, Paper, List, ListItem, ListItemAvatar, Avatar, ListItemText, Button, CircularProgress, Chip } from "@mui/material";
+import CountdownBurst from "./animation/CountdownBurst";
 
 interface Player {
   id: string;
@@ -49,9 +50,14 @@ export default function MatchmakingLobbyView({
           </>
         ) : (
           <>
-            <Typography variant="h3" fontWeight="bold" color="warning.main">
+            {/* <Typography variant="h3" fontWeight="bold" color="warning.main">
               {secondsLeft ?? "..."}
-            </Typography>
+            </Typography> */}
+            <Box sx={{ display: "flex", justifyContent: "center", mb: 1 }}>
+              {secondsLeft !== null && (
+                <CountdownBurst value={secondsLeft} size={140} />
+              )}
+            </Box>
             <Typography variant="body2" color="text.secondary">
               بازی به‌زودی شروع می‌شه
             </Typography>
