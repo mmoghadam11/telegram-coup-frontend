@@ -74,14 +74,14 @@ export default function ReplacementDialog({ open, endsAt, playerName, isMe, newR
           {phase !== "show" ? (
             <Box key={endsAt} sx={{ perspective: 900, height: 240, width: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <motion.div
-                style={{ position: "relative", width: CARD_W, height: CARD_H, transformStyle: "preserve-3d", rotateX: 58, rotateZ: -38 }}
+                style={{ position: "relative", width: CARD_W, height: CARD_H, transformStyle: "preserve-3d", rotateX: 58, rotateZ: 38 }}
               >
                 {/* کارتی که زیر دسته می‌ره (فقط حالت بدون بُر) */}
                 {!shuffle && (
                   <motion.div
                     style={layer}
-                    initial={{ x: CARD_W * 1.7, z: -GAP * 2 }}
-                    animate={phase === "tuck" ? { x: [CARD_W * 1.7, CARD_W * 1.7, 0, 0] } : { x: 0 }}
+                    initial={{ y: CARD_H * 1.7, z: -GAP * 2 }}
+                    animate={phase === "tuck" ? { y: [CARD_H * 1.7, CARD_H * 1.7, 0, 0] } : { y: 0 }}
                     transition={{ duration: 1.9, times: [0, 0.28, 0.72, 1], ease: "easeInOut" }}
                   >
                     <CardBack />
