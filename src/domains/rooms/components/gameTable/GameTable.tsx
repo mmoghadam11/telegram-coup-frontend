@@ -34,6 +34,7 @@ function getTableRadiusPercent(playerCount: number): number {
 export default function GameTable({ players, myUserId, currentTurnPlayerId }: GameTableProps) {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
+  const CARD_BACK_IMAGE = "/assets/images/cards/backCard.png";
 
   const myIndex = players.findIndex((p) => p.id === myUserId);
 
@@ -189,18 +190,25 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
             width: { xs: 44, sm: 56 },
             height: { xs: 60, sm: 76 },
             borderRadius: 1.5,
-            background: isDark ? "#151a2d" : "#29374e",
-            border: "2px solid #c99a4a",
-            boxShadow: "0 6px 15px rgba(0,0,0,.55)",
-            display: "flex",
-            alignItems: "center",
-            justifyContent: "center",
+            // background: isDark ? "#151a2d" : "#29374e",
+            // border: "2px solid #c99a4a",
+            // boxShadow: "0 6px 15px rgba(0,0,0,.55)",
+            // display: "flex",
+            // alignItems: "center",
+            // justifyContent: "center",
+            border: "3px solid #f3e3c3",
+        backgroundColor: "#d9573f",
+        // اگه عکس نبود، طرح CSS جایگزین می‌شه
+        backgroundImage: `url(${CARD_BACK_IMAGE}), radial-gradient(ellipse at center, #a8232b 0 28%, #d9573f 30% 100%)`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        boxShadow: "0 1px 0 #8a4a2a, 0 2px 0 #6b3a1f",
           }}
-        >
-          <Typography sx={{ fontSize: { xs: 20, sm: 28 }, color: "#d5a94c", textShadow: "0 2px 4px rgba(0,0,0,.5)" }}>
+        />
+          {/* <Typography sx={{ fontSize: { xs: 20, sm: 28 }, color: "#d5a94c", textShadow: "0 2px 4px rgba(0,0,0,.5)" }}>
             👑
           </Typography>
-        </Box>
+        </Box> */}
       </Box>
 
       {/* بازیکن‌ها */}

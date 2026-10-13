@@ -11,7 +11,7 @@ const CARD_BACK_IMAGE = "/assets/images/cards/backCard.png";
 
 type Phase = "riffle" | "tuck" | "draw" | "show";
 
-function CardBack({ w = CARD_W }: { w?: number }) {
+export function CardBack({ w = CARD_W }: { w?: number }) {
   return (
     <Box
       sx={{
