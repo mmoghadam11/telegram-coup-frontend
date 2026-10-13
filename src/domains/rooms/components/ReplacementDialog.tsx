@@ -3,56 +3,54 @@ import { Dialog, DialogContent, Typography, Stack, Box } from "@mui/material";
 import { motion } from "motion/react";
 import RoleCardImage from "./proving/RoleCardImage";
 
-function CardBack({ width = 70 }: { width?: number }) {
+const CARD_W = 78;
+const CARD_H = 109;
+const LAYERS = 10;   // تعداد لایه‌های دسته
+const GAP = 2.5;     // ضخامت هر کارت
+const CARD_BACK_IMAGE = "/assets/images/cards/backCard.png";
+
+type Phase = "riffle" | "tuck" | "draw" | "show";
+
+function CardBack({ w = CARD_W }: { w?: number }) {
   return (
     <Box
       sx={{
-        width,
-        height: width * 1.4,
-        borderRadius: 1.5,
-        background: "#29374e",
-        border: "2px solid #c99a4a",
-        boxShadow: "0 4px 10px rgba(0,0,0,.5)",
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        fontSize: width * 0.4,
+        width: w,
+        height: w * (CARD_H / CARD_W),
+        boxSizing: "border-box",
+        borderRadius: "8px",
+        border: "3px solid #f3e3c3",
+        backgroundColor: "#d9573f",
+        // اگه عکس نبود، طرح CSS جایگزین می‌شه
+        backgroundImage: `url(${CARD_BACK_IMAGE}), radial-gradient(ellipse at center, #a8232b 0 28%, #d9573f 30% 100%)`,
+        backgroundSize: "cover",
+        backgroundPosition: "center",
+        boxShadow: "0 1px 0 #8a4a2a, 0 2px 0 #6b3a1f",
       }}
-    >
-      👑
-    </Box>
+    />
   );
 }
 
-type Stage = "shuffle" | "deal" | "show";
+const layer: React.CSSProperties = { position: "absolute", inset: 0, transformStyle: "preserve-3d" };
 
 interface Props {
   open: boolean;
   endsAt?: number;
   playerName: string;
   isMe: boolean;
-  newRole?: string;
-  /** true = دسته بر خورده، false = فقط جابجایی کارت (ایزومتریک) */
-  shuffle?: boolean;
+  newRole?: string;  // فقط برای خود بازیکن پر می‌شه
+  shuffle?: boolean; // true: بُر می‌خوره، false: کارت زیر دسته می‌ره
 }
 
-export default function ReplacementDialog({
-  open,
-  endsAt,
-  playerName,
-  isMe,
-  newRole,
-  shuffle = true,
-}: Props) {
-  const [stage, setStage] = useState<Stage>("shuffle");
+export default function ReplacementDialog({ open, endsAt, playerName, isMe, newRole, shuffle = false }: Props) {
+  const [phase, setPhase] = useState<Phase>(shuffle ? "riffle" : "tuck");
 
   useEffect(() => {
     if (!open) return;
-    setStage("shuffle");
-    // حالت shuffle: انیمیشن طولانی‌تره (بر خوردن + پخش)
-    // حالت ایزومتریک: زمان‌بندی کوتاه‌تره چون یه توالی سریعه
-    const t1 = setTimeout(() => setStage("deal"), shuffle ? 1800 : 2200);
-    const t2 = setTimeout(() => setStage("show"), shuffle ? 2800 : 3400);
+    setPhase(shuffle ? "riffle" : "tuck");
+    const drawAt = shuffle ? 2200 : 1900;
+    const t1 = setTimeout(() => setPhase("draw"), drawAt);
+    const t2 = setTimeout(() => setPhase("show"), drawAt + 1100);
     return () => {
       clearTimeout(t1);
       clearTimeout(t2);
@@ -61,218 +59,86 @@ export default function ReplacementDialog({
 
   if (!open) return null;
 
+  const caption =
+    phase === "riffle" ? "دسته در حال بُر خوردنه..."
+    : phase === "tuck" ? `${playerName} کارتش رو زیر دسته می‌ذاره...`
+    : phase === "draw" ? "کارت رویی دسته برداشته می‌شه..."
+    : isMe ? "کارت جدید شما" : `یک کارت جدید به ${playerName} داده شد`;
+
   return (
-    <Dialog open disableEscapeKeyDown>
+    <Dialog open disableEscapeKeyDown PaperProps={{ sx: { bgcolor: "#1a120b" } }}>
       <DialogContent>
-        <Stack alignItems="center" spacing={2} sx={{ py: 2, minWidth: 280, minHeight: 280 }}>
-          <Typography variant="subtitle1" textAlign="center">
-            {stage === "shuffle" &&
-              (shuffle
-                ? "دسته در حال بُر خوردنه..."
-                : `کارت ${playerName} با کارت رویی تعویض می‌شه...`)}
-            {stage === "deal" &&
-              (shuffle
-                ? `کارت جدید داره به ${playerName} داده می‌شه...`
-                : `کارت رویی داره به ${playerName} داده می‌شه...`)}
-            {stage === "show" &&
-              (isMe ? "کارت جدید شما" : `کارت ${playerName} عوض شد`)}
-          </Typography>
+        <Stack alignItems="center" spacing={1} sx={{ minWidth: 280, minHeight: 300 }}>
+          <Typography variant="subtitle1" textAlign="center">{caption}</Typography>
 
-          <Box sx={{ position: "relative", width: 200, height: 200 }}>
-            {/* ✅ حالت بر خوردن — همون انیمیشن قبلی */}
-            {shuffle && stage === "shuffle" &&
-              [0, 1, 2, 3, 4].map((i) => (
-                <motion.div
-                  key={i}
-                  style={{
-                    position: "absolute",
-                    left: 65,
-                    top: 10,
-                  }}
-                  animate={{
-                    x: [0, (i % 2 ? 1 : -1) * 45, 0],
-                    rotate: [0, (i % 2 ? 1 : -1) * 8, 0],
-                  }}
-                  transition={{ duration: 0.6, repeat: Infinity, delay: i * 0.08 }}
-                >
-                  <CardBack />
-                </motion.div>
-              ))}
-
-            {/* ✅ حالت ایزومتریک — فقط وقتی shuffle=false */}
-            {!shuffle && stage === "shuffle" && <IsometricSwap />}
-
-            {/* حالت shuffle → مرحله‌ی پخش کارت جدید */}
-            {shuffle && stage === "deal" && (
+          {phase !== "show" ? (
+            <Box key={endsAt} sx={{ perspective: 900, height: 240, width: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
               <motion.div
-                style={{ position: "absolute", left: 65, top: 10 }}
-                initial={{ y: 0, scale: 1 }}
-                animate={{ y: 70, scale: 1.15 }}
-                transition={{ duration: 0.9, ease: "easeInOut" }}
+                style={{ position: "relative", width: CARD_W, height: CARD_H, transformStyle: "preserve-3d", rotateX: 58, rotateZ: -38 }}
               >
-                <CardBack />
+                {/* کارتی که زیر دسته می‌ره (فقط حالت بدون بُر) */}
+                {!shuffle && (
+                  <motion.div
+                    style={layer}
+                    initial={{ x: CARD_W * 1.7, z: -GAP * 2 }}
+                    animate={phase === "tuck" ? { x: [CARD_W * 1.7, CARD_W * 1.7, 0, 0] } : { x: 0 }}
+                    transition={{ duration: 1.9, times: [0, 0.28, 0.72, 1], ease: "easeInOut" }}
+                  >
+                    <CardBack />
+                  </motion.div>
+                )}
+
+                {/* خود دسته؛ توی tuck بالا می‌ره و بعد روی کارت زیرین می‌شینه */}
+                <motion.div
+                  style={layer}
+                  animate={phase === "tuck" ? { z: [0, 45, 45, 0] } : { z: 0 }}
+                  transition={{ duration: 1.9, times: [0, 0.28, 0.72, 1], ease: "easeInOut" }}
+                >
+                  {Array.from({ length: LAYERS }).map((_, i) => {
+                    const isTop = i === LAYERS - 1;
+                    const side = i < LAYERS / 2 ? -1 : 1;
+                    const baseZ = i * GAP;
+
+                    let animate: any = { x: 0, y: 0, z: baseZ, rotateZ: 0, opacity: 1 };
+                    let transition: any = { duration: 0.3 };
+
+                    if (phase === "riffle") {
+                      animate = {
+                        x: [0, side * CARD_W * 0.85, side * CARD_W * 0.85, 0],
+                        rotateZ: [0, side * 7, side * 7, 0],
+                        y: [0, 0, 0, 0],
+                        z: baseZ,
+                      };
+                      // با تأخیر وابسته به i، کارت‌های دو نیمه یکی‌درمیون برمی‌گردن
+                      transition = { duration: 2.1, times: [0, 0.3, 0.45 + (i % 5) * 0.08, 1], ease: "easeInOut", delay: (i % 3) * 0.03 };
+                    } else if (phase === "draw" && isTop) {
+                      animate = { x: 0, y: CARD_H * 0.9, z: baseZ + 90, rotateZ: 0, opacity: 1 };
+                      transition = { duration: 1, ease: "easeInOut" };
+                    }
+                    // کارت رویی بعد از برداشتن، توی show اصلاً رندر نمی‌شه (کل صحنه عوض می‌شه)
+
+                    return (
+                      <motion.div key={i} style={layer} initial={{ x: 0, y: 0, z: baseZ, rotateZ: 0 }} animate={animate} transition={transition}>
+                        <CardBack />
+                      </motion.div>
+                    );
+                  })}
+                </motion.div>
               </motion.div>
-            )}
-
-            {/* حالت ایزومتریک → کارت جدید با محو-ظاهر میاد */}
-            {!shuffle && stage === "deal" && (
-              <Box
-                sx={{
-                  position: "absolute",
-                  inset: 0,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                {isMe && newRole ? (
-                  <motion.div
-                    initial={{ scale: 0.6, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ duration: 0.6, ease: "easeOut" }}
-                  >
-                    <RoleCardImage role={newRole} size={130} reveal />
-                  </motion.div>
-                ) : (
-                  <motion.div
-                    initial={{ scale: 0.6, opacity: 0 }}
-                    animate={{ scale: 1, opacity: 1 }}
-                    transition={{ duration: 0.6, ease: "easeOut" }}
-                  >
-                    <CardBack width={70} />
-                  </motion.div>
-                )}
-              </Box>
-            )}
-
-            {/* مرحله‌ی نهایی — کارت نشون داده می‌شه */}
-            {stage === "show" && (
-              <Box
-                sx={{
-                  position: "absolute",
-                  inset: 0,
-                  display: "flex",
-                  alignItems: "center",
-                  justifyContent: "center",
-                }}
-              >
-                {isMe && newRole ? (
-                  <RoleCardImage role={newRole} size={130} reveal />
-                ) : (
-                  <CardBack width={70} />
-                )}
-              </Box>
-            )}
-          </Box>
+            </Box>
+          ) : (
+            <Box sx={{ height: 240, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              {isMe && newRole ? (
+                <RoleCardImage role={newRole} size={130} reveal />
+              ) : (
+                <motion.div initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.5 }}>
+                  <CardBack w={110} />
+                </motion.div>
+              )}
+            </Box>
+          )}
         </Stack>
       </DialogContent>
     </Dialog>
-  );
-}
-
-/**
- * ✅ انیمیشن ایزومتریک: کارت ادعایی میاد و می‌ره زیر دسته،
- *    بعد کارت رویی از دسته درمیاد.
- */
-function IsometricSwap() {
-  return (
-    <Box
-      sx={{
-        position: "absolute",
-        inset: 0,
-        display: "flex",
-        alignItems: "center",
-        justifyContent: "center",
-        perspective: "900px",
-      }}
-    >
-      <Box
-        sx={{
-          position: "relative",
-          width: 130,
-          height: 180,
-          transformStyle: "preserve-3d",
-          transform: "rotateX(50deg) rotateZ(-38deg)",
-        }}
-      >
-        {/* کارت ادعایی — از راست میاد و می‌ره زیر دسته */}
-        <motion.div
-          initial={{ x: 140, y: -30, z: 40, rotateZ: -15, opacity: 0 }}
-          animate={{
-            x: [140, 25, 25],
-            y: [-30, -10, 8],
-            z: [40, 40, -40],       // در آخر زیر دسته
-            rotateZ: [-15, 0, 0],
-            opacity: [0, 1, 1],
-          }}
-          transition={{
-            duration: 1.8,
-            times: [0, 0.65, 1],
-            ease: "easeInOut",
-          }}
-          style={{
-            position: "absolute",
-            left: 0,
-            top: 0,
-            width: 80,
-            height: 112,
-            borderRadius: 8,
-            background: "#4a5a76",
-            border: "2px solid #c99a4a",
-            boxShadow: "0 8px 14px rgba(0,0,0,.5)",
-          }}
-        />
-
-        {/* دسته — چند کارت روی هم */}
-        {[3, 2, 1, 0].map((i) => (
-          <Box
-            key={i}
-            sx={{
-              position: "absolute",
-              left: 25,
-              top: 35 - i * 3,
-              width: 80,
-              height: 112,
-              borderRadius: 1.5,
-              background: "#29374e",
-              border: "2px solid #c99a4a",
-              boxShadow: "0 4px 10px rgba(0,0,0,.35)",
-              zIndex: 10 - i,
-            }}
-          />
-        ))}
-
-        {/* کارت جدید — از روی دسته درمیاد و به چپ می‌ره */}
-        <motion.div
-          initial={{ x: 25, y: 26, z: 15, opacity: 0, scale: 0.9 }}
-          animate={{
-            x: [25, 25, 25, -110],
-            y: [26, 26, -35, -40],
-            z: [15, 15, 30, 45],
-            opacity: [0, 1, 1, 1],
-            scale: [0.9, 1.05, 1.15, 1.2],
-            rotateZ: [0, 0, -8, -14],
-          }}
-          transition={{
-            duration: 2,
-            delay: 1.5,
-            times: [0, 0.15, 0.65, 1],
-            ease: "easeOut",
-          }}
-          style={{
-            position: "absolute",
-            left: 0,
-            top: 0,
-            width: 80,
-            height: 112,
-            borderRadius: 8,
-            background: "#29374e",
-            border: "2px solid #c99a4a",
-            boxShadow: "0 10px 20px rgba(0,0,0,.5)",
-            zIndex: 30,
-          }}
-        />
-      </Box>
-    </Box>
   );
 }
