@@ -11,22 +11,25 @@ interface Props {
 }
 
 export default function ProveCardDialog({ open, roles, revealed, forcedIndex, onSelect }: Props) {
+  const isForced = forcedIndex !== undefined;
+
   return (
     <Dialog open={open} disableEscapeKeyDown>
-      <DialogTitle>یکی از کارت‌هاتون رو برای اثبات انتخاب کنید</DialogTitle>
+      <DialogTitle>
+        {isForced ? "کارت ادعاشده رو نشون بدید" : "یکی از کارت‌هاتون رو برای اثبات انتخاب کنید"}
+      </DialogTitle>
       <DialogContent>
         <Typography variant="body2" sx={{ mb: 2 }}>
-          {!!forcedIndex?"کارتی که ادعا کردید نشون داده می‌شه":
-          " اگه این کارت با ادعاتون یکی باشه، همین کارت می‌مونه (با یه کارت جدید عوض می‌شه). اگه نباشه، همین کارت رو از دست می‌دید."
-          }
+          {isForced
+            ? "همون کارتی که ادعا کردید نشون داده می‌شه."
+            : "اگه این کارت با ادعاتون یکی باشه، همین کارت می‌مونه (با یه کارت جدید عوض می‌شه). اگه نباشه، همین کارت رو از دست می‌دید."}
         </Typography>
         <Stack direction="row" spacing={2} justifyContent="center">
-          {roles?.map((role, i) =>
-            !!forcedIndex && i === forcedIndex ? <RoleCardImage key={i} role={role} onClick={() => onSelect(i)} />
-              : !revealed?.[i] ? (
-                <RoleCardImage key={i} role={role} onClick={() => onSelect(i)} />
-              ) : null
-          )}
+          {roles?.map((role, i) => {
+            if (revealed?.[i]) return null;
+            if (isForced && i !== forcedIndex) return null;
+            return <RoleCardImage key={i} role={role} onClick={() => onSelect(i)} />;
+          })}
         </Stack>
       </DialogContent>
     </Dialog>

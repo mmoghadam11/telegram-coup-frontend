@@ -587,6 +587,7 @@ export default function Room() {
         open={gameState.provePending?.playerId === myUserId}
         roles={privateState?.yourRoles}
         revealed={privateState?.yourRevealed}
+        forcedIndex={privateState?.forcedProofIndex}
         onSelect={(roleIndex) => sendProveCard(roleIndex)}
       />
 
