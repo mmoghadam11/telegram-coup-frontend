@@ -90,6 +90,7 @@ interface ShowcaseState {
   success: boolean | null;
   eliminated: boolean | null;
   endsAt: number;
+  shuffle?: boolean;
 }
 interface PublicGameState {
   phase: string;

@@ -604,6 +604,7 @@ export default function Room() {
             ? privateState.yourRoles[privateState.replacedIndex]
             : undefined
         }
+        shuffle={gameState.showcase?.shuffle ?? false}
       />
       {/* <GameOverDialog
         open={showGameOverDialog}
