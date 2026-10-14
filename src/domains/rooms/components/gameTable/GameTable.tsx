@@ -202,7 +202,7 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
             // backgroundColor: "#d9573f",
             // اگه عکس نبود، طرح CSS جایگزین می‌شه
             backgroundImage: `url(${CARD_DECK_IMAGE}), radial-gradient(ellipse at center, #a8232b 0 28%, #d9573f 30% 100%)`,
-            // backgroundSize: "cover",
+            backgroundSize: "cover",
             backgroundPosition: "center",
             // boxShadow: "0 1px 0 #8a4a2a, 0 2px 0 #6b3a1f",
           }}
