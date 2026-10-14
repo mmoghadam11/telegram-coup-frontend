@@ -217,7 +217,7 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
             top: "50%",
             transform: "translate(50%, -50%)",
             //   width: 34,
-            width: { xs: 44, sm: 56 },
+            height: { xs: 44, sm: 56 },
             //   aspectRatio:"3/4",
             objectFit: "cover",
             // borderRadius: 0.7,
