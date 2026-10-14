@@ -1,199 +1,270 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import { Dialog, DialogContent, Typography, Stack, Box } from "@mui/material";
 import { motion } from "motion/react";
 import RoleCardImage from "./proving/RoleCardImage";
 
 const CARD_W = 78;
 const CARD_H = 109;
-const LAYERS = 10;   // تعداد لایه‌های دسته
-const GAP = 2.5;     // ضخامت هر کارت
+const LAYERS = 12;                 // باید بر ۶ بخش‌پذیر باشه
+const GAP = 2.5;                   // ضخامت هر کارت
+const SLIDE = CARD_H * 1.08;       // جابه‌جایی طولی؛ به‌قدری که دسته کامل از روی بقیه کنار بره
+const BEND_DEG = 16;               // شدت خمیدگی (۰ = بدون خمیدگی)
+const ISO = { rotateX: 58, rotateZ: -38 };
+const FACING = { rotateX: 30, rotateZ: 0 };   // وضعیت «رو به بیننده»
 const CARD_BACK_IMAGE = "/assets/images/cards/minimal/card-back.svg";
-const SLIDE_AXIS: "x" | "y" = "y"; // محور ضلع کوتاه؛ دسته‌ها به اندازه‌ی طول کارت جابه‌جا می‌شن
 
-type ShuffleStyle = "riffle" | "overhand";
+type StepName =
+  | "split" | "zshift" | "merge"
+  | "o1_out" | "o1_up" | "o1_in" | "o1_settle"
+  | "o2_out" | "o2_up" | "o2_in" | "o2_settle"
+  | "t_in" | "turn" | "draw";
+type Style = "riffle" | "overhand" | "tuck";
+type Num = number | number[];
 
-// مقدار انیمیشن را روی محور انتخابی می‌سازد
-const slide = (v: number) => (SLIDE_AXIS === "y" ? { y: v } : { x: v });
+// [نام مرحله، مدت به میلی‌ثانیه]؛ بعد از آخرین مرحله «show» نمایش داده می‌شه
+const SEQUENCES: Record<Style, [StepName, number][]> = {
+  riffle: [["split", 650], ["zshift", 250], ["merge", 950], ["turn", 750], ["draw", 950]],
+  overhand: [
+    ["o1_out", 500], ["o1_up", 350], ["o1_in", 500], ["o1_settle", 250],
+    ["o2_out", 500], ["o2_up", 350], ["o2_in", 500], ["o2_settle", 250],
+    ["turn", 750], ["draw", 950],
+  ],
+  tuck: [["t_in", 900], ["turn", 750], ["draw", 950]],
+};
 
-type Phase = "riffle" | "tuck" | "draw" | "show";
+const zOf = (pos: number) => pos * GAP;
 
-export function CardBack({ w = CARD_W }: { w?: number }) {
-    return (
-        <Box
-            sx={{
-                width: w,
-                height: w * (CARD_H / CARD_W),
-                boxSizing: "border-box",
-                borderRadius: "8px",
-                border: "3px solid #f3e3c3",
-                backgroundColor: "#d9573f",
-                // اگه عکس نبود، طرح CSS جایگزین می‌شه
-                backgroundImage: `url(${CARD_BACK_IMAGE}), radial-gradient(ellipse at center, #a8232b 0 28%, #d9573f 30% 100%)`,
-                backgroundSize: "cover",
-                backgroundPosition: "center",
-                boxShadow: "0 1px 0 #8a4a2a, 0 2px 0 #6b3a1f",
-            }}
-        />
-    );
+interface Target { y: Num; z: Num; top: Num; bottom: Num }
+
+function riffleTarget(step: StepName, i: number): Target {
+  const half = LAYERS / 2;
+  const isA = i < half;
+  const order = isA ? i : i - half;
+  const sign = isA ? -1 : 1;
+  // هر دو دسته یکی‌درمیون توی ارتفاع نهایی قرار می‌گیرن
+  const mergeZ = zOf(order * 2 + (isA ? 0 : 1));
+  const bt = isA ? 0 : -BEND_DEG; // دسته‌ی B: نیمه‌ی بالایی خم می‌شه
+  const bb = isA ? BEND_DEG : 0;  // دسته‌ی A: نیمه‌ی پایینی خم می‌شه
+
+  switch (step) {
+    case "split":
+      return { y: sign * SLIDE, z: zOf(i), top: bt, bottom: bb };
+    case "zshift": // وقتی از هم جدان، ارتفاعشون عوض می‌شه تا موقع ورود به هم گیر نکنن
+      return { y: sign * SLIDE, z: mergeZ, top: bt, bottom: bb };
+    case "merge": // اول صاف می‌شن، بعد (وقتی هنوز هم‌پوشانی ندارن) به هم می‌رن
+      return {
+        y: [sign * SLIDE, sign * SLIDE * 0.65, 0],
+        z: [mergeZ, mergeZ, mergeZ],
+        top: [bt, 0, 0],
+        bottom: [bb, 0, 0],
+      };
+    default:
+      return { y: 0, z: mergeZ, top: 0, bottom: 0 };
+  }
 }
 
-const layer: React.CSSProperties = { position: "absolute", inset: 0, transformStyle: "preserve-3d" };
+function overhandTarget(step: StepName, i: number): Target {
+  const third = LAYERS / 3;
+  const k = i % third;
+  const g = i < third ? "B" : i < 2 * third ? "M" : "T"; // پایین، میانی، بالا
+  const top = zOf(LAYERS + k); // بالاتر از کل دسته
+
+  const base = { B: 0, M: third, T: 2 * third };
+  const afterFirst = { B: 0, T: third, M: 2 * third };    // M رفته روی دسته
+  const afterSecond = { T: 0, M: third, B: 2 * third };   // B هم رفته روی دسته
+  const flat = { top: 0, bottom: 0 };
+
+  switch (step) {
+    case "o1_out": // دسته‌ی اول از جلو بیرون می‌آد
+      return { y: g === "M" ? SLIDE : 0, z: zOf(base[g] + k), ...flat };
+    case "o1_up": // می‌ره بالای دسته؛ بقیه جاش رو پر می‌کنن
+      return g === "M"
+        ? { y: SLIDE, z: top, ...flat }
+        : { y: 0, z: zOf(afterFirst[g] + k), ...flat };
+    case "o1_in": // می‌آد روی دسته
+      return g === "M"
+        ? { y: 0, z: top, ...flat }
+        : { y: 0, z: zOf(afterFirst[g] + k), ...flat };
+    case "o1_settle":
+      return { y: 0, z: zOf(afterFirst[g] + k), ...flat };
+    case "o2_out": // فقط بعد از نشستن کامل دسته‌ی اول، دسته‌ی دوم از زیر بیرون می‌آد
+      return { y: g === "B" ? -SLIDE : 0, z: zOf(afterFirst[g] + k), ...flat };
+    case "o2_up":
+      return g === "B"
+        ? { y: -SLIDE, z: top, ...flat }
+        : { y: 0, z: zOf(afterSecond[g] + k), ...flat };
+    case "o2_in":
+      return g === "B"
+        ? { y: 0, z: top, ...flat }
+        : { y: 0, z: zOf(afterSecond[g] + k), ...flat };
+    default:
+      return { y: 0, z: zOf(afterSecond[g] + k), ...flat };
+  }
+}
+
+function layerTarget(style: Style, step: StepName, i: number): Target {
+  if (style === "riffle") return riffleTarget(step, i);
+  if (style === "overhand") return overhandTarget(step, i);
+  return { y: 0, z: zOf(i), top: 0, bottom: 0 };
+}
+
+// کارت رویی هر حالت (بالاترین z)
+const topLayerIndex = (style: Style) => (style === "overhand" ? LAYERS / 3 - 1 : LAYERS - 1);
+
+const faceStyle: React.CSSProperties = {
+  position: "absolute",
+  left: 0,
+  width: CARD_W,
+  height: CARD_H / 2,
+  backgroundColor: "#d9573f",
+  backgroundImage: `url(${CARD_BACK_IMAGE}), radial-gradient(ellipse at center, #a8232b 0 28%, #d9573f 30% 100%)`,
+  backgroundSize: `${CARD_W}px ${CARD_H}px, cover`,
+  boxShadow: "0 1px 0 #8a4a2a",
+};
+
+// کارت دو‌نیمه‌ی لولا‌دار؛ نیمه‌ها مستقل خم می‌شن
+function BendCard({ top, bottom, transition }: { top: Num; bottom: Num; transition: any }) {
+  return (
+    <div style={{ position: "absolute", inset: 0, transformStyle: "preserve-3d" }}>
+      <motion.div
+        style={{ ...faceStyle, top: 0, backgroundPosition: "0 0", borderRadius: "8px 8px 0 0", transformOrigin: "50% 100%" }}
+        animate={{ rotateX: top }}
+        transition={transition}
+      />
+      <motion.div
+        style={{ ...faceStyle, top: CARD_H / 2, backgroundPosition: `0 -${CARD_H / 2}px, center`, borderRadius: "0 0 8px 8px", transformOrigin: "50% 0%" }}
+        animate={{ rotateX: bottom }}
+        transition={transition}
+      />
+    </div>
+  );
+}
+
+function FlatBack({ w = CARD_W }: { w?: number }) {
+  return (
+    <Box
+      sx={{
+        width: w,
+        height: w * (CARD_H / CARD_W),
+        borderRadius: "8px",
+        backgroundColor: "#d9573f",
+        backgroundImage: `url(${CARD_BACK_IMAGE}), radial-gradient(ellipse at center, #a8232b 0 28%, #d9573f 30% 100%)`,
+        backgroundSize: "cover",
+        boxShadow: "0 4px 10px rgba(0,0,0,.5)",
+      }}
+    />
+  );
+}
+
+const layerStyle: React.CSSProperties = { position: "absolute", inset: 0, transformStyle: "preserve-3d" };
 
 interface Props {
-    open: boolean;
-    endsAt?: number;
-    playerName: string;
-    isMe: boolean;
-    newRole?: string;  // فقط برای خود بازیکن پر می‌شه
-    shuffle?: boolean; // true: بُر می‌خوره، false: کارت زیر دسته می‌ره
-    shuffleStyle?: ShuffleStyle;
+  open: boolean;
+  endsAt?: number;
+  playerName: string;
+  isMe: boolean;
+  newRole?: string;
+  shuffle?: boolean;
+  shuffleStyle?: "riffle" | "overhand";
 }
 
-export default function ReplacementDialog({ open, endsAt, playerName, isMe, newRole, shuffle = false, shuffleStyle = "overhand" }: Props) {
-    const [phase, setPhase] = useState<Phase>(shuffle ? "riffle" : "tuck");
-    const shuffleMs = shuffleStyle === "riffle" ? 2600 : 2800;
-    const drawAt = shuffle ? shuffleMs : 1900;
+export default function ReplacementDialog({
+  open, endsAt, playerName, isMe, newRole, shuffle = false, shuffleStyle = "riffle",
+}: Props) {
+  const style: Style = shuffle ? shuffleStyle : "tuck";
+  const seq = useMemo(() => SEQUENCES[style], [style]);
+  const [idx, setIdx] = useState(0);
 
-    useEffect(() => {
-        if (!open) return;
-        setPhase(shuffle ? "riffle" : "tuck");
-        const drawAt = shuffle ? 2200 : 1900;
-        const t1 = setTimeout(() => setPhase("draw"), drawAt);
-        const t2 = setTimeout(() => setPhase("show"), drawAt + 1100);
-        return () => {
-            clearTimeout(t1);
-            clearTimeout(t2);
-        };
-    }, [open, endsAt, shuffle]);
+  useEffect(() => {
+    if (!open) return;
+    setIdx(0);
+    const timers: ReturnType<typeof setTimeout>[] = [];
+    let acc = 0;
+    seq.forEach(([, ms], n) => {
+      acc += ms;
+      timers.push(setTimeout(() => setIdx(n + 1), acc));
+    });
+    return () => timers.forEach(clearTimeout);
+  }, [open, endsAt, seq]);
 
-    if (!open) return null;
+  if (!open) return null;
 
-    const caption =
-        phase === "riffle" ? "دسته در حال بُر خوردنه..."
-            : phase === "tuck" ? `${playerName} کارتش رو زیر دسته می‌ذاره...`
-                : phase === "draw" ? "کارت رویی دسته برداشته می‌شه..."
-                    : isMe ? "کارت جدید شما" : `یک کارت جدید به ${playerName} داده شد`;
+  const step: StepName | "show" = idx < seq.length ? seq[idx][0] : "show";
+  const stepMs = idx < seq.length ? seq[idx][1] : 0;
+  const faced = step === "turn" || step === "draw" || step === "show";
+  const tr = {
+    duration: stepMs / 1000,
+    ease: "easeInOut" as const,
+    ...(step === "merge" ? { times: [0, 0.35, 1] } : {}),
+  };
 
-    return (
-        <Dialog open disableEscapeKeyDown >
-            <DialogContent>
-                <Stack alignItems="center" spacing={1} sx={{ minWidth: 280, minHeight: 300 }}>
-                    <Typography variant="subtitle1" textAlign="center">{caption}</Typography>
+  const caption =
+    step === "show" ? (isMe ? "کارت جدید شما" : `یک کارت جدید به ${playerName} داده شد`)
+    : step === "draw" ? "کارت رویی دسته برداشته می‌شه..."
+    : step === "turn" ? "دسته رو به بیننده می‌چرخه..."
+    : style === "tuck" ? `${playerName} کارتش رو زیر دسته می‌ذاره...`
+    : "دسته در حال بُر خوردنه...";
 
-                    {phase !== "show" ? (
-                        <Box key={endsAt} sx={{ perspective: 900, height: 240, width: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
-                            <motion.div
-                                style={{ position: "relative", width: CARD_W, height: CARD_H, transformStyle: "preserve-3d", rotateX: 58, rotateZ: 38 }}
-                            >
-                                {/* کارتی که زیر دسته می‌ره (فقط حالت بدون بُر) */}
-                                {!shuffle && (
-                                    <motion.div
-                                        style={layer}
-                                        initial={{ y: CARD_H * 1.7, z: -GAP * 2 }}
-                                        animate={phase === "tuck" ? { y: [CARD_H * 1.7, CARD_H * 1.7, 0, 0] } : { y: 0 }}
-                                        transition={{ duration: 1.9, times: [0, 0.28, 0.72, 1], ease: "easeInOut" }}
-                                    >
-                                        <CardBack />
-                                    </motion.div>
-                                )}
+  const topIdx = topLayerIndex(style);
 
-                                {/* خود دسته؛ توی tuck بالا می‌ره و بعد روی کارت زیرین می‌شینه */}
-                                <motion.div
-                                    style={layer}
-                                    animate={phase === "tuck" ? { z: [0, 45, 45, 0] } : { z: 0 }}
-                                    transition={{ duration: 1.9, times: [0, 0.28, 0.72, 1], ease: "easeInOut" }}
-                                >
-                                    {Array.from({ length: LAYERS }).map((_, i) => {
-                                        const isTop = i === LAYERS - 1;
-                                        const side = i < LAYERS / 2 ? -1 : 1;
-                                        const baseZ = i * GAP;
+  return (
+    <Dialog open disableEscapeKeyDown PaperProps={{ sx: { bgcolor: "#1a120b" } }}>
+      <DialogContent>
+        <Stack alignItems="center" spacing={1} sx={{ minWidth: 280, minHeight: 300 }}>
+          <Typography variant="subtitle1" textAlign="center">{caption}</Typography>
 
-                                        let animate: any = { x: 0, y: 0, z: baseZ, rotateZ: 0, opacity: 1 };
-                                        let transition: any = { duration: 0.3 };
+          {step !== "show" ? (
+            <Box key={endsAt} sx={{ perspective: 900, height: 260, width: "100%", display: "flex", alignItems: "center", justifyContent: "center" }}>
+              <motion.div
+                initial={ISO}
+                animate={faced ? FACING : ISO}
+                transition={{ duration: 0.75, ease: "easeInOut" }}
+                style={{ position: "relative", width: CARD_W, height: CARD_H, transformStyle: "preserve-3d" }}
+              >
+                {/* کارتی که زیر دسته می‌ره (فقط حالت بدون بُر) */}
+                {style === "tuck" && (
+                  <motion.div
+                    style={layerStyle}
+                    initial={{ y: SLIDE, z: -GAP }}
+                    animate={{ y: 0, z: -GAP }}
+                    transition={{ duration: 0.9, ease: "easeInOut" }}
+                  >
+                    <BendCard top={0} bottom={0} transition={{ duration: 0 }} />
+                  </motion.div>
+                )}
 
-                                        // if (phase === "riffle") {
-                                        //     animate = {
-                                        //         x: [0, side * CARD_W * 0.85, side * CARD_W * 0.85, 0],
-                                        //         rotateZ: [0, side * 7, side * 7, 0],
-                                        //         y: [0, 0, 0, 0],
-                                        //         z: baseZ,
-                                        //     };
-                                        //     // با تأخیر وابسته به i، کارت‌های دو نیمه یکی‌درمیون برمی‌گردن
-                                        //     transition = { duration: 2.1, times: [0, 0.3, 0.45 + (i % 5) * 0.08, 1], ease: "easeInOut", delay: (i % 3) * 0.03 };
-                                        // } 
-                                        const half = Math.floor(LAYERS / 2);
-                                        const isBottomHalf = i < half;          // نیمه‌ی پایینی = دسته‌ی A، نیمه‌ی بالایی = دسته‌ی B
-                                        const sign = isBottomHalf ? -1 : 1;
-                                        const slideDist = CARD_H * 0.95;        // جابه‌جایی طولی به اندازه‌ی طول کارت
-
-                                        if (phase === "riffle" && shuffleStyle === "riffle") {
-                                            // ۱) دو دسته جدا می‌شن  ۲) نزدیک می‌شن و یکی‌درمیون توی هم می‌رن (با خمیدگی)  ۳) جمع می‌شن
-                                            const order = isBottomHalf ? i : i - half;            // ترتیب ورود هر کارت داخل دسته‌اش
-                                            const mergeZ = (order * 2 + (isBottomHalf ? 0 : 1)) * GAP; // یکی‌درمیون در ارتفاع نهایی
-                                            animate = {
-                                                ...slide(sign * slideDist),
-                                                rotateX: 0,
-                                                z: baseZ,
-                                            };
-                                            animate = {
-                                                [SLIDE_AXIS]: [0, sign * slideDist, sign * slideDist * 0.15, 0],
-                                                rotateX: [0, 0, sign * -18, 0],                    // خم شدن لبه‌ها موقع ورود
-                                                z: [baseZ, baseZ + 14, mergeZ, mergeZ],
-                                            };
-                                            transition = {
-                                                duration: 2.6,
-                                                times: [0, 0.3, 0.7 + (order % 3) * 0.04, 1],     // ورود پله‌ای کارت‌ها
-                                                ease: "easeInOut",
-                                                delay: order * 0.035,
-                                            };
-                                        } else if (phase === "riffle" && shuffleStyle === "overhand") {
-                                            // مرحله ۱: یک‌سوم میانی رو بیار روی دسته  مرحله ۲: نصف پایینی رو از زیر دربیار و بذار روی دسته
-                                            const third = Math.floor(LAYERS / 3);
-                                            const inMiddleThird = i >= third && i < third * 2;
-                                            const inBottomHalf = i < half;
-
-                                            let seq: number[] = [0, 0, 0, 0];
-                                            let zSeq: number[] = [baseZ, baseZ, baseZ, baseZ];
-
-                                            if (inMiddleThird) {
-                                                seq = [0, slideDist, slideDist, 0];                // بیرون، کنار، برگشت (روی دسته)
-                                                zSeq = [baseZ, baseZ, baseZ + LAYERS * GAP, baseZ + LAYERS * GAP];
-                                            } else if (inBottomHalf) {
-                                                seq = [0, 0, -slideDist, 0];                       // بعدش نصف پایینی از زیر در میاد
-                                                zSeq = [baseZ, baseZ, baseZ, baseZ + LAYERS * GAP * 2];
-                                            }
-
-                                            animate = { [SLIDE_AXIS]: seq, z: zSeq, rotateX: 0 };
-                                            transition = { duration: 2.8, times: [0, 0.35, 0.7, 1], ease: "easeInOut", delay: (i % 3) * 0.02 };
-                                        }
-                                        else if (phase === "draw" && isTop) {
-                                            animate = { x: 0, y: CARD_H * 0.9, z: baseZ + 90, rotateZ: 0, opacity: 1 };
-                                            transition = { duration: 1, ease: "easeInOut" };
-                                        }
-                                        // کارت رویی بعد از برداشتن، توی show اصلاً رندر نمی‌شه (کل صحنه عوض می‌شه)
-
-                                        return (
-                                            <motion.div key={i} style={layer} initial={{ x: 0, y: 0, z: baseZ, rotateZ: 0 }} animate={animate} transition={transition}>
-                                                <CardBack />
-                                            </motion.div>
-                                        );
-                                    })}
-                                </motion.div>
-                            </motion.div>
-                        </Box>
-                    ) : (
-                        <Box sx={{ height: 240, display: "flex", alignItems: "center", justifyContent: "center" }}>
-                            {isMe && newRole ? (
-                                <RoleCardImage role={newRole} size={130} reveal />
-                            ) : (
-                                <motion.div initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.5 }}>
-                                    <CardBack w={110} />
-                                </motion.div>
-                            )}
-                        </Box>
-                    )}
-                </Stack>
-            </DialogContent>
-        </Dialog>
-    );
+                {Array.from({ length: LAYERS }).map((_, i) => {
+                  const t = layerTarget(style, step as StepName, i);
+                  const drawing = step === "draw" && i === topIdx;
+                  const y: Num = drawing ? CARD_H * 0.75 : t.y;
+                  const z: Num = drawing ? (t.z as number) + 90 : t.z;
+                  return (
+                    <motion.div
+                      key={i}
+                      style={layerStyle}
+                      initial={{ y: 0, z: zOf(i) }}
+                      animate={{ y, z }}
+                      transition={tr}
+                    >
+                      <BendCard top={t.top} bottom={t.bottom} transition={tr} />
+                    </motion.div>
+                  );
+                })}
+              </motion.div>
+            </Box>
+          ) : (
+            <Box sx={{ height: 260, display: "flex", alignItems: "center", justifyContent: "center" }}>
+              {isMe && newRole ? (
+                <RoleCardImage role={newRole} size={130} reveal />
+              ) : (
+                <motion.div initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.5 }}>
+                  <FlatBack w={110} />
+                </motion.div>
+              )}
+            </Box>
+          )}
+        </Stack>
+      </DialogContent>
+    </Dialog>
+  );
 }
