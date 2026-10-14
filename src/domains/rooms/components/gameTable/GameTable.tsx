@@ -34,7 +34,7 @@ function getTableRadiusPercent(playerCount: number): number {
 export default function GameTable({ players, myUserId, currentTurnPlayerId }: GameTableProps) {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
-  const CARD_BACK_IMAGE = "/assets/images/cards/minimal/card-deck.svg";
+  const CARD_DECK_IMAGE = "/assets/images/cards/minimal/card-deck.svg";
 
   const myIndex = players.findIndex((p) => p.id === myUserId);
 
@@ -57,7 +57,7 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
       return {
         // top:(playerCount===2 ?0:-4)+tableRadiusPercent + SEAT_OFFSET_FROM_TABLE ,
         // top:`calc(${(tableRadiusPercent/2) + 50}% -10px)` ,
-        top:(tableRadiusPercent/2) + 50 -(playerCount===2 ?0:10) ,
+        top: (tableRadiusPercent / 2) + 50 - (playerCount === 2 ? 0 : 10),
         right: 50,
       };
     }
@@ -71,23 +71,23 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
 
     if (otherPlayers <= 3) {
       const startAngle = 90;
-    const angleStep =
-      360 / (otherPlayers+1);
+      const angleStep =
+        360 / (otherPlayers + 1);
 
-    const angle =
-      startAngle + (index) * angleStep;
+      const angle =
+        startAngle + (index) * angleStep;
 
-    const radians = (angle * Math.PI) / 180;
+      const radians = (angle * Math.PI) / 180;
 
-    return {
-      top:
-        50 +
-        seatRadiusPercent * Math.sin(radians),
+      return {
+        top:
+          50 +
+          seatRadiusPercent * Math.sin(radians),
 
-      right:
-        50 -
-        seatRadiusPercent * Math.cos(radians),
-    };
+        right:
+          50 -
+          seatRadiusPercent * Math.cos(radians),
+      };
     }
 
     /*
@@ -124,12 +124,12 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
         width: "100%",
         // maxWidth: 760,
         mx: "auto",
-        py:2,
-        mb:2,
+        py: 2,
+        mb: 2,
         boxSizing: "border-box",
         // موبایل: باکس بلندتر از عریض (فضای عمودی بیشتر برای بازیکن بالا/پایین)
         // دسکتاپ: نزدیک مربع، چون عرض کافیه
-        aspectRatio: { xs: playerCount===2?"6 / 4":"1/1", sm: "4 / 4.4", md: "1 / 1" },
+        aspectRatio: { xs: playerCount === 2 ? "6 / 4" : "1/1", sm: "4 / 4.4", md: "1 / 1" },
         overflow: "visible",
         borderRadius: 4,
         background: isDark
@@ -188,7 +188,8 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
             top: "50%",
             transform: "translate(50%, -50%)",
             width: { xs: 44, sm: 56 },
-            height: { xs: 60, sm: 76 },
+            // height: { xs: 60, sm: 76 },
+            height: { xs: 44, sm: 56 },
             borderRadius: 1.5,
             // background: isDark ? "#151a2d" : "#29374e",
             // border: "2px solid #c99a4a",
@@ -196,16 +197,17 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
             // display: "flex",
             // alignItems: "center",
             // justifyContent: "center",
-            border: "3px solid #f3e3c3",
-        backgroundColor: "#d9573f",
-        // اگه عکس نبود، طرح CSS جایگزین می‌شه
-        backgroundImage: `url(${CARD_BACK_IMAGE}), radial-gradient(ellipse at center, #a8232b 0 28%, #d9573f 30% 100%)`,
-        backgroundSize: "cover",
-        backgroundPosition: "center",
-        boxShadow: "0 1px 0 #8a4a2a, 0 2px 0 #6b3a1f",
+
+            // border: "3px solid #f3e3c3",
+            // backgroundColor: "#d9573f",
+            // اگه عکس نبود، طرح CSS جایگزین می‌شه
+            backgroundImage: `url(${CARD_DECK_IMAGE}), radial-gradient(ellipse at center, #a8232b 0 28%, #d9573f 30% 100%)`,
+            // backgroundSize: "cover",
+            backgroundPosition: "center",
+            // boxShadow: "0 1px 0 #8a4a2a, 0 2px 0 #6b3a1f",
           }}
         />
-          {/* <Typography sx={{ fontSize: { xs: 20, sm: 28 }, color: "#d5a94c", textShadow: "0 2px 4px rgba(0,0,0,.5)" }}>
+        {/* <Typography sx={{ fontSize: { xs: 20, sm: 28 }, color: "#d5a94c", textShadow: "0 2px 4px rgba(0,0,0,.5)" }}>
             👑
           </Typography>
         </Box> */}
