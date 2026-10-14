@@ -212,6 +212,10 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
           src={CARD_DECK_IMAGE}
           alt={"دسته کارت ها"}
           sx={{
+            position: "absolute",
+            right: "50%",
+            top: "50%",
+            transform: "translate(50%, -50%)",
             //   width: 34,
             width: { xs: 44, sm: 56 },
             //   aspectRatio:"3/4",
