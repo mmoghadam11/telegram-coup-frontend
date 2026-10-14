@@ -188,7 +188,7 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
             top: "50%",
             transform: "translate(50%, -50%)",
             width: { xs: 44, sm: 56 },
-            // height: { xs: 60, sm: 76 },
+            height: { xs: 60, sm: 76 },
             borderRadius: 1.5,
             // background: isDark ? "#151a2d" : "#29374e",
             // border: "2px solid #c99a4a",
@@ -200,7 +200,7 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
         backgroundColor: "#d9573f",
         // اگه عکس نبود، طرح CSS جایگزین می‌شه
         backgroundImage: `url(${CARD_BACK_IMAGE}), radial-gradient(ellipse at center, #a8232b 0 28%, #d9573f 30% 100%)`,
-        // backgroundSize: "cover",
+        backgroundSize: "cover",
         backgroundPosition: "center",
         boxShadow: "0 1px 0 #8a4a2a, 0 2px 0 #6b3a1f",
           }}

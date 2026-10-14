@@ -49,7 +49,7 @@ interface Props {
     shuffleStyle?: ShuffleStyle;
 }
 
-export default function ReplacementDialog({ open, endsAt, playerName, isMe, newRole, shuffle = false, shuffleStyle = "riffle" }: Props) {
+export default function ReplacementDialog({ open, endsAt, playerName, isMe, newRole, shuffle = false, shuffleStyle = "overhand" }: Props) {
     const [phase, setPhase] = useState<Phase>(shuffle ? "riffle" : "tuck");
     const shuffleMs = shuffleStyle === "riffle" ? 2600 : 2800;
     const drawAt = shuffle ? shuffleMs : 1900;
