@@ -181,7 +181,7 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
             border: "1px solid rgba(255,210,140,.12)",
           }}
         />
-        <Box
+        {/* <Box
           sx={{
             position: "absolute",
             right: "50%",
@@ -205,6 +205,19 @@ export default function GameTable({ players, myUserId, currentTurnPlayerId }: Ga
             backgroundSize: "cover",
             backgroundPosition: "center",
             // boxShadow: "0 1px 0 #8a4a2a, 0 2px 0 #6b3a1f",
+          }}
+        /> */}
+        <Box
+          component="img"
+          src={CARD_DECK_IMAGE}
+          alt={"دسته کارت ها"}
+          sx={{
+            //   width: 34,
+            width: { xs: 44, sm: 56 },
+            //   aspectRatio:"3/4",
+            objectFit: "cover",
+            // borderRadius: 0.7,
+            flexShrink: 0,
           }}
         />
         {/* <Typography sx={{ fontSize: { xs: 20, sm: 28 }, color: "#d5a94c", textShadow: "0 2px 4px rgba(0,0,0,.5)" }}>
