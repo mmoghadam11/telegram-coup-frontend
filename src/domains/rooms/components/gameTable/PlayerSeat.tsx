@@ -4,12 +4,12 @@ import { motion } from "motion/react";
 import CoinStack from "./CoinStack";
 
 const ROLE_IMAGES: Record<string, string> = {
-  duke: "/assets/images/cards/minimal/duke.png",
-  captain: "/assets/images/cards/minimal/captain.png",
-  ambassador: "/assets/images/cards/minimal/ambassador.png",
-  princess: "/assets/images/cards/minimal/princess.png",
-  assassin: "/assets/images/cards/minimal/assassin.png",
-  contessa: "/assets/images/cards/minimal/contessa.png",
+  duke: "/assets/images/cards/minimal/duke.webp",
+  captain: "/assets/images/cards/minimal/captain.webp",
+  ambassador: "/assets/images/cards/minimal/ambassador.webp",
+  princess: "/assets/images/cards/minimal/princess.webp",
+  assassin: "/assets/images/cards/minimal/assassin.webp",
+  contessa: "/assets/images/cards/minimal/contessa.webp",
 };
 
 export interface GameTablePlayer {

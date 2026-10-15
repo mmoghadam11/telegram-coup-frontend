@@ -34,7 +34,8 @@ function getTableRadiusPercent(playerCount: number): number {
 export default function GameTable({ players, myUserId, currentTurnPlayerId }: GameTableProps) {
   const theme = useTheme();
   const isDark = theme.palette.mode === "dark";
-  const CARD_DECK_IMAGE = "/assets/images/cards/minimal/card-deck.svg";
+  // const CARD_DECK_IMAGE = "/assets/images/cards/minimal/card-deck.svg";
+  const CARD_DECK_IMAGE = "/assets/images/cards/minimal/card-deck.webp";
 
   const myIndex = players.findIndex((p) => p.id === myUserId);
 
