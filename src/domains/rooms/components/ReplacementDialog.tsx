@@ -9,7 +9,7 @@ const LAYERS = 12;                 // باید بر ۶ بخش‌پذیر باش�
 const GAP = 2.5;                   // ضخامت هر کارت
 const SLIDE = CARD_H * 1.08;       // جابه‌جایی طولی؛ به‌قدری که دسته کامل از روی بقیه کنار بره
 const BEND_DEG = 16;               // شدت خمیدگی (۰ = بدون خمیدگی)
-const ISO = { rotateX: 58, rotateZ: -38 };
+const ISO = { rotateX: 58, rotateZ: 38 };
 const FACING = { rotateX: 30, rotateZ: 0 };   // وضعیت «رو به بیننده»
 const CARD_BACK_IMAGE = "/assets/images/cards/minimal/card-back.svg";
 
@@ -116,7 +116,7 @@ const faceStyle: React.CSSProperties = {
   left: 0,
   width: CARD_W,
   height: CARD_H / 2,
-  backgroundColor: "#d9573f",
+  backgroundColor: "#eed5a9",
   backgroundImage: `url(${CARD_BACK_IMAGE}), radial-gradient(ellipse at center, #a8232b 0 28%, #d9573f 30% 100%)`,
   backgroundSize: `${CARD_W}px ${CARD_H}px, cover`,
   boxShadow: "0 1px 0 #8a4a2a",
