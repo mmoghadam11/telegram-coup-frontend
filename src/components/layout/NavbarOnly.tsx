@@ -13,7 +13,7 @@ import React, { useContext, useEffect, useState } from "react";
 import { styled } from "@mui/material/styles";
 import MenuIcon from "@mui/icons-material/Menu";
 import MuiAppBar, { AppBarProps as MuiAppBarProps } from "@mui/material/AppBar";
-import { AdminPanelSettings, ChangeCircle, Home, Logout, ManageAccounts, ManageAccountsRounded, Password } from "@mui/icons-material";
+import { AdminPanelSettings, ChangeCircle, Home, Logout, ManageAccounts, ManageAccountsRounded, Password, TableBar } from "@mui/icons-material";
 import { DRAWER_WIDTH } from "./Layout";
 import { useAuth } from "hooks/useAuth";
 import AccountCircleIcon from "@mui/icons-material/AccountCircle";
@@ -140,8 +140,8 @@ const NavbarOnly: React.FC<Props> = () => {
               value={tableMode}
               onChange={(_, v) => v && setTableMode(v)}
             >
-              <ToggleButton value="animated">🎴</ToggleButton>
-              <ToggleButton value="text">📜</ToggleButton>
+              <ToggleButton value="animated"><TableBar color="info" fontSize="small"/></ToggleButton>
+              <ToggleButton value="text"><TableBar color="disabled" fontSize="small"/></ToggleButton>
             </ToggleButtonGroup>
           </Box>
           {
