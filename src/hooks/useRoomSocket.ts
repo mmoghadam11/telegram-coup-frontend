@@ -61,6 +61,7 @@ interface RevealResultEvent {
 interface SelectionPending {
   playerId: string;
   mode: "exchange" | "contessa";
+  cardCount: number;
 }
 
 interface ProofEvent {
@@ -92,7 +93,7 @@ interface ShowcaseState {
   endsAt: number;
   shuffle?: boolean;
 }
-interface PublicGameState {
+export interface PublicGameState {
   phase: string;
   roomName: string | null;
   origin: "matchmaking" | "lobby" | "group"; // این خط اضافه شد
