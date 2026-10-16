@@ -38,6 +38,10 @@ import GameOverPannel from "./components/GameOverPannel";
 import ShowcaseDialog from "./components/ShowcaseDialog";
 import ReplacementDialog from "./components/ReplacementDialog";
 import SelfSwapPickDialog from "./components/SelfSwapPickDialog";
+import { useTableMode } from "context/TableModeContext";
+import TextPlayersList from "./components/textMode/TextPlayersList";
+import TextActionButtons from "./components/textMode/TextActionButtons";
+import WaitingForPlayerPanel from "./components/WaitingForPlayerPanel";
 
 
 const ROLE_LABELS_FA: Record<string, string> = {
@@ -58,6 +62,7 @@ const ACTION_LABELS: Record<string, string> = {
 export default function Room() {
   const { playRevealSound, startAnarchistLoop, stopAnarchistLoop } = useCardPreload();
   const Auth = useAuth();
+  const { isAnimated } = useTableMode();
   const { roomId } = useParams<{ roomId: string }>();
   const navigate = useNavigate();
   const snackbar = useSnackbar();
@@ -338,15 +343,23 @@ export default function Room() {
         </List>
       </Paper> */}
       {gameState.phase !== "waiting_for_players" && !showGameOverPanel && (
-        <GameTable
-          players={gameState.players.map((p) => ({ ...p, photo_url: p.photoUrl }))}
-          myUserId={myUserId}
-          currentTurnPlayerId={
-            gameState.turnOrder[
-            gameState.currentTurnIndex
-            ]
-          }
-        />
+        isAnimated ? (
+          <GameTable
+            players={gameState.players.map((p) => ({ ...p, photo_url: p.photoUrl }))}
+            myUserId={myUserId}
+            currentTurnPlayerId={
+              gameState.turnOrder[
+              gameState.currentTurnIndex
+              ]
+            }
+          />
+        ) : (
+          <TextPlayersList
+            players={gameState.players}
+            myUserId={myUserId}
+            currentTurnPlayerId={gameState.turnOrder[gameState.currentTurnIndex]}
+          />
+        )
       )}
       {showGameOverPanel && (
         <GameOverPannel
@@ -363,6 +376,9 @@ export default function Room() {
             navigate("/lobby");
           }}
         />
+      )}
+      {gameState.phase !== "waiting_for_players" && !showGameOverPanel && (
+        <WaitingForPlayerPanel gameState={gameState} myUserId={myUserId} animated={isAnimated} />
       )}
 
       {gameState.origin === "matchmaking" && gameState.phase === "awaiting_action" && !gameState.showcase && (
@@ -382,61 +398,69 @@ export default function Room() {
         </Stack>
       )} */}
       {gameState.phase === "awaiting_action" && isMyTurn && !gameState.revealPending && !gameState.showcase && (
-        <Grid container spacing={1}>
-          {/* ActionCarousel */}
-          {(gameState.players.find((p) => p.id === myUserId)?.coins ?? 0) < 10 &&
-            <Grid item xs={7}>
-              <ActionCarousel
-                actions={Object.keys(ACTION_CARD_DATA)
-                  .filter((action) => {
-                    if (["income", "foreign_aid", "coup", "coup1"].includes(action)) {
-                      return false;
-                    }
-                    const myCoins = gameState.players.find((p) => p.id === myUserId)?.coins ?? 0;
-                    return myCoins >= ACTION_CARD_DATA[action].cost;
-                  })
-                  .map((action) => ({
-                    action,
-                    ...ACTION_CARD_DATA[action],
-                  }))}
-                onSelect={handleActionClick}
-              />
-            </Grid>}
-          {(gameState.players.find((p) => p.id === myUserId)?.coins ?? 0) < 10 &&
-            <Grid item xs={5} display={"flex"}>
-              {/* Income + Foreign Aid */}
-              <Stack
-                direction="column"
-                spacing={1}
-                sx={{ height: "100%" }}>
-                <ActionButton
-                  action="income"
-                  onClick={handleActionClick}
+        isAnimated ? (
+          <Grid container spacing={1}>
+            {/* ActionCarousel */}
+            {(gameState.players.find((p) => p.id === myUserId)?.coins ?? 0) < 10 &&
+              <Grid item xs={7}>
+                <ActionCarousel
+                  actions={Object.keys(ACTION_CARD_DATA)
+                    .filter((action) => {
+                      if (["income", "foreign_aid", "coup", "coup1"].includes(action)) {
+                        return false;
+                      }
+                      const myCoins = gameState.players.find((p) => p.id === myUserId)?.coins ?? 0;
+                      return myCoins >= ACTION_CARD_DATA[action].cost;
+                    })
+                    .map((action) => ({
+                      action,
+                      ...ACTION_CARD_DATA[action],
+                    }))}
+                  onSelect={handleActionClick}
                 />
+              </Grid>}
+            {(gameState.players.find((p) => p.id === myUserId)?.coins ?? 0) < 10 &&
+              <Grid item xs={5} display={"flex"}>
+                {/* Income + Foreign Aid */}
+                <Stack
+                  direction="column"
+                  spacing={1}
+                  sx={{ height: "100%" }}>
+                  <ActionButton
+                    action="income"
+                    onClick={handleActionClick}
+                  />
 
-                <ActionButton
-                  action="foreign_aid"
-                  onClick={handleActionClick}
-                />
-              </Stack>
-            </Grid>
-          }
-          {/* Coup */}
-          {(gameState.players.find((p) => p.id === myUserId)?.coins ?? 0) >= ACTION_CARD_DATA.coup1.cost && (
-            <Grid item xs={12}>
-              {/* <ActionButton
+                  <ActionButton
+                    action="foreign_aid"
+                    onClick={handleActionClick}
+                  />
+                </Stack>
+              </Grid>
+            }
+            {/* Coup */}
+            {(gameState.players.find((p) => p.id === myUserId)?.coins ?? 0) >= ACTION_CARD_DATA.coup1.cost && (
+              <Grid item xs={12}>
+                {/* <ActionButton
                 action="coup1"
                 onClick={handleActionClick}
                 sx={{
                   width: { xs: 70, sm: 85 },
                 }}
               /> */}
-              <CoupCardItem
-                onClick={() => handleActionClick("coup")}
-              />
-            </Grid>
-          )}
-        </Grid>
+                <CoupCardItem
+                  onClick={() => handleActionClick("coup")}
+                />
+              </Grid>
+            )}
+          </Grid>
+        ) : (
+          <TextActionButtons
+            coins={gameState.players.find((p) => p.id === myUserId)?.coins ?? 0}
+            labels={ACTION_LABELS}
+            onSelect={handleActionClick}
+          />
+        )
       )}
 
       {/* اکشن یکی دیگه در انتظار پاسخ بقیه‌ست */}
@@ -543,6 +567,7 @@ export default function Room() {
         pool={privateState?.exchangePool}
         keepCount={privateState?.exchangeKeepCount}
         onConfirm={(keepIndexes) => sendExchangeSelect(keepIndexes)}
+        animated={isAnimated}
       />
 
       <ContessaDialog
@@ -550,6 +575,7 @@ export default function Room() {
         roles={privateState?.yourRoles}
         revealed={privateState?.yourRevealed}
         onSelect={(roleIndex) => sendContessaSelect("contessa_self_select", roleIndex)}
+        animated={isAnimated}
       />
 
       <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
@@ -605,6 +631,7 @@ export default function Room() {
             : undefined
         }
         shuffle={gameState.showcase?.shuffle ?? false}
+      // animated={isAnimated}
       />
       {/* <GameOverDialog
         open={showGameOverDialog}
