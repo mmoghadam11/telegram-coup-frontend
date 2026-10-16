@@ -4,6 +4,8 @@ import {
   Button,
   Grid,
   IconButton,
+  ToggleButton,
+  ToggleButtonGroup,
   Toolbar,
   Typography,
 } from "@mui/material";
@@ -27,6 +29,7 @@ import UploadAvatarSimpleDialog from "./UploadAvatarSimpleDialog";
 import { useQuery } from "@tanstack/react-query";
 import paramsSerializer from "services/paramsSerializer";
 import UserProfile from "./UserProfile";
+import { useTableMode } from "context/TableModeContext";
 
 interface AppBarProps extends MuiAppBarProps {
   open?: boolean;
@@ -56,6 +59,7 @@ type Props = {
 const NavbarOnly: React.FC<Props> = () => {
   const Auth = useAuth();
   const navigate = useNavigate();
+  const { tableMode, setTableMode } = useTableMode();
 
   const { access } = useContext(mainProviderContext);
   const [anchorEl, setAnchorEl] = React.useState<HTMLButtonElement | null>(
@@ -77,10 +81,10 @@ const NavbarOnly: React.FC<Props> = () => {
 
   const colorMode = React.useContext(ColorModeContext);
 
-    useEffect(() => {
+  useEffect(() => {
 
     if (Auth.userInfo?.photo_url) {
-     
+
       setAvatarUrl(Auth.userInfo?.photo_url);
     }
   }, [Auth]);
@@ -128,33 +132,45 @@ const NavbarOnly: React.FC<Props> = () => {
               checked={colorMode.mode === "dark"}
             />
           </Box>
+          <Box className="account-menu-btn" sx={{ display: "flex", alignItems: "center", mt: 1 }}>
+            <Typography variant="button" sx={{ mr: 1 }}>حالت میز</Typography>
+            <ToggleButtonGroup
+              size="small"
+              exclusive
+              value={tableMode}
+              onChange={(_, v) => v && setTableMode(v)}
+            >
+              <ToggleButton value="animated">🎴</ToggleButton>
+              <ToggleButton value="text">📜</ToggleButton>
+            </ToggleButtonGroup>
+          </Box>
           {
-            Auth.userInfo?.role==="admin"&&
+            Auth.userInfo?.role === "admin" &&
             <Button
-            className="account-menu-btn"
-            sx={{ mt: 1, color: (theme) => theme.palette.text.primary }}
-            color="primary"
-            variant="contained"
-            endIcon={<AdminPanelSettings />}
-            onClick={()=>navigate("/admin")}
-          >
-            پنل ادمین
-          </Button>
-          }   
-          {
-            Auth.userInfo?.role==="admin"&&
-            <Button
-            className="account-menu-btn"
-            sx={{ mt: 1, color: (theme) => theme.palette.text.primary }}
-            color="primary"
-            variant="contained"
-            endIcon={<Home />}
-            onClick={()=>navigate("/")}
-          >
-            صفحه اصلی
-          </Button>
+              className="account-menu-btn"
+              sx={{ mt: 1, color: (theme) => theme.palette.text.primary }}
+              color="primary"
+              variant="contained"
+              endIcon={<AdminPanelSettings />}
+              onClick={() => navigate("/admin")}
+            >
+              پنل ادمین
+            </Button>
           }
-          
+          {
+            Auth.userInfo?.role === "admin" &&
+            <Button
+              className="account-menu-btn"
+              sx={{ mt: 1, color: (theme) => theme.palette.text.primary }}
+              color="primary"
+              variant="contained"
+              endIcon={<Home />}
+              onClick={() => navigate("/")}
+            >
+              صفحه اصلی
+            </Button>
+          }
+
         </Box>
       </Popover>
       <AppBar
@@ -282,14 +298,14 @@ const NavbarOnly: React.FC<Props> = () => {
                   borderColor: "divider",
                 }}
               >
-                <AccountCircleIcon sx={{width: 40,height: 40,}} color="inherit" />
+                <AccountCircleIcon sx={{ width: 40, height: 40, }} color="inherit" />
               </Avatar>
               {/* <AccountCircleIcon sx={{ fontSize: "28px" }} color="inherit" /> */}
             </IconButton>
           </Box>
         </Toolbar>
       </AppBar>
-      
+
       <UserProfile
         open={openProfile}
         onClose={() => setOpenProfile(false)}

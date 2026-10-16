@@ -17,6 +17,7 @@ import { AdapterDateFnsJalali } from "@mui/x-date-pickers/AdapterDateFnsJalaliV3
 import { LocalizationProvider } from "@mui/x-date-pickers/";
 import { faIR } from "@mui/x-date-pickers/locales";
 import GlobalStyles from "GlobalStyles";
+import { TableModeProvider } from "context/TableModeContext";
 
 
 export const ColorModeContext = React.createContext({
@@ -156,7 +157,9 @@ function App() {
                   <ReactQueryDevtools initialIsOpen={false} />
                   <ColorModeContext.Provider value={{ ...colorMode, mode }}>
                     <LocalizationProvider dateAdapter={AdapterDateFnsJalali}>
-                      <AppRoutes />
+                      <TableModeProvider>
+                        <AppRoutes />
+                      </TableModeProvider>
                     </LocalizationProvider>
                   </ColorModeContext.Provider>
                 </MainProviderContext>
