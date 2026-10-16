@@ -412,4 +412,3 @@ const TableModeSwitch = styled(
   },
 }));
 
-export default TableModeSwitch;
