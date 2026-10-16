@@ -42,6 +42,7 @@ import { useTableMode } from "context/TableModeContext";
 import TextPlayersList from "./components/textMode/TextPlayersList";
 import TextActionButtons from "./components/textMode/TextActionButtons";
 import WaitingForPlayerPanel from "./components/WaitingForPlayerPanel";
+import WaitingRoomPanel from "./components/WaitingRoomPanel";
 
 
 const ROLE_LABELS_FA: Record<string, string> = {
@@ -289,7 +290,7 @@ export default function Room() {
 
       {gameState.phase === "waiting_for_players" && gameState.creatorId === myUserId && (
         <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
-          <Button variant="contained" fullWidth onClick={startGame}>
+          <Button disabled={gameState.players.length < 2} variant="contained" fullWidth onClick={startGame}>
             شروع بازی ({gameState.players.length} بازیکن)
           </Button>
           <Button variant="outlined" color="error" onClick={() => setCloseWaitingConfirmOpen(true)}>
@@ -298,6 +299,12 @@ export default function Room() {
         </Stack>
 
       )}
+      {gameState.phase === "waiting_for_players" &&
+        <WaitingRoomPanel
+          creatorId={gameState.creatorId}
+          myUserId={myUserId}
+          players={gameState.players}
+        />}
 
       {gameState.phase !== "waiting_for_players" && (
         <Paper sx={{ p: 2, mb: 2 }}>
