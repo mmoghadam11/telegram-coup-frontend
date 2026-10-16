@@ -20,7 +20,7 @@ import AccountCircleIcon from "@mui/icons-material/AccountCircle";
 import { useNavigate } from "react-router-dom";
 import { ColorModeContext } from "App";
 import Popover from "@mui/material/Popover";
-import Switch from "@mui/material/Switch";
+import Switch, { SwitchProps } from "@mui/material/Switch";
 import "./Navbar.css";
 import { isMobile } from "react-device-detect";
 import { store } from "../../redux/configureStore";
@@ -134,15 +134,12 @@ const NavbarOnly: React.FC<Props> = () => {
           </Box>
           <Box className="account-menu-btn" sx={{ display: "flex", alignItems: "center", mt: 1 }}>
             <Typography variant="button" sx={{ mr: 1 }}>حالت میز</Typography>
-            <ToggleButtonGroup
-              size="small"
-              exclusive
-              value={tableMode}
-              onChange={(_, v) => v && setTableMode(v)}
-            >
-              <ToggleButton value="animated"><TableBar color="info" fontSize="small"/></ToggleButton>
-              <ToggleButton value="text"><TableBar color="disabled" fontSize="small"/></ToggleButton>
-            </ToggleButtonGroup>
+            <TableModeSwitch
+              sx={{ m: 1 }}
+              onChange={(event) =>
+                setTableMode(event.target.checked ? "animated" : "text")
+              }
+            />
           </Box>
           {
             Auth.userInfo?.role === "admin" &&
@@ -365,3 +362,54 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
     borderRadius: 20 / 2,
   },
 }));
+
+const TableModeSwitch = styled(
+  (props: SwitchProps) => {
+    const { tableMode } = useTableMode();
+
+    return (
+      <Switch
+        {...props}
+        checked={tableMode === "animated"}
+      />
+    );
+  }
+)(({ theme }) => ({
+  width: 62,
+  height: 34,
+  padding: 7,
+  margin: "0 -15px 0 0 !important",
+  transform: "scale(.75)",
+
+  "& .MuiSwitch-switchBase": {
+    margin: 1,
+    padding: 0,
+    transform: "translateX(6px)",
+
+    "&.Mui-checked": {
+      color: "#fff",
+      transform: "translateX(22px)",
+
+      "& + .MuiSwitch-track": {
+        opacity: 1,
+        backgroundColor: "#1976d2",
+      },
+    },
+  },
+
+  "& .MuiSwitch-thumb": {
+    backgroundColor: theme.palette.mode === "dark" ? "#000" : "#fff",
+    border: `1px solid ${theme.palette.mode === "dark" ? "#000" : "#757575"
+      }`,
+    width: 32,
+    height: 32,
+  },
+
+  "& .MuiSwitch-track": {
+    opacity: 1,
+    backgroundColor: "#aab4be",
+    borderRadius: 10,
+  },
+}));
+
+export default TableModeSwitch;
