@@ -132,7 +132,7 @@ const NavbarOnly: React.FC<Props> = () => {
               checked={colorMode.mode === "dark"}
             />
           </Box>
-          <Box className="account-menu-btn" sx={{ display: "flex", alignItems: "center", mt: 1 }}>
+          {/* <Box className="account-menu-btn" sx={{ display: "flex", alignItems: "center", mt: 1 }}>
             <Typography variant="button" sx={{ mr: 1 }}>حالت میز</Typography>
             <TableModeSwitch
               sx={{ m: 1 }}
@@ -140,6 +140,10 @@ const NavbarOnly: React.FC<Props> = () => {
                 setTableMode(event.target.checked ? "animated" : "text")
               }
             />
+          </Box> */}
+          <Box className="account-menu-btn" sx={{ display: "flex", alignItems: "center" }}>
+            <Typography variant="button">حالت میز</Typography>
+            <TableModeSwitch sx={{ m: 1 }} />
           </Box>
           {
             Auth.userInfo?.role === "admin" &&
@@ -363,52 +367,96 @@ const MaterialUISwitch = styled(Switch)(({ theme }) => ({
   },
 }));
 
-const TableModeSwitch = styled(
-  (props: SwitchProps) => {
-    const { tableMode } = useTableMode();
+// const TableModeSwitch = styled(
+//   (props: SwitchProps) => {
+//     const { tableMode } = useTableMode();
 
-    return (
-      <Switch
-        {...props}
-        checked={tableMode === "animated"}
-      />
-    );
-  }
-)(({ theme }) => ({
+//     return (
+//       <Switch
+//         {...props}
+//         checked={tableMode === "animated"}
+//       />
+//     );
+//   }
+// )(({ theme }) => ({
+//   width: 62,
+//   height: 34,
+//   padding: 7,
+//   margin: "0 -15px 0 0 !important",
+//   transform: "scale(.75)",
+
+//   "& .MuiSwitch-switchBase": {
+//     margin: 1,
+//     padding: 0,
+//     transform: "translateX(6px)",
+
+//     "&.Mui-checked": {
+//       color: "#fff",
+//       transform: "translateX(22px)",
+
+//       "& + .MuiSwitch-track": {
+//         opacity: 1,
+//         backgroundColor: "#1976d2",
+//       },
+//     },
+//   },
+
+//   "& .MuiSwitch-thumb": {
+//     backgroundColor: theme.palette.mode === "dark" ? "#000" : "#fff",
+//     border: `1px solid ${theme.palette.mode === "dark" ? "#000" : "#757575"
+//       }`,
+//     width: 32,
+//     height: 32,
+//   },
+
+//   "& .MuiSwitch-track": {
+//     opacity: 1,
+//     backgroundColor: "#aab4be",
+//     borderRadius: 10,
+//   },
+// }));
+
+const Thumb = ({ icon }: { icon: React.ReactNode }) => (
+  <Box
+    sx={{
+      width: 32, height: 32, borderRadius: "50%",
+      display: "flex", alignItems: "center", justifyContent: "center",
+      bgcolor: (t) => (t.palette.mode === "dark" ? "#000" : "#fff"),
+      border: (t) => `1px solid ${t.palette.mode === "dark" ? "#000" : "#757575"}`,
+      boxShadow: 1,
+    }}
+  >
+    {icon}
+  </Box>
+);
+
+const StyledSwitch = styled(Switch)(() => ({
   width: 62,
   height: 34,
   padding: 7,
   margin: "0 -15px 0 0 !important",
   transform: "scale(.75)",
-
   "& .MuiSwitch-switchBase": {
     margin: 1,
     padding: 0,
     transform: "translateX(6px)",
-
     "&.Mui-checked": {
-      color: "#fff",
       transform: "translateX(22px)",
-
-      "& + .MuiSwitch-track": {
-        opacity: 1,
-        backgroundColor: "#1976d2",
-      },
+      "& + .MuiSwitch-track": { opacity: 1, backgroundColor: "#1976d2" },
     },
   },
-
-  "& .MuiSwitch-thumb": {
-    backgroundColor: theme.palette.mode === "dark" ? "#000" : "#fff",
-    border: `1px solid ${theme.palette.mode === "dark" ? "#000" : "#757575"
-      }`,
-    width: 32,
-    height: 32,
-  },
-
-  "& .MuiSwitch-track": {
-    opacity: 1,
-    backgroundColor: "#aab4be",
-    borderRadius: 10,
-  },
+  "& .MuiSwitch-track": { opacity: 1, backgroundColor: "#aab4be", borderRadius: 10 },
 }));
 
+export function TableModeSwitch(props: SwitchProps) {
+  const { tableMode, setTableMode } = useTableMode();
+  return (
+    <StyledSwitch
+      {...props}
+      checked={tableMode === "animated"}
+      onChange={(_, checked) => setTableMode(checked ? "animated" : "text")}
+      icon={<Thumb icon={<TableBar sx={{ fontSize: 18, color: "#757575" }} />} />}
+      checkedIcon={<Thumb icon={<TableBar sx={{ fontSize: 18, color: "#19d25d" }} />} />}
+    />
+  );
+}
