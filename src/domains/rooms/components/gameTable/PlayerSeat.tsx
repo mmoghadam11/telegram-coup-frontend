@@ -2,6 +2,7 @@ import React from "react";
 import { Avatar, Box, Stack, Typography } from "@mui/material";
 import { motion } from "motion/react";
 import CoinStack from "./CoinStack";
+import { useAssets } from "context/AssetPreloadContext";
 
 const ROLE_IMAGES: Record<string, string> = {
   duke: "/assets/images/cards/minimal/duke.webp",
@@ -117,6 +118,7 @@ function AvatarBubble({
 }
 
 function CoinsAndCards({ player }: { player: GameTablePlayer }) {
+  const { src } = useAssets();
   if (player.coins <= 0 && player.revealedRoles.length === 0) return null;
   return (
     <Stack direction="row" alignItems="center" spacing={0.5}>
@@ -130,7 +132,7 @@ function CoinsAndCards({ player }: { player: GameTablePlayer }) {
               <Box
                 key={`${player.id}-${role}-${index}`}
                 component="img"
-                src={image}
+                src={src(image)}
                 alt={role}
                 sx={{
                   width: { xs: 24, sm: 30 },

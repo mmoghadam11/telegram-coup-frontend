@@ -1,8 +1,10 @@
+import { useAssets } from "context/AssetPreloadContext";
 import { useCallback, useEffect, useRef } from "react";
 
-const actionCard = ["duke", "captain", "ambassador", "princess", "assassin", "contessa", "aid", "income", "coup"];
+const actionCard = ["duke", "captain", "ambassador", "princess", "assassin", "contessa", "aid", "income", "coup1"];
 
 export function useCardPreload() {
+  const { src } = useAssets();
   const revealAudioRef = useRef<HTMLAudioElement | null>(null);
   const anarchistAudioRef = useRef<HTMLAudioElement | null>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
@@ -12,7 +14,7 @@ export function useCardPreload() {
   useEffect(() => {
     actionCard.forEach((role) => {
       const img = new Image();
-      img.src = `/assets/images/cards/minimal/${role}.png`;
+      img.src = src(`/assets/images/cards/minimal/${role}.webp`);
     });
 
     const reveal = new Audio("/assets/sounds/reveal.mp3");

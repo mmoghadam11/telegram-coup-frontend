@@ -82,7 +82,7 @@ export default function RoleCardImage({
       onClick={onClick}
     >
       <motion.img
-        src={`/assets/images/cards/minimal/${role}.png`}
+        src={`/assets/images/cards/minimal/${role}.webp`}
         alt={ROLE_LABELS_FA[role] || role}
         loading="eager"
         draggable={false}
