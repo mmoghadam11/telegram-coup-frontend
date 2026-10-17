@@ -3,7 +3,7 @@ import { Alert, Avatar, Box, CircularProgress, Paper, Stack, Typography } from "
 import { motion } from "motion/react";
 import type { PublicGameState } from "hooks/useRoomSocket";
 
-const CARD_BACK = "/assets/images/cards/minimal/card-back.svg";
+const CARD_BACK = "/assets/images/cards/minimal/card-back.webp";
 const RING = 170;
 const RADIUS = 64;
 

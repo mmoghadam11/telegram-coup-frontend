@@ -1,6 +1,6 @@
 export const ACTION_CARD_DATA: Record<string, { image: string; title: string; description: string; cost: number }> = {
-  income: { image: "/assets/images/cards/minimal/income.png", title: "درآمد", description: "یک سکه از بانک", cost: 0 },
-  foreign_aid: { image: "/assets/images/cards/minimal/aid.png", title: "کمک خارجی", description: "دو سکه از بانک(قابل بلاک)", cost: 0 },
+  income: { image: "/assets/images/cards/minimal/income.webp", title: "درآمد", description: "یک سکه از بانک", cost: 0 },
+  foreign_aid: { image: "/assets/images/cards/minimal/aid.webp", title: "کمک خارجی", description: "دو سکه از بانک(قابل بلاک)", cost: 0 },
   coup: { image: "/assets/images/cards/minimal/coup.png", title: "کودتا", description: "کودتا با ۷ سکه", cost: 7 },
   coup1: { image: "/assets/images/cards/minimal/coup1.webp", title: "کودتا", description: "کودتا با ۷ سکه", cost: 7 },
   tax: { image: "/assets/images/cards/minimal/duke.webp", title: "مالیات (بزرگ‌زاده)", description: "3 سکه از بانک بردار", cost: 0 },

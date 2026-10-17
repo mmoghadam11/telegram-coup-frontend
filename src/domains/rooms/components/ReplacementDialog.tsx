@@ -11,7 +11,7 @@ const SLIDE = CARD_H * 1.08;       // جابه‌جایی طولی؛ به‌قد
 const BEND_DEG = 16;               // شدت خمیدگی (۰ = بدون خمیدگی)
 const ISO = { rotateX: 58, rotateZ: 38 };
 const FACING = { rotateX: 30, rotateZ: 0 };   // وضعیت «رو به بیننده»
-const CARD_BACK_IMAGE = "/assets/images/cards/minimal/card-back.svg";
+const CARD_BACK_IMAGE = "/assets/images/cards/minimal/card-back.webp";
 
 type StepName =
   | "split" | "zshift" | "merge"
