@@ -20,7 +20,7 @@ export default function ExchangeDialog({ open, pool, keepCount = 0, onConfirm, a
 
   // با join کلید می‌گیریم؛ با هر broadcast آرایه‌ی pool یه رفرنس جدید می‌شه و انتخاب بی‌دلیل پاک می‌شد
   const poolKey = pool?.join(",") ?? "";
-  useEffect(() => setSelected([]), [poolKey]);
+  useEffect(() => setSelected([]), [poolKey,open]);
 
   const toggle = (i: number) => setSelected((prev) => toggleIndex(prev, i, keepCount));
 
