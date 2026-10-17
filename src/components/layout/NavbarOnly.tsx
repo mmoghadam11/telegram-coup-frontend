@@ -442,7 +442,7 @@ const StyledSwitch = styled(Switch)(() => ({
     transform: "translateX(6px)",
     "&.Mui-checked": {
       transform: "translateX(22px)",
-      "& + .MuiSwitch-track": { opacity: 1, backgroundColor: "#1976d2" },
+      "& + .MuiSwitch-track": { opacity: 1, backgroundColor: "#ffae00" },
     },
   },
   "& .MuiSwitch-track": { opacity: 1, backgroundColor: "#aab4be", borderRadius: 10 },
@@ -456,7 +456,7 @@ export function TableModeSwitch(props: SwitchProps) {
       checked={tableMode === "animated"}
       onChange={(_, checked) => setTableMode(checked ? "animated" : "text")}
       icon={<Thumb icon={<TableBar sx={{ fontSize: 18, color: "#757575" }} />} />}
-      checkedIcon={<Thumb icon={<TableBar sx={{ fontSize: 18, color: "#19d25d" }} />} />}
+      checkedIcon={<Thumb icon={<TableBar sx={{ fontSize: 18, color: "#ffae00" }} />} />}
     />
   );
 }
