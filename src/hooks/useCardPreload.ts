@@ -4,7 +4,7 @@ import { useCallback, useEffect, useRef } from "react";
 const actionCard = ["duke", "captain", "ambassador", "princess", "assassin", "contessa", "aid", "income", "coup1"];
 
 export function useCardPreload() {
-  const { src } = useAssets();
+  const { src , ready} = useAssets();
   const revealAudioRef = useRef<HTMLAudioElement | null>(null);
   const anarchistAudioRef = useRef<HTMLAudioElement | null>(null);
   const audioCtxRef = useRef<AudioContext | null>(null);
@@ -12,17 +12,18 @@ export function useCardPreload() {
   const sourceNodeRef = useRef<MediaElementAudioSourceNode | null>(null);
 
   useEffect(() => {
-    actionCard.forEach((role) => {
-      const img = new Image();
-      img.src = src(`/assets/images/cards/minimal/${role}.webp`);
-    });
+    if (!ready) return; // قبل از آماده شدن، هیچ دانلود اضافه‌ای شروع نمی‌شه
+    // actionCard.forEach((role) => {
+    //   const img = new Image();
+    //   img.src = src(`/assets/images/cards/minimal/${role}.webp`);
+    // });
 
-    const reveal = new Audio("/assets/sounds/reveal.mp3");
+    const reveal = new Audio(src("/assets/sounds/reveal.mp3"));
     reveal.preload = "auto";
     reveal.load();
     revealAudioRef.current = reveal;
 
-    const anarchist = new Audio("/assets/sounds/clock-tick.mp3");
+    const anarchist = new Audio(src("/assets/sounds/clock-tick.mp3"));
     anarchist.preload = "auto";
     anarchist.loop = true;
     anarchist.load();
@@ -38,7 +39,7 @@ export function useCardPreload() {
       audioCtxRef.current?.close();
       audioCtxRef.current = null;
     };
-  }, []);
+  }, [ready]);
 
   const playRevealSound = useCallback(() => {
     const audio = revealAudioRef.current;
