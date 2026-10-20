@@ -278,6 +278,7 @@ export function useRoomSocket(roomId?: string) {
     (choice: "stay" | "leave") => send({ type: "respond_to_restart_vote", choice }),
     [send]
   );
+  const leaveTable = useCallback(() => send({ type: "leave_table" }), [send]);
   const leaveRoom = useCallback(() => send({ type: "leave_room" }), [send]);
   const closeRoom = useCallback(() => send({ type: "close_room" }), [send]);
   const forceReset = useCallback(() => send({ type: "force_reset" }), [send]);
@@ -310,6 +311,7 @@ export function useRoomSocket(roomId?: string) {
     anarchistPass,
     anarchistNeutralize,
     mmLeave,
+    leaveTable,
     fold,
     restartGame,
     respondToRestartVote,

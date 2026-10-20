@@ -78,7 +78,7 @@ export default function Room() {
     // revealResultEvent, clearRevealResultEvent,
     connected, loaded, gameState, privateState, mmLeave, fold,
     sendProveCard, anarchistRespond, anarchistBlockRespond, anarchistPass, anarchistNeutralize,
-    startGame, sendChat, sendAction, respond, blockAction, respondToBlock, revealCard, restartGame, leaveRoom, closeRoom, forceReset, sendContessaSelect, sendExchangeSelect, respondToRestartVote,
+    startGame, sendChat, sendAction, respond, blockAction, respondToBlock, revealCard, restartGame, leaveRoom, leaveTable, closeRoom, forceReset, sendContessaSelect, sendExchangeSelect, respondToRestartVote,
   } = useRoomSocket(roomId);
 
   // useEffect(() => {
@@ -123,6 +123,7 @@ export default function Room() {
   const [debugMode, setDebugMode] = useState(false);
   const [closeWaitingConfirmOpen, setCloseWaitingConfirmOpen] = useState(false);
   const [blockDialogOpen, setBlockDialogOpen] = useState(false);
+  const [leaveConfirmOpen, setLeaveConfirmOpen] = useState(false);
   const BLOCKING_ROLES_FA: Record<string, string[]> = {
     foreign_aid: ["duke"],
     assassinate: ["princess"],
@@ -136,13 +137,22 @@ export default function Room() {
       </Box>
     );
   }
-
   const myUserId = String(Auth?.userInfo?.id);
   const showGameOverPanel = gameState.phase === "game_over";
   const showcasePlayerName = gameState.players.find((p) => p.id === gameState.showcase?.playerId)?.name ?? "";
   const isMyTurn = gameState.turnOrder[gameState.currentTurnIndex] === myUserId;
   const pending = gameState.pendingAction;
   const revealPending = gameState.revealPending;
+
+  const me = gameState.players.find((p) => p.id === myUserId);
+  const inHandNow =
+    !["waiting_for_players", "game_over", "restart_vote", "room_closed"].includes(gameState.phase) &&
+    (gameState.origin !== "matchmaking" || gameState.roomPhase === "playing");
+  const quietNow =
+    gameState.phase === "awaiting_action" &&
+    !gameState.showcase && !gameState.revealPending && !gameState.selectionPending &&
+    !gameState.provePending && !gameState.pendingAction;
+  const creatorOfLobby = gameState.origin !== "matchmaking" && gameState.creatorId === myUserId;
 
   const handleSend = () => {
     if (!input.trim()) return;
@@ -388,10 +398,22 @@ export default function Room() {
         <WaitingForPlayerPanel gameState={gameState} myUserId={myUserId} animated={isAnimated} />
       )}
 
-      {gameState.origin === "matchmaking" && gameState.phase === "awaiting_action" && !gameState.showcase && (
+      {/* {gameState.origin === "matchmaking" && gameState.phase === "awaiting_action" && !gameState.showcase && (
         <Button size="small" color="warning" variant="outlined" onClick={fold} sx={{ mb: 1 }}>
           فولد (این دست رو بازی نکنم)
         </Button>
+      )} */}
+      {inHandNow && me?.isAlive && (
+        <Stack direction="row" spacing={1} sx={{ mb: 1 }}>
+          <Button size="small" color="warning" variant="outlined" disabled={!quietNow} onClick={fold}>
+            کناره‌گیری از این دست
+          </Button>
+          {!creatorOfLobby && (
+            <Button size="small" color="error" variant="outlined" disabled={!quietNow} onClick={() => setLeaveConfirmOpen(true)}>
+              خروج کامل از میز
+            </Button>
+          )}
+        </Stack>
       )}
 
       {/* دکمه‌های اکشن — فقط وقتی نوبت خودمه و منتظر اکشن جدید هستیم */}
@@ -701,6 +723,18 @@ export default function Room() {
           closeRoom();
           setCloseWaitingConfirmOpen(false);
         }} />
+      <ConfirmBox
+        open={leaveConfirmOpen}
+        handleClose={() => setLeaveConfirmOpen(false)}
+        title="خروج از میز"
+        message="کارت‌هاتون باز می‌شه و از این میز خارج می‌شید. مطمئنید؟"
+        handleSubmit={() => {
+          (gameState.origin === "matchmaking" ? mmLeave : leaveTable)();
+          Auth?.setUserInfo({ ...Auth.userInfo, active_room_id: null });
+          setLeaveConfirmOpen(false);
+          navigate("/");
+        }}
+      />
     </Container>
   );
 }
