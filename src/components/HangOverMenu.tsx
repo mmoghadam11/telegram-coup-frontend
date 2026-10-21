@@ -190,7 +190,7 @@ const handleMenuItemClick = (item: MenuItem) => {
                       size="small"
                       onClick={() => handleMenuItemClick(item)}
                       variant="contained"
-                      disabled={item.action === "matchmake" && matchmakingLoading}
+                      disabled={(item.action === "matchmake" && matchmakingLoading)||!Auth.authLoading}
                     >
                       {item.action === "matchmake" && matchmakingLoading ? <CircularProgress size={16} /> : item.btn??"مشاهده"}
                     </Button>

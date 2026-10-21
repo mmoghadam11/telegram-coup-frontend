@@ -64,7 +64,7 @@ const AuthProvider: React.FC<Props> = ({ children }) => {
       .then((res) => {
         storeToken(res.data.sessionToken);
         setUserInfo(res.data.user);
-        snackbar("شما"+res.data.user.first_name+"هستید","info")
+        snackbar("شما "+res.data.user.first_name+" هستید","info")
       })
       .catch((err) => {
         console.error("telegram auth failed", err);
