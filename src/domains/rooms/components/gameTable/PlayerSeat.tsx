@@ -121,7 +121,7 @@ function AvatarBubble({
 
 function CoinsAndCards({ player }: { player: GameTablePlayer }) {
   const { src } = useAssets();
-  if (player.coins <= 0 && player.revealedRoles.length === 0 && player.roleCount === 0) return null;
+  // if (player.coins <= 0 && player.revealedRoles.length === 0 && player.roleCount === 0) return null;
   return (
     <Stack direction="row" alignItems="center" spacing={0.5}>
       {player.coins > 0 && <CoinStack count={player.coins} />}
