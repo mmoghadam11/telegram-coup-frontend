@@ -125,7 +125,7 @@ function CoinsAndCards({ player }: { player: GameTablePlayer }) {
   return (
     <Stack direction="row" alignItems="center" spacing={0.5}>
       {player.coins > 0 && <CoinStack count={player.coins} />}
-      {player.revealedRoles.length > 0 && (
+      {
         <Stack direction="row">
           {player.revealedRoles.map((role, index) => {
             // const image = ROLE_IMAGES[role];
@@ -172,7 +172,7 @@ function CoinsAndCards({ player }: { player: GameTablePlayer }) {
             );
           })}
         </Stack>
-      )}
+      }
     </Stack>
   );
 }
