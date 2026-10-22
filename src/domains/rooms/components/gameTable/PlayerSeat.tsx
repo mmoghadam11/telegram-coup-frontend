@@ -3,15 +3,16 @@ import { Avatar, Box, Stack, Typography } from "@mui/material";
 import { motion } from "motion/react";
 import CoinStack from "./CoinStack";
 import { useAssets } from "context/AssetPreloadContext";
+import { CARD_BACK_PATH, cardImagePath, SkinSelection } from "shared/cardSkins";
 
-const ROLE_IMAGES: Record<string, string> = {
-  duke: "/assets/images/cards/minimal/duke.webp",
-  captain: "/assets/images/cards/minimal/captain.webp",
-  ambassador: "/assets/images/cards/minimal/ambassador.webp",
-  princess: "/assets/images/cards/minimal/princess.webp",
-  assassin: "/assets/images/cards/minimal/assassin.webp",
-  contessa: "/assets/images/cards/minimal/contessa.webp",
-};
+// const ROLE_IMAGES: Record<string, string> = {
+//   duke: "/assets/images/cards/minimal/duke.webp",
+//   captain: "/assets/images/cards/minimal/captain.webp",
+//   ambassador: "/assets/images/cards/minimal/ambassador.webp",
+//   princess: "/assets/images/cards/minimal/princess.webp",
+//   assassin: "/assets/images/cards/minimal/assassin.webp",
+//   contessa: "/assets/images/cards/minimal/contessa.webp",
+// };
 
 export interface GameTablePlayer {
   id: string;
@@ -22,6 +23,7 @@ export interface GameTablePlayer {
   revealedRoles: string[];
   isAlive: boolean;
   photo_url?: string | null;
+  skins?: SkinSelection;
 }
 
 interface PlayerSeatProps {
@@ -119,20 +121,21 @@ function AvatarBubble({
 
 function CoinsAndCards({ player }: { player: GameTablePlayer }) {
   const { src } = useAssets();
-  if (player.coins <= 0 && player.revealedRoles.length === 0) return null;
+  if (player.coins <= 0 && player.revealedRoles.length === 0 && player.roleCount === 0) return null;
   return (
     <Stack direction="row" alignItems="center" spacing={0.5}>
       {player.coins > 0 && <CoinStack count={player.coins} />}
       {player.revealedRoles.length > 0 && (
         <Stack direction="row">
           {player.revealedRoles.map((role, index) => {
-            const image = ROLE_IMAGES[role];
-            if (!image) return null;
+            // const image = ROLE_IMAGES[role];
+            // if (!image) return null;
             return (
               <Box
                 key={`${player.id}-${role}-${index}`}
                 component="img"
-                src={src(image)}
+                // src={src(image)}
+                src={src(cardImagePath(role, player.skins))}
                 alt={role}
                 sx={{
                   width: { xs: 24, sm: 30 },
@@ -142,6 +145,28 @@ function CoinsAndCards({ player }: { player: GameTablePlayer }) {
                   boxShadow: "0 2px 5px rgba(0,0,0,.5)",
                   ml: index === 0 ? 0 : -0.8,
                   zIndex: index,
+                }}
+              />
+            );
+          })}
+          {/* ۲. رندر کارت‌های باقی‌مانده (پشت کارت) */}
+          {Array.from({ length: player.roleCount }).map((_, index) => {
+            // برای اینکه z-index و حاشیه ادامه‌ی کارت‌های قبلی باشه
+            const overallIndex = player.revealedRoles.length + index;
+            return (
+              <Box
+                key={`${player.id}-hidden-${index}`}
+                component="img"
+                src={src(CARD_BACK_PATH)} // استفاده از src برای پری‌لود
+                alt="card-back"
+                sx={{
+                  width: { xs: 24, sm: 30 },
+                  objectFit: "cover",
+                  borderRadius: "4px",
+                  border: "1px solid rgba(255,255,255,.5)",
+                  boxShadow: "0 2px 5px rgba(0,0,0,.5)",
+                  ml: overallIndex === 0 ? 0 : -0.8,
+                  zIndex: overallIndex,
                 }}
               />
             );
