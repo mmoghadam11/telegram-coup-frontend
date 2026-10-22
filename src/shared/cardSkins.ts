@@ -18,7 +18,7 @@ export const skinImagePath = (folder: string, role: string) => `${BASE}/${folder
 
 export function skinFolderFor(role: string, sel?: SkinSelection): string {
   const wanted = sel?.[role];
-  return wanted && SKINS[wanted]?.roles.includes(role) ? wanted : DEFAULT_SKIN;
+  return wanted && SKINS[wanted]?.roles?.includes(role) ? wanted : DEFAULT_SKIN;
 }
 
 export const cardImagePath = (role: string, sel?: SkinSelection) =>
