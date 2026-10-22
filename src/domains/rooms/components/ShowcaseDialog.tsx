@@ -2,6 +2,8 @@
 import React from "react";
 import { Dialog, DialogContent, Typography, Stack, Box } from "@mui/material";
 import RoleCardImage from "./proving/RoleCardImage";
+import { SkinSelection } from "shared/cardSkins";
+import ConfettiBurst from "components/confetti/ConfettiBurst";
 
 
 interface ShowcaseState {
@@ -15,10 +17,11 @@ interface ShowcaseState {
 interface Props {
   showcase: ShowcaseState | null;
   playerName: string;
+  skins?: SkinSelection;
 }
 
 // بدون onClose، پس بازیکن‌ها نمی‌تونن ببندنش؛ فقط با تموم شدن showcase سمت سرور بسته می‌شه
-export default function ShowcaseDialog({ showcase, playerName }: Props) {
+export default function ShowcaseDialog({ showcase, playerName, skins }: Props) {
   if (!showcase || showcase.kind === "replacement" || !showcase.role) return null;
 
   const isProof = showcase.kind === "proof";
@@ -30,7 +33,10 @@ export default function ShowcaseDialog({ showcase, playerName }: Props) {
           <Typography variant="subtitle1">
             {playerName} {isProof ? "کارت اثبات رو نشون داد" : "یک کارت فدا کرد"}
           </Typography>
-          <RoleCardImage key={`${showcase.kind}-${showcase.endsAt}`} role={showcase.role} size={130} reveal />
+          {/* <RoleCardImage key={`${showcase.kind}-${showcase.endsAt}`} role={showcase.role} size={130} reveal skins={skins}/> */}
+          <ConfettiBurst fire={showcase.success ? showcase.endsAt : false}>
+            <RoleCardImage role={showcase.role} size={130} reveal skins={skins} />
+          </ConfettiBurst>
           <Box textAlign="center">
             {isProof ? (
               <Typography variant="body2" color={showcase.success ? "success.main" : "error.main"}>
