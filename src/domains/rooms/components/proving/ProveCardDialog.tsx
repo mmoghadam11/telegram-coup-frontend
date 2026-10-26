@@ -1,6 +1,7 @@
 import React from "react";
 import { Dialog, DialogTitle, DialogContent, Typography, Stack } from "@mui/material";
 import RoleCardImage from "./RoleCardImage";
+import { SkinSelection } from "shared/cardSkins";
 
 interface Props {
   open: boolean;
@@ -8,9 +9,10 @@ interface Props {
   revealed?: boolean[];
   onSelect: (roleIndex: number) => void;
   forcedIndex?: number
+  skins?: SkinSelection;
 }
 
-export default function ProveCardDialog({ open, roles, revealed, forcedIndex, onSelect }: Props) {
+export default function ProveCardDialog({ open, roles, revealed, forcedIndex, onSelect ,skins}: Props) {
   const isForced = forcedIndex !== undefined;
 
   return (
@@ -28,7 +30,7 @@ export default function ProveCardDialog({ open, roles, revealed, forcedIndex, on
           {roles?.map((role, i) => {
             if (revealed?.[i]) return null;
             if (isForced && i !== forcedIndex) return null;
-            return <RoleCardImage key={i} role={role} onClick={() => onSelect(i)} />;
+            return <RoleCardImage key={i} role={role} onClick={() => onSelect(i)} skins={skins}/>;
           })}
         </Stack>
       </DialogContent>

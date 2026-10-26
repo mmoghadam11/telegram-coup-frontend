@@ -16,6 +16,7 @@ interface TelegramUser {
   photo_url?: string;
   role:"player" | "admin";
   active_room_id?: string ;
+  card_skins: string | null
 }
 
 interface Props {

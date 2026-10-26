@@ -43,6 +43,8 @@ import TextPlayersList from "./components/textMode/TextPlayersList";
 import TextActionButtons from "./components/textMode/TextActionButtons";
 import WaitingForPlayerPanel from "./components/WaitingForPlayerPanel";
 import WaitingRoomPanel from "./components/WaitingRoomPanel";
+import { useAssets } from "context/AssetPreloadContext";
+import { selectedImagePaths } from "shared/cardSkins";
 
 
 const ROLE_LABELS_FA: Record<string, string> = {
@@ -81,6 +83,12 @@ export default function Room() {
     startGame, sendChat, sendAction, respond, blockAction, respondToBlock, revealCard, restartGame, leaveRoom, leaveTable, closeRoom, forceReset, sendContessaSelect, sendExchangeSelect, respondToRestartVote,
   } = useRoomSocket(roomId);
 
+  const { ensureAssets } = useAssets();
+  const skinsKey = (gameState?.players ?? []).map((p) => JSON.stringify(p.skins ?? {})).join("|");
+  useEffect(() => {
+    gameState?.players.forEach((p) => ensureAssets(selectedImagePaths(p.skins), true));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [skinsKey]);
   // useEffect(() => {
   //   if (gameState?.phase !== "game_over") {
   //     setShowGameOverDialog(false);
@@ -143,6 +151,8 @@ export default function Room() {
   const isMyTurn = gameState.turnOrder[gameState.currentTurnIndex] === myUserId;
   const pending = gameState.pendingAction;
   const revealPending = gameState.revealPending;
+  const skinsOf = (id?: string | null) => gameState.players.find((p) => p.id === id)?.skins;
+  const mySkins = skinsOf(myUserId);
 
   const me = gameState.players.find((p) => p.id === myUserId);
   const inHandNow =
@@ -497,8 +507,9 @@ export default function Room() {
         <Paper sx={{ p: 2, mb: 2 }}>
           <Typography variant="body2" gutterBottom>
             {gameState.players.find((p) => p.id === pending.actorId)?.name} ادعای{" "}
-            {ACTION_LABELS[pending.action] || pending.action} کرد
+            {ACTION_LABELS[pending.action] || pending.action}
             {pending.targetId && ` علیه ${gameState.players.find((p) => p.id === pending.targetId)?.name}`}
+             کرد
           </Typography>
 
           <AwaitingResponses
@@ -597,6 +608,7 @@ export default function Room() {
         keepCount={privateState?.exchangeKeepCount}
         onConfirm={(keepIndexes) => sendExchangeSelect(keepIndexes)}
         animated={isAnimated}
+        skins={mySkins}
       />
 
       <ContessaDialog
@@ -605,6 +617,7 @@ export default function Room() {
         revealed={privateState?.yourRevealed}
         onSelect={(roleIndex) => sendContessaSelect("contessa_self_select", roleIndex)}
         animated={isAnimated}
+        skins={mySkins}
       />
 
       <Stack direction="row" spacing={1} sx={{ mb: 2 }}>
@@ -644,11 +657,12 @@ export default function Room() {
         revealed={privateState?.yourRevealed}
         forcedIndex={privateState?.forcedProofIndex}
         onSelect={(roleIndex) => sendProveCard(roleIndex)}
+        skins={mySkins}
       />
 
       {/* <ProveResultDialog open={!showGameOverDialog} event={proofEvent} onClose={clearProofEvent} />
       <RevealResultDialog event={revealResultEvent} onClose={clearRevealResultEvent} /> */}
-      <ShowcaseDialog showcase={gameState.showcase} playerName={showcasePlayerName} />
+      <ShowcaseDialog showcase={gameState.showcase} playerName={showcasePlayerName} skins={skinsOf(gameState.showcase?.playerId)}/>
       <ReplacementDialog
         open={gameState.showcase?.kind === "replacement"}
         endsAt={gameState.showcase?.endsAt}

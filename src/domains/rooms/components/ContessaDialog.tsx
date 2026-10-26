@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, Stack } from "@mui/material";
 import CardPicker, { toggleIndex } from "./CardPicker";
+import { SkinSelection } from "shared/cardSkins";
 
 const ROLE_LABELS_FA: Record<string, string> = {
   duke: "بزرگ‌زاده", captain: "فرمانده", ambassador: "سفیر",
@@ -13,9 +14,10 @@ interface Props {
   revealed?: boolean[];
   onSelect: (roleIndex: number) => void;
   animated?: boolean;
+  skins?: SkinSelection;
 }
 
-export default function ContessaDialog({ open, roles, revealed, onSelect, animated = true }: Props) {
+export default function ContessaDialog({ open, roles, revealed, onSelect, animated = true ,skins}: Props) {
   const [selected, setSelected] = useState<number[]>([]);
   useEffect(() => { if (!open) setSelected([]); }, [open]);
 
@@ -31,6 +33,7 @@ export default function ContessaDialog({ open, roles, revealed, onSelect, animat
             hiddenIndexes={hidden}
             selected={selected}
             onToggle={(i) => setSelected((prev) => toggleIndex(prev, i, 1))}
+            skins={skins}
           />
         ) : (
           <Stack direction="row" spacing={1} sx={{ py: 2 }}>

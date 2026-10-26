@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import { Dialog, DialogContent, Typography, Stack, Box } from "@mui/material";
 import { motion } from "motion/react";
 import RoleCardImage from "./proving/RoleCardImage";
+import { SkinSelection } from "shared/cardSkins";
 
 const CARD_W = 78;
 const CARD_H = 109;
@@ -166,10 +167,11 @@ interface Props {
   newRole?: string;
   shuffle?: boolean;
   shuffleStyle?: "riffle" | "overhand";
+  skins?: SkinSelection;
 }
 
 export default function ReplacementDialog({
-  open, endsAt, playerName, isMe, newRole, shuffle = false, shuffleStyle = "riffle",
+  open, endsAt, playerName, isMe, newRole, shuffle = false, shuffleStyle = "riffle", skins,
 }: Props) {
   const style: Style = shuffle ? shuffleStyle : "tuck";
   const seq = useMemo(() => SEQUENCES[style], [style]);
@@ -255,7 +257,7 @@ export default function ReplacementDialog({
           ) : (
             <Box sx={{ height: 260, display: "flex", alignItems: "center", justifyContent: "center" }}>
               {isMe && newRole ? (
-                <RoleCardImage role={newRole} size={130} reveal />
+                <RoleCardImage role={newRole} size={130} reveal skins={skins}/>
               ) : (
                 <motion.div initial={{ scale: 0.6, opacity: 0 }} animate={{ scale: 1, opacity: 1 }} transition={{ duration: 0.5 }}>
                   <FlatBack w={110} />

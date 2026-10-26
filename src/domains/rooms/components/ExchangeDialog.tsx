@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { Button, Chip, Dialog, DialogActions, DialogContent, DialogTitle, Stack, Typography } from "@mui/material";
 import CardPicker, { toggleIndex } from "./CardPicker";
+import { SkinSelection } from "shared/cardSkins";
 
 const ROLE_LABELS_FA: Record<string, string> = {
   duke: "بزرگ‌زاده", captain: "فرمانده", ambassador: "سفیر",
@@ -13,9 +14,10 @@ interface Props {
   keepCount?: number;
   onConfirm: (keepIndexes: number[]) => void;
   animated?: boolean;
+  skins?: SkinSelection;
 }
 
-export default function ExchangeDialog({ open, pool, keepCount = 0, onConfirm, animated = true }: Props) {
+export default function ExchangeDialog({ open, pool, keepCount = 0, onConfirm, animated = true, skins }: Props) {
   const [selected, setSelected] = useState<number[]>([]);
 
   // با join کلید می‌گیریم؛ با هر broadcast آرایه‌ی pool یه رفرنس جدید می‌شه و انتخاب بی‌دلیل پاک می‌شد
@@ -32,7 +34,7 @@ export default function ExchangeDialog({ open, pool, keepCount = 0, onConfirm, a
           {keepCount} کارت رو نگه دارید ({selected.length}/{keepCount}). بقیه زیر دسته می‌رن.
         </Typography>
         {animated ? (
-          <CardPicker roles={pool ?? []} selected={selected} onToggle={toggle} />
+          <CardPicker roles={pool ?? []} selected={selected} onToggle={toggle} skins={skins}/>
         ) : (
           <Stack direction="row" spacing={1} flexWrap="wrap" useFlexGap justifyContent="center" sx={{ py: 2 }}>
             {pool?.map((role, i) => (

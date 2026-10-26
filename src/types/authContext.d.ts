@@ -32,6 +32,7 @@ export interface TAuthContext {
     photo_url?: string;
     role:"player" | "admin";
     active_room_id?:string;
+    card_skins: string | null
   } | null;
   isUserLoggedIn: boolean;
   authLoading: boolean;
