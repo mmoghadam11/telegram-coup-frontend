@@ -25,6 +25,7 @@ interface PublicPlayer {
   revealedRoles: string[];
   isAlive: boolean;
   stats: PlayerStats;
+  skins:Record<string, string>
 }
 
 interface RestartVoteState {

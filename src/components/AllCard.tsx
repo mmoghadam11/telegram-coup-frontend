@@ -119,7 +119,7 @@ const AllCard = (props: Props) => {
         },
     ]
     return (
-        <Box ref={emblaRef} overflow={"hidden"}>
+        <Box ref={emblaRef} overflow={"hidden"} sx={{borderRadius: 2.5}}>
             <Box display={"flex"}>
                 {
                     Object.keys(ACTION_CARD_DATA)

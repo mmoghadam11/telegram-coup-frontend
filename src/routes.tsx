@@ -12,6 +12,7 @@ import Room from "domains/rooms/Room";
 import Layout from "components/layout/Layout";
 import AdminPage from "domains/admin/AdminPage";
 import Leaderboard from "domains/leaderboard/Leaderboard";
+import Skins from "domains/skins/Skins";
 
 
 const AppRoutes: React.FC = () => {
@@ -44,6 +45,7 @@ const AppRoutes: React.FC = () => {
     { url: "room/:roomId", access: ["player", "admin"], component: <Room />, },
     { url: "admin", access: ["admin"], component: <AdminPage /> },
     { url: "leaderboard", access: ["player", "admin"], component: <Leaderboard /> },
+    { url: "skins", access: ["player", "admin"], component: <Skins /> },
   ];
   return (
     <Routes>
