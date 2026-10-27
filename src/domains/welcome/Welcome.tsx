@@ -27,6 +27,7 @@ import FireButton from "components/FireButton";
 import PushButton from "components/PushButton";
 import ParallaxBackdrop from "./ParallaxBackdrop";
 import SkinsEntryCard from "./SkinsEntryCard";
+import RibbonBanner from "components/RibbonBanner";
 
 interface CarouselItem {
   id: number;
@@ -158,33 +159,7 @@ function Welcome() {
             {/* <Typography variant="h6" textAlign={"center"}>{Auth?.userInfo?.first_name} خوش آمدید</Typography> */}
             <Parallax y={titleY}>
               <motion.div style={{ opacity: titleOpacity }}>
-                <motion.div
-                  initial={reduce ? false : { opacity: 0, y: -20 }}
-                  animate={{ opacity: 1, y: 0 }}
-                  transition={{ duration: 0.7, ease: [0.22, 1, 0.36, 1] }}
-                >
-                  <Typography variant="h5" textAlign={"center"}>
-                    {/* نیمه‌ی راست و چپ گرادیان یکسان‌اند؛ پس حلقه بدون پرش تکرار می‌شود */}
-                    <motion.span
-                      animate={reduce ? undefined : { backgroundPosition: ["0% 50%", "100% 50%"] }}
-                      transition={{ duration: 5, repeat: Infinity, ease: "linear" }}
-                      style={{
-                        background: "linear-gradient(90deg,#c98a1a,#f5c451,#c98a1a,#f5c451,#c98a1a)",
-                        backgroundSize: "200% 100%",
-                        WebkitBackgroundClip: "text",
-                        backgroundClip: "text",
-                        WebkitTextFillColor: "transparent",
-                        fontWeight: 800,
-                      }}
-                    >
-                      {Auth?.userInfo?.first_name ?? ""}
-                    </motion.span>{" "}
-                    خوش آمدید
-                  </Typography>
-                  {/* <Typography variant="body2" textAlign={"center"} color="text.secondary" sx={{ mt: 0.5 }}>
-                    آماده‌ی یه دست بلوف و کودتا؟
-                  </Typography> */}
-                </motion.div>
+                <RibbonBanner name={Auth?.userInfo?.first_name} reduce={reduce} />
               </motion.div>
             </Parallax>
           </Grid>

@@ -89,7 +89,7 @@ const MyCard = ({ image, title, description, animationDuration = 500 }: CardProp
         </Card>
     )
 }
-const AllCard = (props: Props) => {
+const AllCard = React.forwardRef<HTMLDivElement, Props>((props, ref) => {
     const [emblaRef] = useEmblaCarousel({
         loop: true,
         direction: "rtl",
@@ -119,25 +119,28 @@ const AllCard = (props: Props) => {
         },
     ]
     return (
-        <Box ref={emblaRef} overflow={"hidden"} sx={{borderRadius: 2.5}}>
-            <Box display={"flex"}>
-                {
-                    Object.keys(ACTION_CARD_DATA)
+        <Box ref={ref}>
+            <Box ref={emblaRef} overflow={"hidden"} sx={{ borderRadius: 2.5 }}>
+                <Box display={"flex"}>
+                    {
+                        Object.keys(ACTION_CARD_DATA)
 
-                        .map((action) => ({
-                            action,
-                            ...ACTION_CARD_DATA[action]
-                        }))
-                        .filter((item) => item.action !== "coup1")
-                        ?.map((cardItem, cardIndex) => (
-                        // cardItems?.map((cardItem, cardIndex) => (
-                            <MyCard key={cardIndex} image={cardItem.image} title={cardItem.title} description={cardItem?.description} />
-                        ))
-                }
+                            .map((action) => ({
+                                action,
+                                ...ACTION_CARD_DATA[action]
+                            }))
+                            .filter((item) => item.action !== "coup1")
+                            ?.map((cardItem, cardIndex) => (
+                                // cardItems?.map((cardItem, cardIndex) => (
+                                <MyCard key={cardIndex} image={cardItem.image} title={cardItem.title} description={cardItem?.description} />
+                            ))
+                    }
+                </Box>
             </Box>
         </Box>
+
     )
-}
+})
 
 export default AllCard
 
