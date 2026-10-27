@@ -159,7 +159,7 @@ function Welcome() {
             {/* <Typography variant="h6" textAlign={"center"}>{Auth?.userInfo?.first_name} خوش آمدید</Typography> */}
             <Parallax y={titleY}>
               <motion.div style={{ opacity: titleOpacity }}>
-                <RibbonBanner name={Auth?.userInfo?.first_name} reduce={reduce} />
+                <RibbonBanner name={Auth?.userInfo?.first_name ?? ""} reduce={reduce} />
               </motion.div>
             </Parallax>
           </Grid>
