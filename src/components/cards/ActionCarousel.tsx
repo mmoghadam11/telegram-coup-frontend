@@ -2,13 +2,15 @@ import React from "react";
 import { Box } from "@mui/material";
 import useEmblaCarousel from "embla-carousel-react";
 import ActionCard, { ActionCardData } from "./ActionCard";
+import { SkinSelection } from "shared/cardSkins";
 
 interface Props {
   actions: ActionCardData[];
   onSelect: (action: string) => void;
+  skins?: SkinSelection;
 }
 
-export default function ActionCarousel({ actions, onSelect }: Props) {
+export default function ActionCarousel({ actions,skins, onSelect }: Props) {
   const [emblaRef] = useEmblaCarousel({ loop: true, direction: "rtl" });
 
   if (actions.length === 0) return null;
@@ -17,7 +19,7 @@ export default function ActionCarousel({ actions, onSelect }: Props) {
     <Box ref={emblaRef} overflow="hidden">
       <Box display="flex">
         {actions.map((item,cardIndex) => (
-          <ActionCard key={cardIndex} {...item} onClick={onSelect} />
+          <ActionCard key={item.action} {...item} skins={skins} onClick={onSelect} />
         ))}
       </Box>
     </Box>

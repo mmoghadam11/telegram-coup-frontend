@@ -1,5 +1,8 @@
 import React from "react";
 import { Box, Card, CardMedia, Typography } from "@mui/material";
+import { cardImagePath, SkinSelection } from "shared/cardSkins";
+import { useAssets } from "context/AssetPreloadContext";
+import { ACTION_ROLE } from "shared/constants/actionCards";
 
 export interface ActionCardData {
   action: string;
@@ -11,9 +14,14 @@ export interface ActionCardData {
 
 interface Props extends ActionCardData {
   onClick: (action: string) => void;
+  skins?: SkinSelection;
 }
 
-export default function ActionCard({ action, image, title, description, disabled, onClick }: Props) {
+export default function ActionCard({ action, image, title, description, disabled, onClick , skins}: Props) {
+   const { src } = useAssets();
+  const role = ACTION_ROLE[action];
+  // اگر اکشن نقش دارد، تصویر از اسکین کاربر؛ وگرنه همان تصویر ثابت
+  const finalImage = src(role ? cardImagePath(role, skins) : image);
   return (
     <Card
       sx={{
@@ -32,7 +40,7 @@ export default function ActionCard({ action, image, title, description, disabled
         component="img"
         height="100%"
         width="100%"
-        image={image}
+        image={finalImage}
         alt={title}
         sx={{ objectFit: "cover", width: "100%", height: "100%" }}
       />

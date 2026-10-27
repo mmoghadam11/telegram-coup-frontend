@@ -456,6 +456,7 @@ export default function Room() {
                       ...ACTION_CARD_DATA[action],
                     }))}
                   onSelect={handleActionClick}
+                  skins={mySkins}
                 />
               </Grid>}
             {(gameState.players.find((p) => p.id === myUserId)?.coins ?? 0) < 10 &&

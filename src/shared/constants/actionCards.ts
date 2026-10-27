@@ -11,3 +11,14 @@ export const ACTION_CARD_DATA: Record<string, { image: string; title: string; de
   contessa_other: { image: "/assets/images/cards/minimal/contessa.webp", title: "اجبار به تعویض (بازرس)", description: "تعویض کارت حریف", cost: 0 },
   anarchist_attack: { image: "/assets/images/cards/minimal/anarchist.webp", title: "آنارشیست", description: "حمله با 5 سکه", cost: 5 },
 };
+
+// shared/constants/actionRoles.ts
+export const ACTION_ROLE: Record<string, string> = {
+  tax: "duke",
+  assassinate: "assassin",
+  steal: "captain",
+  exchange: "ambassador",
+  contessa_self: "contessa",
+  contessa_other: "contessa",
+  // anarchist_attack، income، foreign_aid و coup کارت نقش ندارند و تصویر ثابت می‌مانند
+};
