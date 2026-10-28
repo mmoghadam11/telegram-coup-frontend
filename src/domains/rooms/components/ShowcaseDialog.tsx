@@ -1,10 +1,10 @@
-//(فایل جدید، جایگزین ProveResultDialog و RevealResultDialog)
 import React from "react";
-import { Dialog, DialogContent, Typography, Stack, Box } from "@mui/material";
-import RoleCardImage from "./proving/RoleCardImage";
-import { SkinSelection } from "shared/cardSkins";
-import ConfettiBurst from "components/confetti/ConfettiBurst";
+import { Dialog, DialogContent, Typography, Stack } from "@mui/material";
 
+import { useTableMode } from "context/TableModeContext";
+import { SkinSelection } from "shared/cardSkins";
+import RoleCardImage from "./proving/RoleCardImage";
+import CardFate, { CardFateKind } from "./animation/CardFate";
 
 interface ShowcaseState {
   kind: "proof" | "reveal" | "replacement";
@@ -20,34 +20,38 @@ interface Props {
   skins?: SkinSelection;
 }
 
-// بدون onClose، پس بازیکن‌ها نمی‌تونن ببندنش؛ فقط با تموم شدن showcase سمت سرور بسته می‌شه
 export default function ShowcaseDialog({ showcase, playerName, skins }: Props) {
+  const { isAnimated } = useTableMode();
   if (!showcase || showcase.kind === "replacement" || !showcase.role) return null;
 
   const isProof = showcase.kind === "proof";
+  const fate: CardFateKind = isProof
+    ? showcase.success ? "truth" : "bluff"
+    : showcase.eliminated ? "eliminated" : "sacrificed";
 
   return (
-    <Dialog open disableEscapeKeyDown>
-      <DialogContent>
+    <Dialog open disableEscapeKeyDown PaperProps={{ sx: { overflow: "visible" } }}>
+      <DialogContent sx={{ overflow: "visible" }}>
         <Stack alignItems="center" spacing={2} sx={{ py: 2, minWidth: 220 }}>
           <Typography variant="subtitle1">
             {playerName} {isProof ? "کارت اثبات رو نشون داد" : "یک کارت فدا کرد"}
           </Typography>
-          {/* <RoleCardImage key={`${showcase.kind}-${showcase.endsAt}`} role={showcase.role} size={130} reveal skins={skins}/> */}
-          <ConfettiBurst fire={showcase.success ? showcase.endsAt : false}>
-            <RoleCardImage role={showcase.role} size={130} reveal skins={skins} />
-          </ConfettiBurst>
-          <Box textAlign="center">
-            {isProof ? (
-              <Typography variant="body2" color={showcase.success ? "success.main" : "error.main"}>
-                {showcase.success ? "ادعا درست بود ✅" : "ادعا دروغ بود ❌ این کارت می‌سوزه"}
-              </Typography>
-            ) : (
-              <Typography variant="body2" color={showcase.eliminated ? "error.main" : "text.secondary"}>
-                {showcase.eliminated ? "حذف شد ☠️" : "یک کارت رو از دست داد 🔥"}
-              </Typography>
-            )}
-          </Box>
+
+          {isAnimated ? (
+            // key: با هر نمایش جدید، انیمیشن‌ها از اول شروع بشن
+            <CardFate key={`${showcase.kind}-${showcase.endsAt}`} role={showcase.role} size={130} skins={skins} fate={fate} />
+          ) : (
+            <RoleCardImage role={showcase.role} size={110} skins={skins} />
+          )}
+
+          <Typography
+            variant="body2"
+            color={isProof ? (showcase.success ? "success.main" : "error.main") : showcase.eliminated ? "error.main" : "text.secondary"}
+          >
+            {isProof
+              ? showcase.success ? "ادعا درست بود ✅" : "ادعا دروغ بود ❌ این کارت می‌سوزه"
+              : showcase.eliminated ? "حذف شد ☠️" : "یک کارت رو از دست داد 🔥"}
+          </Typography>
         </Stack>
       </DialogContent>
     </Dialog>
