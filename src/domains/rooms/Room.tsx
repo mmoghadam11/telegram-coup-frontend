@@ -524,11 +524,11 @@ export default function Room() {
             <Stack direction="row" spacing={1} sx={{ mt: 1.5 }}>
               <Button size="small" variant="contained" onClick={() => respond("allow")}>قبول</Button>
               {pending.claimedRole && (
-                <Button size="small" color="warning" onClick={() => respond("challenge")}>چالش (بلوفه!)</Button>
+                <Button size="small" color="warning" variant="contained" onClick={() => respond("challenge")}>چالش (بلوفه!)</Button>
               )}
               {["foreign_aid", "assassinate", "steal"].includes(pending.action) &&
                 (pending.action !== "assassinate" && pending.action !== "steal" || pending.targetId === myUserId) && (
-                  <Button size="small" color="secondary" onClick={() => setBlockDialogOpen(true)}>
+                  <Button size="small" color="error" variant="contained" onClick={() => setBlockDialogOpen(true)}>
                     بلاک می‌کنم
                   </Button>
                 )}
@@ -553,7 +553,7 @@ export default function Room() {
           {pending.blockedBy.playerId !== myUserId && !pending.blockChallengeResponses?.[myUserId] && (
             <Stack direction="row" spacing={1} sx={{ mt: 1.5 }}>
               <Button size="small" variant="contained" onClick={() => respondToBlock("allow")}>قبول</Button>
-              <Button size="small" color="warning" onClick={() => respondToBlock("challenge")}>چالش (بلوفه!)</Button>
+              <Button size="small" color="warning" variant="contained" onClick={() => respondToBlock("challenge")}>چالش (بلوفه!)</Button>
             </Stack>
           )}
         </Paper>
