@@ -57,7 +57,7 @@ export default function AnarchistDialog({
         <Stack alignItems="center" sx={{ mb: 2 }}>
           <Box
             component="img"
-            src="/assets/images/cards/minimal/anarchist.jpeg"
+            src="/assets/images/cards/minimal/anarchist.webp"
             alt="آنارشیست"
             sx={{ width: 100, height: 150, objectFit: "cover", borderRadius: 2, border: "1px solid", borderColor: "divider" }}
           />
