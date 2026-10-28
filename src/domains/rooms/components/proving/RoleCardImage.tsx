@@ -110,37 +110,27 @@ interface Props {
   size?: number;
   faded?: boolean;
   onClick?: () => void;
-  reveal?: boolean;     // انیمیشن چرخش از پشت به رو
+  reveal?: boolean;     // چرخش از پشت به رو
+  gloss?: boolean;      // براق و درخشش لبه بعد از چرخش (ادعای درست)
   skins?: SkinSelection;
 }
 
 const face: React.CSSProperties = {
-  position: "absolute",
-  inset: 0,
-  width: "100%",
-  height: "100%",
-  objectFit: "cover",
-  borderRadius: 6,
-  backfaceVisibility: "hidden",
-  WebkitBackfaceVisibility: "hidden",
-  userSelect: "none",
+  position: "absolute", inset: 0, width: "100%", height: "100%", objectFit: "cover", borderRadius: 6,
+  backfaceVisibility: "hidden", WebkitBackfaceVisibility: "hidden", userSelect: "none",
 };
+const DUR = 1.4;
 
-export default function RoleCardImage({ role, size = 90, faded, onClick, reveal = false, skins }: Props) {
+export default function RoleCardImage({ role, size = 90, faded, onClick, reveal = false, gloss = false, skins }: Props) {
   const { src } = useAssets();
   const h = size * 1.4;
-  const DUR = 1.4;
+  const showGloss = gloss && reveal;
 
   return (
-    <Box
-      onClick={onClick}
-      sx={{ textAlign: "center", cursor: onClick ? "pointer" : "default", opacity: faded ? 0.4 : 1 }}
-    >
-      {/* perspective روی والد: بدونش چرخش تخت و خشک دیده می‌شه */}
+    <Box onClick={onClick} sx={{ textAlign: "center", cursor: onClick ? "pointer" : "default", opacity: faded ? 0.4 : 1 }}>
       <Box sx={{ perspective: 900, width: size, height: h, mx: "auto" }}>
         <motion.div
           style={{ position: "relative", width: "100%", height: "100%", transformStyle: "preserve-3d" }}
-          // شروع: پشت کارت (۱۸۰ درجه) و کمی کوچیک و پایین‌تر؛ پایان: همه‌ی مقدارها صفر
           initial={reveal ? { rotateY: 180, rotateZ: -6, scale: 0.85, y: 24 } : false}
           animate={{
             rotateY: 0,
@@ -156,27 +146,31 @@ export default function RoleCardImage({ role, size = 90, faded, onClick, reveal 
           }}
           whileHover={onClick ? { scale: 1.05 } : undefined}
         >
-          {/* وجه رو */}
-          <img
-            src={src(cardImagePath(role, skins))}
-            alt={ROLE_LABELS_FA[role] || role}
-            draggable={false}
-            style={{ ...face, boxShadow: "0 8px 20px rgba(0,0,0,.45)" }}
-          />
-          {/* وجه پشت؛ ۱۸۰ درجه برعکسه تا با چرخش به جلو بیاد */}
-          {reveal && (
-            <img
-              src={src(CARD_BACK_PATH)}
-              alt=""
-              draggable={false}
-              style={{ ...face, transform: "rotateY(180deg)" }}
-            />
+          <img src={src(cardImagePath(role, skins))} alt={ROLE_LABELS_FA[role] || role} draggable={false}
+            style={{ ...face, boxShadow: "0 8px 20px rgba(0,0,0,.45)" }} />
+
+          {showGloss && (
+            <>
+              {/* درخشش لبه */}
+              <motion.div aria-hidden
+                style={{ ...face, pointerEvents: "none", transform: "translateZ(1px)" }}
+                initial={{ boxShadow: "0 0 0 0 rgba(245,196,81,0)" }}
+                animate={{ boxShadow: ["0 0 0 0 rgba(245,196,81,0)", "0 0 22px 5px rgba(245,196,81,.85)", "0 0 12px 2px rgba(245,196,81,.45)"] }}
+                transition={{ delay: DUR, duration: 1.2, times: [0, 0.35, 1] }} />
+              {/* جاروب براق */}
+              <div aria-hidden style={{ ...face, overflow: "hidden", pointerEvents: "none", transform: "translateZ(1px)" }}>
+                <motion.div
+                  initial={{ x: "-120%" }} animate={{ x: "120%" }}
+                  transition={{ delay: DUR + 0.05, duration: 0.9, ease: "easeInOut" }}
+                  style={{ position: "absolute", inset: 0, background: "linear-gradient(105deg, transparent 35%, rgba(255,255,255,.55) 50%, transparent 65%)" }} />
+              </div>
+            </>
           )}
+
+          {reveal && <img src={src(CARD_BACK_PATH)} alt="" draggable={false} style={{ ...face, transform: "rotateY(180deg)" }} />}
         </motion.div>
       </Box>
-      <Typography variant="caption" display="block">
-        {ROLE_LABELS_FA[role] || role}
-      </Typography>
+      <Typography variant="caption" display="block">{ROLE_LABELS_FA[role] || role}</Typography>
     </Box>
   );
 }
