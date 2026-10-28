@@ -120,25 +120,25 @@ export default function AnarchistDialog({
 
       {anarchist.status === "awaiting_block_decision" && isCurrentTarget && (
         <DialogActions sx={{ justifyContent: "center" }}>
-          <Button variant="contained" color="secondary" onClick={onAllow}>قبول می‌کنم</Button>
-          <Button variant="contained" color="warning" onClick={onBlock}>بلاک می‌کنم (شاهدخت)</Button>
+          <Button variant="outlined" color="secondary" onClick={onAllow}>قبول می‌کنم</Button>
+          <Button variant="outlined" color="warning" onClick={onBlock}>بلاک می‌کنم (شاهدخت)</Button>
         </DialogActions>
       )}
 
       {anarchist.status === "awaiting_block_challenge" && !isCurrentTarget && !alreadyRespondedToBlock && (
         <DialogActions sx={{ justifyContent: "center" }}>
-          <Button variant="contained" onClick={onBlockAllow}>قبول</Button>
-          <Button color="warning" variant="contained" onClick={onBlockChallenge}>چالش (بلوفه!)</Button>
+          <Button variant="outlined" onClick={onBlockAllow}>قبول</Button>
+          <Button color="warning" variant="outlined" onClick={onBlockChallenge}>چالش (بلوفه!)</Button>
         </DialogActions>
       )}
 
       {anarchist.status === "awaiting_pass_target" && isCurrentTarget && (
         <DialogActions sx={{ flexWrap: "wrap", justifyContent: "center", gap: 1 }}>
-          <Button variant="contained" color="secondary" onClick={onNeutralize}>
+          <Button variant="outlined" color="secondary" onClick={onNeutralize}>
             خنثی می‌کنم
           </Button>
           {eligibleForPass.length > 0 && (
-            <Button variant="contained" disabled={!passTarget} onClick={() => onPass(passTarget)}>
+            <Button variant="outlined" disabled={!passTarget} onClick={() => onPass(passTarget)}>
               تایید pass
             </Button>
           )}
