@@ -210,7 +210,7 @@ export default function ReplacementDialog({
   const topIdx = topLayerIndex(style);
 
   return (
-    <Dialog open disableEscapeKeyDown PaperProps={{ sx: { bgcolor: "#1a120b" } }}>
+    <Dialog open disableEscapeKeyDown >
       <DialogContent>
         <Stack alignItems="center" spacing={1} sx={{ minWidth: 280, minHeight: 300 }}>
           <Typography variant="subtitle1" textAlign="center">{caption}</Typography>
