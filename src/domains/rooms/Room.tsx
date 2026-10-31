@@ -45,6 +45,8 @@ import WaitingForPlayerPanel from "./components/WaitingForPlayerPanel";
 import WaitingRoomPanel from "./components/WaitingRoomPanel";
 import { useAssets } from "context/AssetPreloadContext";
 import { selectedImagePaths } from "shared/cardSkins";
+import DuelDialog from "./components/DuelDialog";
+import PhaseTimer from "./components/animation/PhaseTimer";
 
 
 const ROLE_LABELS_FA: Record<string, string> = {
@@ -80,7 +82,7 @@ export default function Room() {
     // revealResultEvent, clearRevealResultEvent,
     connected, loaded, gameState, privateState, mmLeave, fold,
     sendProveCard, anarchistRespond, anarchistBlockRespond, anarchistPass, anarchistNeutralize,
-    startGame, sendChat, sendAction, respond, blockAction, respondToBlock, revealCard, restartGame, leaveRoom, leaveTable, closeRoom, forceReset, sendContessaSelect, sendExchangeSelect, respondToRestartVote,
+    startGame, sendChat, sendAction, respond, blockAction, respondToBlock, revealCard, restartGame, leaveRoom, leaveTable, closeRoom, forceReset, sendContessaSelect, sendExchangeSelect, respondToRestartVote,sendDuelPick,
   } = useRoomSocket(roomId);
 
   const { ensureAssets } = useAssets();
@@ -388,6 +390,10 @@ export default function Room() {
           />
         )
       )}
+      {gameState.phase !== "duel_pick" && gameState.deadlineAt && (
+        <PhaseTimer deadlineAt={gameState.deadlineAt} totalMs={gameState.deadlineTotalMs}
+          label={gameState.phase === "awaiting_action" ? "مهلت انتخاب اکشن" : "مهلت پاسخ"} />
+      )}
       {showGameOverPanel && (
         <GameOverPannel
           winnerName={gameState.players.find((p) => p.id === gameState.winnerId)?.name}
@@ -510,7 +516,7 @@ export default function Room() {
             {gameState.players.find((p) => p.id === pending.actorId)?.name} ادعای{" "}
             {ACTION_LABELS[pending.action] || pending.action}
             {pending.targetId && ` علیه ${gameState.players.find((p) => p.id === pending.targetId)?.name}`}
-             کرد
+            کرد
           </Typography>
 
           <AwaitingResponses
@@ -676,6 +682,16 @@ export default function Room() {
         }
         shuffle={gameState.showcase?.shuffle ?? false}
       // animated={isAnimated}
+      />
+      <DuelDialog
+        open={gameState.phase === "duel_pick"}
+        opponentName={gameState.players.find((p) => p.id !== myUserId)?.name ?? ""}
+        deadlineAt={gameState.deadlineAt}
+        totalMs={gameState.deadlineTotalMs}
+        confirmedByMe={!!gameState.duel?.confirmed.includes(myUserId)}
+        myPick={privateState?.duelPick}
+        skins={mySkins}
+        onConfirm={sendDuelPick}
       />
       {/* <GameOverDialog
         open={showGameOverDialog}

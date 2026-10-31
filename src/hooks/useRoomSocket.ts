@@ -25,7 +25,7 @@ interface PublicPlayer {
   revealedRoles: string[];
   isAlive: boolean;
   stats: PlayerStats;
-  skins:Record<string, string>
+  skins: Record<string, string>
 }
 
 interface RestartVoteState {
@@ -97,6 +97,9 @@ interface ShowcaseState {
 export interface PublicGameState {
   phase: string;
   roomName: string | null;
+  duel: { confirmed: string[] } | null;
+  deadlineAt: number | null;       // ساعت خود کلاینت
+  deadlineTotalMs: number | null;
   origin: "matchmaking" | "lobby" | "group"; // این خط اضافه شد
   roomPhase: "waiting" | "starting" | "playing" | "closed"; // این خط اضافه شد
   countdownEndsAt: number | null; // این خط اضافه شد
@@ -124,6 +127,7 @@ interface PrivateState {
   exchangeKeepCount?: number;
   replacedIndex?: number;
   forcedProofIndex?: number;
+  duelPick?: string | null;
 }
 
 export function useRoomSocket(roomId?: string) {
@@ -175,6 +179,7 @@ export function useRoomSocket(roomId?: string) {
         setGameState({
           ...state,
           players: generatedPlayers,
+          deadlineAt: state.deadlineInMs != null ? Date.now() + state.deadlineInMs : null,
         });
 
         setLoaded(true);
@@ -223,7 +228,7 @@ export function useRoomSocket(roomId?: string) {
   const startGame = useCallback(() => send({ type: "start_game" }), [send]);
   const sendChat = useCallback((text: string) => send({ type: "chat", text }), [send]);
   const sendAction = useCallback(
-    (action: string, targetId?: string, cardIndex?: number) => send({ type: "action", action, targetId , cardIndex}),
+    (action: string, targetId?: string, cardIndex?: number) => send({ type: "action", action, targetId, cardIndex }),
     [send]
   );
   const respond = useCallback(
@@ -287,6 +292,7 @@ export function useRoomSocket(roomId?: string) {
     (roleIndex: number) => send({ type: "prove_card", roleIndex }),
     [send]
   );
+  const sendDuelPick = useCallback((role: string) => send({ type: "duel_pick", role }), [send]);
 
   return {
     connected,
@@ -319,5 +325,6 @@ export function useRoomSocket(roomId?: string) {
     leaveRoom,
     closeRoom,
     forceReset,
+    sendDuelPick
   };
 }
