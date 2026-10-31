@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { Box, Container, Typography, Paper, List, ListItem, ListItemAvatar, Avatar, ListItemText, Button, CircularProgress, Chip } from "@mui/material";
 import CountdownBurst from "./animation/CountdownBurst";
+import { useCountdown } from "hooks/useCountdown";
 
 interface Player {
   id: string;
@@ -22,21 +23,7 @@ interface Props {
 export default function MatchmakingLobbyView({
   roomPhase, players, myUserId, countdownEndsAt, minPlayers, maxPlayers, onLeave,
 }: Props) {
-  const [secondsLeft, setSecondsLeft] = useState<number | null>(null);
-
-  useEffect(() => {
-    if (!countdownEndsAt) {
-      setSecondsLeft(null);
-      return;
-    }
-    const tick = () => {
-      const diff = Math.max(0, Math.ceil((countdownEndsAt - Date.now()) / 1000));
-      setSecondsLeft(diff);
-    };
-    tick();
-    const interval = setInterval(tick, 250);
-    return () => clearInterval(interval);
-  }, [countdownEndsAt]);
+  const secondsLeft = useCountdown(countdownEndsAt);
 
   return (
     <Container maxWidth="sm" sx={{ py: 3 }}>
@@ -50,13 +37,8 @@ export default function MatchmakingLobbyView({
           </>
         ) : (
           <>
-            {/* <Typography variant="h3" fontWeight="bold" color="warning.main">
-              {secondsLeft ?? "..."}
-            </Typography> */}
             <Box sx={{ display: "flex", justifyContent: "center", mb: 1 }}>
-              {secondsLeft !== null && (
-                <CountdownBurst value={secondsLeft} size={140} />
-              )}
+              {secondsLeft !== null && <CountdownBurst value={secondsLeft} size={140} />}
             </Box>
             <Typography variant="body2" color="text.secondary">
               بازی به‌زودی شروع می‌شه

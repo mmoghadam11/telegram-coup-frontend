@@ -102,8 +102,10 @@ export interface PublicGameState {
   deadlineTotalMs: number | null;
   origin: "matchmaking" | "lobby" | "group"; // این خط اضافه شد
   roomPhase: "waiting" | "starting" | "playing" | "closed"; // این خط اضافه شد
-  countdownEndsAt: number | null; // این خط اضافه شد
-  handResultEndsAt: number | null; // این خط اضافه شد
+  // countdownEndsAt: number | null; // این خط اضافه شد
+  // handResultEndsAt: number | null; // این خط اضافه شد
+  countdownInMs?: number | null;
+  handResultInMs?: number | null;
   creatorId: string | null;
   players: PublicPlayer[];
   turnOrder: string[];
@@ -163,6 +165,7 @@ export function useRoomSocket(roomId?: string) {
 
       if (data.type === "state") {
         const state = data.state;
+        const now = Date.now();
 
         const generatedPlayers = state.players.map((playerItem: PublicPlayer) => ({
           ...playerItem,
@@ -179,7 +182,9 @@ export function useRoomSocket(roomId?: string) {
         setGameState({
           ...state,
           players: generatedPlayers,
-          deadlineAt: state.deadlineInMs != null ? Date.now() + state.deadlineInMs : null,
+          deadlineAt: state.deadlineInMs != null ? now + state.deadlineInMs : null,
+          countdownEndsAt: state.countdownInMs != null ? now + state.countdownInMs : null,
+          handResultEndsAt: state.handResultInMs != null ? now + state.handResultInMs : null,
         });
 
         setLoaded(true);
