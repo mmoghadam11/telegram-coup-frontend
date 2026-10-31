@@ -102,8 +102,8 @@ export interface PublicGameState {
   deadlineTotalMs: number | null;
   origin: "matchmaking" | "lobby" | "group"; // این خط اضافه شد
   roomPhase: "waiting" | "starting" | "playing" | "closed"; // این خط اضافه شد
-  // countdownEndsAt: number | null; // این خط اضافه شد
-  // handResultEndsAt: number | null; // این خط اضافه شد
+  countdownEndsAt: number | null; // این خط اضافه شد
+  handResultEndsAt: number | null; // این خط اضافه شد
   countdownInMs?: number | null;
   handResultInMs?: number | null;
   creatorId: string | null;
