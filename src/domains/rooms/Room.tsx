@@ -47,6 +47,7 @@ import { useAssets } from "context/AssetPreloadContext";
 import { selectedImagePaths } from "shared/cardSkins";
 import DuelDialog from "./components/DuelDialog";
 import PhaseTimer from "./components/animation/PhaseTimer";
+import CircleTimer from "./components/animation/CircleTimer";
 
 
 const ROLE_LABELS_FA: Record<string, string> = {
@@ -82,7 +83,7 @@ export default function Room() {
     // revealResultEvent, clearRevealResultEvent,
     connected, loaded, gameState, privateState, mmLeave, fold,
     sendProveCard, anarchistRespond, anarchistBlockRespond, anarchistPass, anarchistNeutralize,
-    startGame, sendChat, sendAction, respond, blockAction, respondToBlock, revealCard, restartGame, leaveRoom, leaveTable, closeRoom, forceReset, sendContessaSelect, sendExchangeSelect, respondToRestartVote,sendDuelPick,
+    startGame, sendChat, sendAction, respond, blockAction, respondToBlock, revealCard, restartGame, leaveRoom, leaveTable, closeRoom, forceReset, sendContessaSelect, sendExchangeSelect, respondToRestartVote, sendDuelPick,
   } = useRoomSocket(roomId);
 
   const { ensureAssets } = useAssets();
@@ -219,23 +220,28 @@ export default function Room() {
       />
     );
   }
+  const timerLabel =
+    gameState.phase === "awaiting_action" ? "مهلت انتخاب اکشن" : "مهلت پاسخ";
+  const showTimer = gameState.phase !== "duel_pick" && !!gameState.deadlineAt
 
   return (
     <Container maxWidth="sm" sx={{ py: 3 }}>
       <Stack direction="row" justifyContent="space-between" alignItems="center" sx={{ mb: 2 }}>
         <Typography variant="h6">روم: {gameState.roomName || roomId}</Typography>
         <Stack direction="row" alignItems="center" spacing={1}>
+          {showTimer && (
+            <CircleTimer deadlineAt={gameState.deadlineAt} totalMs={gameState.deadlineTotalMs} label={timerLabel} />
+          )}
           {gameState.creatorId === myUserId && gameState.phase !== "room_closed" && (
             <IconButton size="small" color="warning" onClick={() => setResetConfirmOpen(true)}>
               <RestartAlt />
             </IconButton>
           )}
-          {
-            Auth.userInfo?.role === "admin" &&
+          {Auth.userInfo?.role === "admin" && (
             <IconButton size="small" onClick={() => setDebugMode((d) => !d)}>
               <BugReport fontSize="small" />
             </IconButton>
-          }
+          )}
           <Chip size="small" color="success" label="متصل" />
         </Stack>
       </Stack>
@@ -390,10 +396,10 @@ export default function Room() {
           />
         )
       )}
-      {gameState.phase !== "duel_pick" && gameState.deadlineAt && (
+      {/* {gameState.phase !== "duel_pick" && gameState.deadlineAt && (
         <PhaseTimer deadlineAt={gameState.deadlineAt} totalMs={gameState.deadlineTotalMs}
           label={gameState.phase === "awaiting_action" ? "مهلت انتخاب اکشن" : "مهلت پاسخ"} />
-      )}
+      )} */}
       {showGameOverPanel && (
         <GameOverPannel
           winnerName={gameState.players.find((p) => p.id === gameState.winnerId)?.name}
@@ -669,7 +675,7 @@ export default function Room() {
 
       {/* <ProveResultDialog open={!showGameOverDialog} event={proofEvent} onClose={clearProofEvent} />
       <RevealResultDialog event={revealResultEvent} onClose={clearRevealResultEvent} /> */}
-      <ShowcaseDialog showcase={gameState.showcase} playerName={showcasePlayerName} skins={skinsOf(gameState.showcase?.playerId)}/>
+      <ShowcaseDialog showcase={gameState.showcase} playerName={showcasePlayerName} skins={skinsOf(gameState.showcase?.playerId)} />
       <ReplacementDialog
         open={gameState.showcase?.kind === "replacement"}
         endsAt={gameState.showcase?.endsAt}
