@@ -13,12 +13,14 @@ import Layout from "components/layout/Layout";
 import AdminPage from "domains/admin/AdminPage";
 import Leaderboard from "domains/leaderboard/Leaderboard";
 import Skins from "domains/skins/Skins";
+import { useStartParamEntry } from "hooks/useStartParamEntry";
 
 
 const AppRoutes: React.FC = () => {
   const auth = useAuth();
   const navigate = useNavigate();
   const routerLocation = useLocation();
+  useStartParamEntry()
   // بلافاصله بعد از لاگین، اگه کاربر یه روم فعال داره، ببرش همونجا
   useEffect(() => {
     if (auth?.authLoading) return; // صبر کن لاگین تموم بشه
