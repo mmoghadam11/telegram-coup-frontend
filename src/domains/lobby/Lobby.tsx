@@ -36,7 +36,7 @@ function RoomCard({ room, onJoin, busy }: { room: any; onJoin: () => void; busy:
   const s = STATUS[room.status] ?? STATUS.closed;
   const count = Number(room.player_count) || 0;
   const full = count >= MAX_PLAYERS_PER_ROOM;
-  const joinable = room.status === "waiting" && !full;
+  const joinable = (room.status === "waiting" || room.status === "starting") && !full;
   return (
     <motion.div layout initial={{ opacity: 0, y: 12 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.25 }}>
       <Paper variant="outlined" sx={{ p: 1.5, borderRadius: 3 }}>

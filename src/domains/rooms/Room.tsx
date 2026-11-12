@@ -75,13 +75,13 @@ export default function Room() {
   const lastLogLineRef = useRef<string | null>(null);
   const [showFullLog, setShowFullLog] = useState(false);
   const [resetConfirmOpen, setResetConfirmOpen] = useState(false);
-  const [restartDialogOpen, setRestartDialogOpen] = useState(false);
+  // const [restartDialogOpen, setRestartDialogOpen] = useState(false);
   // const [showGameOverDialog, setShowGameOverDialog] = useState(false);
   const [selfSwapPickerOpen, setSelfSwapPickerOpen] = useState(false);
   const {
     // proofEvent, clearProofEvent,
     // revealResultEvent, clearRevealResultEvent,
-    connected, loaded, gameState, privateState, mmLeave, fold,
+    connected, loaded, gameState, privateState, mmLeave, fold, setReady,
     sendProveCard, anarchistRespond, anarchistBlockRespond, anarchistPass, anarchistNeutralize,
     startGame, sendChat, sendAction, respond, blockAction, respondToBlock, revealCard, restartGame, leaveRoom, leaveTable, closeRoom, forceReset, sendContessaSelect, sendExchangeSelect, respondToRestartVote, sendDuelPick,
   } = useRoomSocket(roomId);
@@ -141,6 +141,14 @@ export default function Room() {
     steal: ["captain", "ambassador"],
   };
 
+  const amIn = !!gameState?.players.some((p) => p.id === String(Auth?.userInfo?.id));
+  useEffect(() => {
+    if (!loaded || !gameState || gameState.phase === "room_closed" || amIn) return;
+    Auth?.setUserInfo({ ...Auth.userInfo, active_room_id: null });
+    snackbar("از میز خارج شدید", "info");
+    navigate("/");
+  }, [amIn, loaded]); // eslint-disable-line react-hooks/exhaustive-deps
+  
   if (!connected || !loaded || !gameState) {
     return (
       <Box sx={{ display: "flex", justifyContent: "center", alignItems: "center", height: "60vh" }}>
@@ -165,7 +173,7 @@ export default function Room() {
     gameState.phase === "awaiting_action" &&
     !gameState.showcase && !gameState.revealPending && !gameState.selectionPending &&
     !gameState.provePending && !gameState.pendingAction;
-  const creatorOfLobby = gameState.origin !== "matchmaking" && gameState.creatorId === myUserId;
+  // const creatorOfLobby = gameState.origin !== "matchmaking" && gameState.creatorId === myUserId;
 
   const handleSend = () => {
     if (!input.trim()) return;
@@ -203,7 +211,7 @@ export default function Room() {
   //   );
   // }
   // این بلوک جدید اضافه شد: برای روم‌های matchmaking، قبل از playing، صفحه‌ی لابی/شمارش معکوس رو نشون بده
-  if (gameState.origin === "matchmaking" && (gameState.roomPhase === "waiting" || gameState.roomPhase === "starting")) {
+  if (gameState.roomPhase === "waiting" || gameState.roomPhase === "starting") {
     return (
       <MatchmakingLobbyView
         roomPhase={gameState.roomPhase}
@@ -212,11 +220,10 @@ export default function Room() {
         countdownEndsAt={gameState.countdownEndsAt}
         minPlayers={MIN_PLAYERS_TO_START}
         maxPlayers={MAX_PLAYERS_PER_ROOM}
-        onLeave={() => {
-          mmLeave();
-          Auth?.setUserInfo({ ...Auth.userInfo, active_room_id: null });
-          navigate("/");
-        }}
+        roomName={gameState.origin === "matchmaking" ? null : gameState.roomName}
+        readyMode={gameState.origin !== "matchmaking"}
+        onToggleReady={setReady}
+        onLeave={() => { mmLeave(); Auth?.setUserInfo({ ...Auth.userInfo, active_room_id: null }); navigate("/"); }}
       />
     );
   }
@@ -268,13 +275,13 @@ export default function Room() {
         </DialogActions>
       </Dialog>
 
-      {gameState.phase === "game_over" && gameState.creatorId === myUserId && (
+      {/* {gameState.phase === "game_over" && gameState.creatorId === myUserId && (
         <Button variant="contained" onClick={() => setRestartDialogOpen(true)}>
           شروع مجدد
         </Button>
-      )}
+      )} */}
 
-      <Dialog open={restartDialogOpen} onClose={() => setRestartDialogOpen(false)}>
+      {/* <Dialog open={restartDialogOpen} onClose={() => setRestartDialogOpen(false)}>
         <DialogTitle>شروع مجدد بازی</DialogTitle>
         <DialogContent>
           <Typography variant="body2">
@@ -301,7 +308,7 @@ export default function Room() {
             باز برای ورود
           </Button>
         </DialogActions>
-      </Dialog>
+      </Dialog> */}
       <DebugPanel
         debugMode={debugMode}
         data={{
@@ -405,7 +412,8 @@ export default function Room() {
           winnerName={gameState.players.find((p) => p.id === gameState.winnerId)?.name}
           players={gameState.players.map((p) => ({ id: p.id, name: p.name, stats: p.stats }))}
           isCreator={gameState.creatorId === myUserId}
-          isMatchmaking={gameState.origin === "matchmaking"}
+          // isMatchmaking={gameState.origin === "matchmaking"}
+          isMatchmaking={true}
           countdownEndsAt={gameState.handResultEndsAt ?? null}
           onRestart={(reopenForJoining) => restartGame(reopenForJoining)}
           onCloseRoom={closeRoom}
@@ -430,11 +438,11 @@ export default function Room() {
           <Button size="small" color="warning" variant="outlined" disabled={!quietNow} onClick={fold}>
             کناره‌گیری از این دست
           </Button>
-          {!creatorOfLobby && (
-            <Button size="small" color="error" variant="outlined" disabled={!quietNow} onClick={() => setLeaveConfirmOpen(true)}>
-              خروج کامل از میز
-            </Button>
-          )}
+
+          <Button size="small" color="error" variant="outlined" disabled={!quietNow} onClick={() => setLeaveConfirmOpen(true)}>
+            خروج کامل از میز
+          </Button>
+
         </Stack>
       )}
 
@@ -725,7 +733,7 @@ export default function Room() {
         }}
       />
 
-      <RestartVoteDialog
+      {/* <RestartVoteDialog
         open={gameState.phase === "restart_vote"}
         isCreator={gameState.creatorId === myUserId}
         alreadyResponded={!!gameState.restartVote?.responses[myUserId]}
@@ -738,7 +746,7 @@ export default function Room() {
         onLeave={() => {
           respondToRestartVote("leave");
         }}
-      />
+      /> */}
       <AnarchistDialog
         open={gameState.phase === "anarchist_in_progress"}
         anarchist={gameState.anarchistPending}
@@ -766,7 +774,7 @@ export default function Room() {
         title="خروج از میز"
         message="کارت‌هاتون باز می‌شه و از این میز خارج می‌شید. مطمئنید؟"
         handleSubmit={() => {
-          (gameState.origin === "matchmaking" ? mmLeave : leaveTable)();
+          mmLeave();
           Auth?.setUserInfo({ ...Auth.userInfo, active_room_id: null });
           setLeaveConfirmOpen(false);
           navigate("/");

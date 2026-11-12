@@ -26,6 +26,7 @@ interface PublicPlayer {
   isAlive: boolean;
   stats: PlayerStats;
   skins: Record<string, string>
+  ready: boolean
 }
 
 interface RestartVoteState {
@@ -299,6 +300,8 @@ export function useRoomSocket(roomId?: string) {
   );
   const sendDuelPick = useCallback((role: string) => send({ type: "duel_pick", role }), [send]);
 
+  const setReady = useCallback((ready: boolean) => send({ type: "set_ready", ready }), [send]);
+
   return {
     connected,
     loaded,
@@ -308,6 +311,7 @@ export function useRoomSocket(roomId?: string) {
     // clearProofEvent,
     // revealResultEvent,
     // clearRevealResultEvent,
+    setReady,
     sendProveCard,
     startGame,
     sendChat,
