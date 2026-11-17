@@ -118,7 +118,8 @@ export default function Leaderboard() {
                   <Typography variant="caption" color="text.secondary">
                     #{index + 1}
                   </Typography>
-                  <Avatar src={p.photo_url || undefined}>{p.first_name?.[0]}</Avatar>
+                  {/* <Avatar src={p.photo_url || undefined}>{p.first_name?.[0]}</Avatar> */}
+                  <Avatar >{p.first_name?.[0]}</Avatar>
                 </Stack>
               </ListItemAvatar>
               <ListItemText
