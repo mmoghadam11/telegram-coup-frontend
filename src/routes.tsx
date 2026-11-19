@@ -14,6 +14,7 @@ import AdminPage from "domains/admin/AdminPage";
 import Leaderboard from "domains/leaderboard/Leaderboard";
 import Skins from "domains/skins/Skins";
 import { useStartParamEntry } from "hooks/useStartParamEntry";
+import Tutorial from "domains/tutorial/Tutorial";
 
 
 const AppRoutes: React.FC = () => {
@@ -48,6 +49,7 @@ const AppRoutes: React.FC = () => {
     { url: "admin", access: ["admin"], component: <AdminPage /> },
     { url: "leaderboard", access: ["player", "admin"], component: <Leaderboard /> },
     { url: "skins", access: ["player", "admin"], component: <Skins /> },
+    { url: "tutorial", access: ["player", "admin"], component: <Tutorial /> },
   ];
   return (
     <Routes>

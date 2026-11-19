@@ -28,6 +28,7 @@ import PushButton from "components/PushButton";
 import ParallaxBackdrop from "./ParallaxBackdrop";
 import SkinsEntryCard from "./SkinsEntryCard";
 import RibbonBanner from "components/RibbonBanner";
+import TutorialEntryCard from "./TutorialEntryCard";
 
 interface CarouselItem {
   id: number;
@@ -122,6 +123,10 @@ function Welcome() {
   const skinsY = useTransform(scrollY, [0, 500], [0, -48 * k]);
   const cardsY = useTransform(scrollY, [0, 500], [0, -20 * k]);
 
+  const tutorialDone = (() => {
+    try { return localStorage.getItem("COUP_TUTORIAL_DONE") === "1"; }
+    catch { return false; }
+  })();
   useEffect(() => {
     if ((window as any).Telegram?.WebApp?.initDataUnsafe?.user) {
       const user = (window as any).Telegram.WebApp.initDataUnsafe.user;
@@ -150,7 +155,7 @@ function Welcome() {
   // }, []);
   return (
     // minHeight بیشتر از ۱۰۰: بدون اسکرول‌شدنی بودن صفحه، پارالکس دیده نمی‌شود
-    <Box sx={{ minHeight: "115svh", position: "relative" }}>
+    <Box sx={{ minHeight: "90svh", position: "relative" }}>
       <ParallaxBackdrop scrollY={scrollY} reduce={reduce} />
       <Box sx={{ position: "relative", zIndex: 1 }}>
         <Grid container justifyContent={"center"} width={"100svw"}>
@@ -182,21 +187,32 @@ function Welcome() {
             </Reveal>
           </Parallax>
           <Grid container item md={11} xs={11} justifyContent={"space-between"}>
-            {/* اسلات اسکین: روی موبایل ۳ از ۱۲ و padding ۴ (۳۲ پیکسل) جایی برای کارت نمی‌گذاشت */}
-            <Grid container item md={3} xs={4} p={{ xs: 1, md: 4 }} alignItems="center">
-              <Parallax y={skinsY}>
-                <Reveal delay={0.2}>
-                  <SkinsEntryCard />
-                </Reveal>
-              </Parallax>
+            {/* ✅ بخش کارت‌های کوچک (اسکین + آموزش) */}
+            <Grid container item md={11} xs={12} p={{ xs: 1, md: 4 }} spacing={3} alignItems="center">
+              <Grid item xs={6}>
+                <Parallax y={skinsY}>
+                  <Reveal delay={0.3}>
+                    <SkinsEntryCard />
+                  </Reveal>
+                </Parallax>
+              </Grid>
+              <Grid item xs={6}>
+                <Parallax y={skinsY}> {/* از همون y استفاده میکنیم تا هماهنگ باشن */}
+                  <Reveal delay={0.3}>
+                    <TutorialEntryCard tutorialDone={tutorialDone} reduce={reduce} />
+                  </Reveal>
+                </Parallax>
+              </Grid>
             </Grid>
-            <Grid container item md={9} xs={8} p={1} >
+
+            {/* ✅ کارت اصلی (همون AllCard) */}
+            {/* <Grid container item md={11} xs={12} p={1} >
               <Parallax y={cardsY}>
                 <Reveal delay={0.3}>
                   <AllCard />
                 </Reveal>
               </Parallax>
-            </Grid>
+            </Grid> */}
           </Grid>
           {/* <Grid item md={11} xs={11} p={4} justifyContent={"center"} alignContent={"center"} display={"flex"}>
           <PushButton size={200} onClick={() => console.log("Button Pressed!")} />
