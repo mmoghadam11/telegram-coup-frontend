@@ -206,7 +206,7 @@ export default function DemoTable() {
                             <motion.div key={idx} initial={{ opacity: 0, scale: 0.6, rotateY: 90 }} animate={{ opacity: 1, scale: 1, rotateY: 0 }} exit={{ opacity: 0 }} transition={{ duration: 0.5 }} style={{ textAlign: "center" }}>
                                 <Box component="img" src={src(cardImagePath(step.pop.role))} alt="" draggable={false}
                                     sx={{ width: 64, height: 90, objectFit: "cover", borderRadius: 1.5, boxShadow: "0 8px 24px rgba(0,0,0,.6)" }} />
-                                <Chip size="small" color={step.pop.ok ? "success" : "error"} sx={{ display: "block", mt: 0.5, fontWeight: 800 }}
+                                <Chip size="small" color={step.pop.ok ? "success" : "error"} sx={{ display: "block", mt: 0, fontWeight: 800 }}
                                     label={step.pop.ok ? `✓ ${nameOf(step.pop.role)}` : `✗ ${nameOf(step.pop.role)} (ادعا: ${nameOf(step.pop.claimed!)})`} />
                             </motion.div>
                         )}
