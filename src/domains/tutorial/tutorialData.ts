@@ -14,7 +14,7 @@ export const ROLE_INFO: RoleInfo[] = [
   { role: "princess", name: "شاهدخت", count: 2, cat: "kill", does: [], blocks: "ترور و آنارشیست را بلاک می‌کند" },
   { role: "ambassador", name: "سفیر", count: 2, cat: "swap", does: ["تعویض: ۲ کارت از دسته می‌کشد، هر کدام را خواست نگه می‌دارد و بقیه را زیر دسته برمی‌گرداند"], blocks: "دزدی را بلاک می‌کند" },
   { role: "assassin", name: "قاتل", count: 2, cat: "kill", does: ["ترور: ۳ سکه می‌دهی و یک کارت از هدف حذف می‌شود"] },
-  { role: "contessa", name: "بازرس", count: 5, cat: "swap", does: ["تعویض کارت خودم: یکی از کارت‌هایت را زیر دسته کارت‌ها گزاشته و کارت رویی دسته را برمیداری ", "اجبار به تعویض: بازیکن هدف باید یکی از کارت‌هایش را با دسته عوض کند"] },
+  { role: "contessa", name: "بازرس", count: 5, cat: "swap", does: ["تعویض کارت خودم: یکی از کارت‌هایت را زیر دسته کارت‌ها گذاشته و کارت رویی دسته را برمیداری ", "اجبار به تعویض: بازیکن هدف باید یکی از کارت‌هایش را با دسته عوض کند"] },
 ];
 
 export const CATS: Record<Cat, { title: string; icon: string; color: string; roles: string[] }> = {
